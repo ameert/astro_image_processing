@@ -36,16 +36,16 @@ import sys
 class mysql_connect():
     """Connects to mysql and lets you submit queries"""
     def __init__(self, dba, usr, pwd, lhost = "localhost"):
-         """dba: database name
-           usr: user name
-           pwd: password
-           host: hostname (default should work on most machines)
-           """
-         try:
-            Conn = mysql.connect (host = "%s" %lhost,
-                                  user = "%s" %usr,
-                                  passwd = "%s" %pwd,
-                                  db = "%s" %dba)
+        """dba: database name
+usr: user name
+pwd: password
+host: hostname (default should work on most machines)
+"""
+        try:
+            Conn = mysql.connect(host = "%s" %lhost,
+                                 user = "%s" %usr,
+                                 passwd = "%s" %pwd,
+                                 db = "%s" %dba)
             Conn.autocommit(True)
         except mysql.Error, e:
             print "Error %d: %s" % (e.args[0], e.args[1])
