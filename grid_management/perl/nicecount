@@ -1,0 +1,85 @@
+#!/usr/bin/perl -w
+use diagnostics;
+use strict;
+
+my @qstatin=`qstat`;
+my $username=`whoami`;
+
+chomp $username;
+my $countall=0;
+my $countRme=0;
+
+my $countRall=0;
+my $countQWme=0;
+my $countQWall=0;
+
+my $countHme=0;
+my $countHall=0;
+my $countSall=0;
+
+my $countSme=0;
+my $countEall=0;
+my $countEme=0;
+
+foreach my $qstatline (@qstatin) {
+chomp $qstatline;
+
+if ($qstatline=~m/\s+(\d+)\s+([\d\.]+)\s+([\S\d\.]+)\s+(\S+)\s+(\S+)\s+([\d\/]+)\s+([\d\:]+)\s+(\S*)\s+(\d+)/i) {
+
+my $jobid=$1;
+my $prior=$2;
+my $jobname=$3;
+
+my $user=$4;
+my $state=$5;
+my $subdate=$6;
+
+my $subtime=$7;
+my $queue=$8;
+my $slots=$9;
+
+$countall++;
+if ($state=~m/r/i) {
+
+$countRall++;
+if ($user eq $username) {
+
+$countRme++;
+}
+}
+if ($state=~m/^qw$/i) {
+
+$countQWall++;
+if ($user eq $username) {
+
+$countQWme++;
+}
+}
+if ($state=~m/h/i) {
+
+$countHall++;
+if ($user eq $username) {
+
+$countHme++;
+}
+}
+if ($state=~m/s/i) {
+
+$countSall++;
+if ($user eq $username) {
+
+$countSme++;
+}
+}
+if ($state=~m/e/i) {
+
+$countEall++;
+if ($user eq $username) {
+
+$countEme++;
+}
+}
+}
+}
+
+print "$countall $countRall $countQWall $countHall $countSall $countEall $countRme $countQWme $countHme $countSme $countEme\n";

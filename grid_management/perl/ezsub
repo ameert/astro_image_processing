@@ -1,0 +1,74 @@
+#! /bin/bash
+# Shell script to automatically create a simple shell script
+# and submit it to sge using qsub. To use this, just type
+# ezsub followed by the name and options for your job. I.e.,
+
+#
+# ezsub paup -n batchfile.nex
+# ezsub ./configure --disable-shared
+# ezsub mb adh.nex
+# ezsub tar -xvf gsl-1.8.tar
+#
+# The one constraint is that you can't have pipes or redirects ( >, <, |), as
+# they would use the output of the ezsub command (which is just your job number)
+
+# instead of the output of whatever program you're calling
+#
+# Brian O'Meara 17 Nov 2006
+# http://www.brianomeara.info/SGEscripts.html
+# Released under GPL v2
+
+echo "#!/bin/bash" >tempqrun.sh
+echo "#$ -cwd" >>tempqrun.sh #use current directory as working directory
+
+
+########### Change email settings #################
+echo "#$ -M ameert@sas.upenn.edu.edu" >>tempqrun.sh #use your own email address. Please.
+echo "#$ -m as" >>tempqrun.sh #send email about the job.
+
+# "b"=when job begins
+# "e"=when job ends
+# "a"=when job aborts
+# "s"=when job suspended (someone kicks you off)
+# "n" alone means don't send mail
+##################################################
+
+##################### Job name ############################
+echo "#$ -N EZsub" >>tempqrun.sh #job name, currently EZsub
+
+###########################################################
+
+########### Don't modify this bit #################
+echo "#$ -r y">>tempqrun.sh #makes job rerunable #
+echo "#$ -S /bin/bash">>tempqrun.sh #
+
+echo "">>tempqrun.sh #
+until [ -z "$1" ] #
+
+do #
+echo -n "$1 " >> temporaryqrunstrings #
+
+shift #
+done #
+tr '\n' ' ' < temporaryqrunstrings >> tempqrun.sh #
+
+###################################################
+############ Cleanup #########################
+#delete the "#" at the beginning of the following line if you want to remove the output files
+#echo "rm EZsub.*" >> tempqrun.sh
+#############################################
+###### Don't modify this bit ###########
+sleep 1 #
+
+chmod 777 tempqrun.sh #
+cp tempqrun.sh tempqrun2.sh #
+qsub tempqrun2.sh #
+
+sleep 1 #
+rm temporaryqrunstrings #
+rm tempqrun.sh #
+rm tempqrun2.sh #
+
+########################################
+
+

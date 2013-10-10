@@ -1,0 +1,57 @@
+#!/usr/bin/perl -w
+
+# nicestart: start submitting your nicely-submitted jobs to SGE. It takes three numbers as arguments.
+# MinNum: You will have at least MinNum jobs running or in the official queue at a time,
+# even if this leaves no nodes free for other users
+# MaxNum: You will have no more than MaxNum jobs running or in the official queue at a time,
+# even there are oodles of other nodes free.
+# FreeNum: The number of nodes you will leave free for other users.
+#
+# usage: nicestart <MinNum> <MaxNum> <FreeNum>
+
+# example: nicestart 2 30 40
+# will keep between 2 and 30 of your jobs running or actively queued, while keeping at least
+# 40 nodes unused, regardless of how many other people are using the cluster
+#
+# Niceloop and nicesub effectively put jobs in your own queue. Nicestart starts a script that moves jobs
+# from your own queue into the general queue. You submit jobs until there are only FreeNum nodes available
+# (but you keep at least MinNum jobs in the general queue). The general idea is that if the cluster isn't
+# being heavily used, you submit many jobs, but if the cluster is getting fuller, you submit jobs at a slower
+# rate to make sure to leave nodes available for other users. This is most useful for cases where you have
+
+# many jobs (>50) to submit but don't want to block cluster use. It can be especially appropriate if the
+# jobs complete very quickly, so your number of active jobs can change very quickly as cluster use changes.
+# Setting MinNum>0 means that you will always have MinNum jobs submitted or running, even if this means that
+# fewer than FreeNum nodes are left available.
+#
+# If you want to change your limits, just run nicestart again with the new limits.
+#
+# Jobs that are held in your own separate queue will have state "hqw" and job name "niceWAIT" -- when
+# they are submitted to the general queue, their state will be "qw" or "r" and their name changed to
+
+# "niceRUN".
+#
+# Brian O'Meara
+# http://www.brianomeara.info/SGEscripts.html
+# Nov. 16, 2006
+# Released under GNU Public License V. 2
+use diagnostics;
+
+use strict;
+my $username=`ameert`;
+chomp $username;
+
+my $nicewatchcount=`top -b -n1 | grep $username | grep -c nicewatch`;
+if ($nicewatchcount>0) {
+
+my @nicewatchlist=`top -b -n1 | grep $username | grep nicewatch`;
+foreach my $job (@nicewatchlist) {
+
+$job=~m/^\s*(\d+)\s+/;
+
+my $pid=$1;
+system("kill $pid");
+}
+
+}
+system("nohup nicewatch $ARGV[0] $ARGV[1] $ARGV[2] > /dev/null &");

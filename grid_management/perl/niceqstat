@@ -1,0 +1,8 @@
+#!/bin/bash
+#This just returns qstat's normal output, omitting jobs held in individual user queues
+# Brian O'Meara
+# http://www.brianomeara.info/SGEscripts.html
+
+# Nov. 16, 2006
+# Released under GNU Public Licence v 2
+qstat | grep -v "hqw"

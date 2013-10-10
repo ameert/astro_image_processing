@@ -1,0 +1,65 @@
+#!/usr/bin/perl -w
+#takes settings minnum_active_queued_or_running, maxnum_active_queued_or_running (both for individual user), number of slots to leave free
+# Brian O'Meara
+# http://www.brianomeara.info/SGEscripts.html
+# Nov. 27, 2006
+# Released under GNU Public License V. 2
+
+use diagnostics;
+use strict;
+sleep(3);
+my $username=`whoami`;
+
+chomp $username;
+my $minnumqueuedtorun=$ARGV[0];
+my $maxnumqueuedtorun=$ARGV[1];
+
+my $freeslots=$ARGV[2];
+while (`qstat | grep "$username" | grep -c "hqw"`>0) { #while there are still queued, held jobs
+
+my @ezcountarray=split(/ /,`/data2/home/ameert/grid_scripts/nicecount`);
+
+my $countall=$ezcountarray[0];
+my $countRme=$ezcountarray[6];
+
+my $countRall=$ezcountarray[1];
+my $countQWme=$ezcountarray[7];
+
+my $countQWall=$ezcountarray[2];
+my $countHme=$ezcountarray[8];
+
+my $countHall=$ezcountarray[3];
+my $countSall=$ezcountarray[4];
+
+my $countSme=$ezcountarray[9];
+my $countEall=$ezcountarray[5];
+
+my $countEme=$ezcountarray[10];
+my $reactivate=0;
+
+if (($countRme+$countQWme)<$minnumqueuedtorun) {
+$reactivate=1;
+
+}
+if ((128-($countQWall+$countRall))>$freeslots) {
+# 128 is the maximum number of jobs on the cluster at any gicen time
+# check this with "qstat -g c"
+if (($countRme+$countQWme)<$maxnumqueuedtorun ) {
+$reactivate=1;
+
+}
+}
+if ($reactivate==1) {
+
+my $jobtostartline=`qstat | grep "$username" | grep -m1 "hqw"`;
+$jobtostartline=~m/^[\s]*([\d]+)/;
+
+my $jobtostart=$1;
+system("qalter -h U -N $jobtostart");
+}
+
+sleep(rand(10)); #Don't change this. This tells the script how long to wait before
+# reactivating. If you get rid of this line, the script will
+# keep rerunning, taking up far too much time on the head node.
+
+}

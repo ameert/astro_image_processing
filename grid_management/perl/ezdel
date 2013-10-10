@@ -1,0 +1,22 @@
+#!/usr/bin/perl -w
+#A quick script to delete all your queued and held jobs.
+#Not often useful, but handy when you do need it (something has gone terribly wrong)
+
+use diagnostics;
+use strict;
+my $username="ameert";
+
+while (`qstat | grep "$username" | grep -c "r"`>0) { #while you still have queued and/or held jobs
+my $jobtokillline=`qstat | grep "$username" | grep -m1 "r"`;
+
+$jobtokillline=~m/^[\s]*([\d]+)/;
+
+my $jobtokill=$1;
+print "qdel $jobtokill" ;
+system("qdel $jobtokill");
+sleep(1);
+
+}
+
+
+

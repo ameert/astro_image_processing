@@ -1,0 +1,82 @@
+#!/usr/bin/perl -w
+# Shell script to automatically start multiple repetitive jobs.
+# Examples would be doing 100 bootstrap replicates by sending
+# five jobs of 20 reps each or doing 4 mrbayes runs at once.
+# Basically, the script expects there to be a batch file that
+
+# you're using; it will replace any instance of REP (all caps)
+# in that batch file with the replicate number. To use this
+# script, you type niceloop followed by the number of loops,
+# then the program you want to run, any options, and the
+# name of the batch file. For example,
+#
+# niceloop 5 paup -n bootbatch.nex
+# niceloop 4 mb adh.nex
+#
+
+# A sample batch file for something like paup might be:
+#
+# #nexus
+# begin paup;
+# log start file=bootREP.log;
+# execute primates.nex;
+# bootstrap nreps=20 treefile=bootREP.tre brlen=yes / start=nj;
+# quit;
+# end;
+
+#
+# Then, if submitted using the command "niceloop 5 paup -n bootbatch.nex",
+# the output would be boot1.log, boot1.tre, boot2.log, boot2.tre,...
+# boot5.log, boot5.tre. Each tree file would have trees from twenty
+# bootstrap replicates; you could then load them all into paup,
+# making sure to store tree weights, and get a majority rule
+# consensus tree using tree weights to compute the bootstrap tree
+# from 100 bootstrap replicates.
+
+# The one constraint is that you can't have pipes or redirects ( >, <, |), as
+# they would use the output of the niceloop command (which is just your job number)
+# instead of the output of whatever program you're calling
+#
+# Brian O'Meara 17 Nov 2006
+# http://www.brianomeara.info/SGEscripts.html
+# Released under GPL v2
+
+use diagnostics;
+use strict;
+if ($#ARGV < 2 || $ARGV[0]!~m/\d+/) {
+
+print "usage: ezloop #reps command [options] filename\n";
+exit;
+}
+my $outputstring="";
+
+my $maxcmdnum=$#ARGV;
+for (my $arg=1;$arg<$maxcmdnum;$arg++) {
+
+$outputstring="$outputstring "."$ARGV[$arg]";
+}
+for (my $rep=1;$rep<=$ARGV[0];$rep++) {
+
+my $filein="$ARGV[$#ARGV]";
+open(IN,"$filein") or die("where is $filein ?");
+
+open(OUT,">$rep.$filein");
+while(<IN>) {
+
+my $inline=$_;
+chomp $inline;
+$inline=~s/REP/$rep/g; #convert REP to $rep. Case sensitive
+
+print OUT "$inline\n";
+}
+close IN;
+
+close OUT;
+my $totaloutput="nicesub $outputstring "."$rep.$filein";
+sleep(rand(4)); #just to give the cluster a break, give us time to abort if something's wrong, etc.
+
+print "$totaloutput";
+#system("$totaloutput");
+}
+
+
