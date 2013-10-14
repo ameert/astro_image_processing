@@ -3,7 +3,6 @@ from astro_utils.sizes import *
 from astro_utils.surf_bright import *
 
 import numpy as np
-from read_list import *
 
 def profile_to_arcsec_mag(input_profile_filename, zeropoint, 
                    output_profile_filename = 'NULL', kk = defaults['kk'] , 
