@@ -1,0 +1,40 @@
+#++++++++++++++++++++++++++
+#
+# TITLE: read_dists 
+#
+# PURPOSE: reads the cdf distributions
+#          for observed magnitude, BT ratio,
+#          rad bulge and disk in kpc, bulge
+#          ellipticity, bulge sersic index,
+#          redshift, zeropoint, kk and airmass
+#          sdss parameters. Parameters are randomly
+#          selected from this distribtuion.
+#
+# INPUTS: dist_path: path to the cdf profiles
+#         dist_stem: the file stem for the distributions
+#
+# OUTPUTS: returns mag_dist, bt_dist, re_dist, rd_dist,
+#          eb_dist, n_bulge_dist, z_dist, zp_dist, kk_dist,
+#          airmass_dist. each of these is a list of arrays of the
+#          parameter value and the corresponding cdf value.
+#
+# PROGRAM CALLS: relies only upon included and standard packages
+#
+# BY: Alan Meert
+#     Department of Physics and Astronomy
+#     University of Pennsylvania
+#
+# FOR: Mariangela Bernardi
+#      Department of Physics and Astronomy
+#      University of Pennsylvania
+#
+# DATE: 20 FEB 2011
+#
+# NOTES:Files to be read MUST be of form below
+#       1st line(headers): parameter name,cdf
+#       2nd line and after: number,number
+#      
+#-----------------------------------
+
+import numpy as n
+
