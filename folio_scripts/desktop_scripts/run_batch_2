@@ -1,0 +1,5 @@
+#!/bin/sh
+#$ -t 1-4
+#$ -wd /data2/home/ameert/test_batch/${SGE_TASK_ID}/ 
+
+/data2/home/ameert/serial_pipeline/trunk/pymorph.py 
