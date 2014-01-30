@@ -89,10 +89,12 @@ def run_auto_flags(model, band, folder_num, print_flags=False):
 to a mysql database"""
     
     infile = open('/home/ameert/to_classify/flagfiles/%s/%s/total_flag_%d.pickle' %(band,model,folder_num))
+    #infile = open('/home/ameert/to_classify/flagfiles/simulation/%s/total_flag_%d.pickle' %(model,folder_num))
     data = pickle.load(infile)
     infile.close()
 
     infile = open('/home/ameert/to_classify/flagfiles/%s/%s/total_profile_%d.pickle' %(band,model,folder_num))
+    #infile = open('/home/ameert/to_classify/flagfiles/simulation/%s/total_profile_%d.pickle' %(model,folder_num))
     profile_data = pickle.load(infile)
     infile.close()
 
@@ -203,7 +205,8 @@ to a mysql database"""
     auto_flags = np.where(galfit_fail==1, 0, auto_flags)
     auto_flags += galfit_fail * 2**autoflag_dict['galfit failure']
 
-    outfile = open('/home/ameert/to_classify/flagfiles/%s/%s/autoflags_%d_revised.pickle' %(band, model,folder_num), 'w')
+    outfile = open('/home/ameert/to_classify/flagfiles/%s/%s/autoflags_%d.pickle' %(band, model,folder_num), 'w')
+    #outfile = open('/home/ameert/to_classify/flagfiles/simulation/%s/autoflags_%d_newtestrevised.pickle' %(model,folder_num), 'w')
     pickle.dump({'galcount':data['galcount'],'autoflags':auto_flags},outfile)
     outfile.close()
     if print_flags:
@@ -218,8 +221,10 @@ def load_autoflag(folder_num, info_dict, print_info = False):
 
     if print_info:
         print 'loading folder %d' %folder_num
-        print '/home/ameert/to_classify/flagfiles/%s/%s/autoflags_%d_revised.pickle' %(info_dict['band'],info_dict['model'],folder_num)
-    infile = open('/home/ameert/to_classify/flagfiles/%s/%s/autoflags_%d_revised.pickle' %(info_dict['band'],info_dict['model'],folder_num))
+        print '/home/ameert/to_classify/flagfiles/%s/%s/autoflags_%d.pickle' %(info_dict['band'],info_dict['model'],folder_num)
+        #print '/home/ameert/to_classify/flagfiles/simulation/%s/autoflags_%d_newtestrevised.pickle' %(info_dict['model'],folder_num)
+    infile = open('/home/ameert/to_classify/flagfiles/%s/%s/autoflags_%d.pickle' %(info_dict['band'],info_dict['model'],folder_num))
+    #infile = open('/home/ameert/to_classify/flagfiles/simulation/%s/autoflags_%d_newtestrevised.pickle' %(info_dict['model'],folder_num))
     data = pickle.load(infile)
     infile.close()
 
@@ -231,3 +236,15 @@ def load_autoflag(folder_num, info_dict, print_info = False):
 
     return
 
+
+if __name__ == "__main__":
+    info_dict = {'dba':'simulations', 
+                 'usr':'pymorph', 'pwd':'pymorph', 'host':'',
+                 'band':'r', 'model':'serexp','autoflag_ftype':'x',
+                 'uflag_ftype':'z',
+                 }
+    info_dict['cursor']=mysql_connect(info_dict['dba'],info_dict['usr'],info_dict['pwd'],info_dict['host'])
+    
+    for folder_num in range(1,121):
+        run_auto_flags(info_dict['model'], info_dict['band'], folder_num, print_flags=False)
+        load_autoflag(folder_num, info_dict, print_info = False)
