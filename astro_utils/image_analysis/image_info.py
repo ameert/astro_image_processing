@@ -144,7 +144,7 @@ class image_info:
         self.rads, self.prof, self.proferr, self.aperflux, self.included_pix = self.running_ave(rad_pix, good_image, self.edges)
 
         if outfile != 'NULL':
-            self.write_prof(self.rads, self.prof, self.proferr, self.aperflux, outfile)
+            self.write_prof(self.rads, self.prof, self.proferr, self.aperflux, self.included_pix, outfile)
         return
 
 
@@ -182,13 +182,20 @@ class image_info:
         return rad_out, prof_out,proferr_out, aperflux, included_pix
 
 
-    def write_prof(self, rads, prof, proferr, aperflux, outfile):
-        file = open(outfile, 'w')
-        file.write('# rad prof proferr aperflux\n')
-        for r, p,perr, af in zip(rads, prof, proferr,aperflux):
-            file.write('%f %e %e %e\n'  %(r,p,perr, af))
+    def write_prof(self, rads, prof, proferr, aperflux, included_pix, outfile):
+        
+        file_end =outfile.split('.')[-1]
+        if file_end == 'npz':
+            data_names = ['rads', 'prof','proferr','aperflux','included_pix']
+            data = dict([a for a in zip(data_names, [ rads, prof, proferr, aperflux, included_pix])])
+            np.savez(outfile, **data)
+        else:
+        ofile = open(outfile, 'w')
+        ofile.write('# rad, prof, proferr, aperflux, included_pix\n')
+        for r, p,perr, af, ip in zip(rads, prof, proferr,aperflux,included_pix):
+            ofile.write('%f %e %e %e %.0f\n'  %(r,p,perr, af, ip))
 
-        file.close()
+        ofile.close()
         return
    
     def halflight(self, ltot=0, inrad = 100.0):
