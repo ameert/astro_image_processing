@@ -21,10 +21,6 @@
 #     Department of Physics and Astronomy
 #     University of Pennsylvania
 #
-# FOR: Mariangela Bernardi
-#      Department of Physics and Astronomy
-#      University of Pennsylvania
-#
 # DATE: 14 JAN 2011
 #
 #-----------------------------------
@@ -92,7 +88,34 @@ host: hostname (default should work on most machines)
         return
 
 
-        
+if __name__ == "__main__":
+    import random
+    dba = 'test'
+    usr = 'test'
+    pwd = ''
+    
+    cursor =  mysql_connect(dba, usr, pwd)
+    
+    print "creating table TEST"
+    cursor.execute('create table IF NOT EXISTS TEST (number int primary key, data1 float, data2 varchar(20));')
+    
+    for count in range(1,5):
+        data1 = random.random()
+        cursor.execute("insert ignore into TEST value (%d, %f, 'This is entry %d');" %(count, data1, count))
+    
+    number, data1, data2 = cursor.get_data('select number, data1, data2 from TEST;')
+
+    print "data in TEST"
+    for a in zip(number, data1, data2):
+        print a
+
+    print "data in dict form"
+    data_dict = cursor.get_data_dict('select number, data1, data2 from TEST;', ['number', 'data1', 'data2'], [int, float, str])
+    
+    print data_dict
+
+    print "dropping table TEST"
+    cursor.execute('drop table IF EXISTS TEST;')
     
         
         
