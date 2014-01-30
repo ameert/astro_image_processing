@@ -190,12 +190,12 @@ class image_info:
             data = dict([a for a in zip(data_names, [ rads, prof, proferr, aperflux, included_pix])])
             np.savez(outfile, **data)
         else:
-        ofile = open(outfile, 'w')
-        ofile.write('# rad, prof, proferr, aperflux, included_pix\n')
-        for r, p,perr, af, ip in zip(rads, prof, proferr,aperflux,included_pix):
-            ofile.write('%f %e %e %e %.0f\n'  %(r,p,perr, af, ip))
-
-        ofile.close()
+            ofile = open(outfile, 'w')
+            ofile.write('# rad, prof, proferr, aperflux, included_pix\n')
+            for r, p,perr, af, ip in zip(rads, prof, proferr,aperflux,included_pix):
+                ofile.write('%f %e %e %e %.0f\n'  %(r,p,perr, af, ip))
+                
+            ofile.close()
         return
    
     def halflight(self, ltot=0, inrad = 100.0):
