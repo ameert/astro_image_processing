@@ -60,8 +60,9 @@ for I_tot and Re"""
         self.n_ser = n_ser
         self.phi = phi
         self.ba = ba
-        self.Re = Re
-        self.oversim = 1000.0
+        self.Re = Re 
+        self.oversim = np.min([1000.0,10**(9.0-np.log10(self.I_tot))])
+        print "Counts: %d oversim:%f" %(self.I_tot, self.oversim)
         self.draw_size = 10.0**6
 
         if self.I_tot >=1:
@@ -112,7 +113,7 @@ for I_tot and Re"""
         while counts_to_sim > 0:
             print "remaining photons: %10.0f" %counts_to_sim
             self.get_photons(np.min((counts_to_sim,self.draw_size)))
-
+        
             self.xprime = self.photons*np.sqrt(self.ba)*np.cos(self.pos_ang)
             self.yprime = self.photons/np.sqrt(self.ba)*np.sin(self.pos_ang)
 
@@ -164,7 +165,7 @@ for I_tot and Re"""
         self.phi = phi
         self.ba = ba
         self.Re = R_scale*np.sqrt(self.ba) #this factor is here to adjust for the shearing in the rotation since we are using the ellipticity rotation for bulges rather than the inclination rotation used for disks
-        self.oversim = 1000.0
+        self.oversim = np.min([1000.0,10**(9.0-np.log10(self.I_tot))])
         self.draw_size = 10.0**6
 
         if self.I_tot >=1:
@@ -319,8 +320,7 @@ class galaxy:
             disk_com = disk(self.Id_counts*self.gain, self.dang, self.ed, self.rd)
             disk_com.set_image_params(xcntr = self.x_ctr, ycntr = self.y_ctr, xsize = self.x_size, ysize = self.y_size)
             disk_com.make_image()
-
-
+            
             new_gal =  im_obj((sersic_com.image+disk_com.image)/self.gain)
             new_gal.convolve_image(self.psf_name)
 
@@ -486,6 +486,7 @@ def make_new_flat(outdir, inflat, inpsf, fwhm = 0.0):
     ext.header.update('FWHM' , fwhm, 'arcsec')
 
     ext. writeto(outfile_name)
+    return new_flat
 
 def stack_ims(small_im, big_im, xctr, yctr):
     shape = np.shape(small_im)
