@@ -33,13 +33,19 @@ exptime = 1.0#53.907456 #in seconds, taken from SDSS website
     #www.sdss.org/dr3/algorithms/fluxcal.html
 
 def profile_to_arcsec_mag(aa, kk, airmass,band,  input_profile_filename, output_profile_filename = 'NULL', kcorr = 0, extinction = 0):
+    
+    input_type = input_profile_filename.split('.')[1]
+    if input_type == 'npz':
+        print 'loading npz file'
+        profile = np.load(input_profile_filename)
+    else:
+        print 'loading txt file'
+        profile = {}
+        profile['rads'], profile['prof'],profile['proferr'],profile['aperflux'],profile['included_pix'] = np.loadtxt(input_profile_filename, unpack=True)
 
-    profile = np.loadtxt(input_profile_filename, unpack=True)
-    # profile should have 3 columns of data: radius, counts, and error(counts)
-
-    bad_dat = np.where(profile[1]>-900.0)
-    radius = pixels_to_arcsec(profile[0][bad_dat])
-    mag, magerr = co_pix_to_mag_arc(profile[1][bad_dat], profile[2][bad_dat], band, 
+    bad_dat = np.where(profile['prof']>-900.0)
+    radius = pixels_to_arcsec(profile['rads'][bad_dat])
+    mag, magerr = co_pix_to_mag_arc(profile['prof'][bad_dat], profile['proferr'][bad_dat], band, 
                                     aa, kk, airmass)
     mag = mag-extinction-kcorr
                                    

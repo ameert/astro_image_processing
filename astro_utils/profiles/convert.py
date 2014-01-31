@@ -44,13 +44,20 @@ def profile_to_arcsec_mag(input_profile_filename, zeropoint,
 #
 #-----------------------------------
 """
-    profile = np.loadtxt(input_profile_filename, unpack=True)
+    input_type = input_profile_filename.split('.')[1]
+    if input_type == 'npz':
+        print 'loading npz file'
+        profile = np.load(input_profile_filename)
+    else:
+        print 'loading txt file'
+        profile = {}
+        profile['rads'], profile['prof'],profile['proferr'],profile['aperflux'],profile['included_pix'] = np.loadtxt(input_profile_filename, unpack=True)
 
     #now shift sky 
-    profile[1] += shift
+    profile['prof'] += shift
 
-    radius = pixels_to_size(profile[0],pixsz = pixsz)
-    mag, magerr = co_pix_to_mag_arc(profile[1], profile[2], 
+    radius = pixels_to_size(profile['rads'],pixsz = pixsz)
+    mag, magerr = co_pix_to_mag_arc(profile['prof'], profile['proferr'], 
                                     zeropoint, kk = kk, 
                                     airmass = airmass, band = band, 
                                     magtype = magtype, exptime=exptime)

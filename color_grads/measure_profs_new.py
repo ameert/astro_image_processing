@@ -22,10 +22,6 @@
 #     Department of Physics and Astronomy
 #     University of Pennsylvania
 #
-# FOR: Mariangela Bernardi
-#      Department of Physics and Astronomy
-#      University of Pennsylvania
-#
 # DATE: 24 JANUARY 2013
 #
 #-----------------------------------
@@ -38,7 +34,6 @@ from sersic_classes import im_obj
 from measure_profs_functions import *
 import os
 from mysql_class import *
-
 
 bands = 'gri'
 m_stem = 'EM'
