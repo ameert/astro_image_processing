@@ -160,24 +160,19 @@ class image_info:
             tmp_rad = np.extract(rad_pix < edges[curr_edge+1], rad_pix)
 
             if len(tmp_rad)>0:
-                aperflux.append(np.sum(tmp_im))
-                included_pix.append(float(tmp_im.size))
-            else:
-                aperflux.append(0)
-                included_pix.append(0)
-
-            tmp_im = np.extract(tmp_rad >= edges[curr_edge], tmp_im)
-            tmp_rad = np.extract(tmp_rad >= edges[curr_edge], tmp_rad)
+                aper_tmp = np.sum(tmp_im)
+                inc_tmp = float(tmp_im.size)
+            
+                tmp_im = np.extract(tmp_rad >= edges[curr_edge], tmp_im)
+                tmp_rad = np.extract(tmp_rad >= edges[curr_edge], tmp_rad)
 
 
-            if len(tmp_rad) > 0:
-                rad_out.append(np.mean(tmp_rad))
-                prof_out.append(np.mean(tmp_im))
-                proferr_out.append(np.std(tmp_im))
-            else:
-                rad_out.append(-999.0)
-                prof_out.append(-999.0)
-                proferr_out.append(-999.0)
+                if len(tmp_rad) > 0:
+                    rad_out.append(np.mean(tmp_rad))
+                    prof_out.append(np.mean(tmp_im))
+                    proferr_out.append(np.std(tmp_im))
+                    aperflux.append(aper_tmp)
+                    included_pix.append(inc_tmp)
 
         return rad_out, prof_out,proferr_out, aperflux, included_pix
 
@@ -186,10 +181,12 @@ class image_info:
         
         file_end =outfile.split('.')[-1]
         if file_end == 'npz':
+            print "writing npz file"
             data_names = ['rads', 'prof','proferr','aperflux','included_pix']
             data = dict([a for a in zip(data_names, [ rads, prof, proferr, aperflux, included_pix])])
             np.savez(outfile, **data)
         else:
+            print "writing ascii file"
             ofile = open(outfile, 'w')
             ofile.write('# rad, prof, proferr, aperflux, included_pix\n')
             for r, p,perr, af, ip in zip(rads, prof, proferr,aperflux,included_pix):
