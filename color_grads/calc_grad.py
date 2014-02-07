@@ -1,14 +1,32 @@
-"""create table %s_colorgrad_%srad (galcount int primary key, centerrad_arcsec float default -999,
-grCenter float default -999,  giCenter float default -999,  riCenter float default -999,
-gr05_hl float default -999,  gi05_hl float default -999,  ri05_hl float default -999,
-gr10_hl float default -999,  gi10_hl float default -999,  ri10_hl float default -999,
-gr15_hl float default -999,  gi15_hl float default -999,  ri15_hl float default -999,
-gr20_hl float default -999,  gi20_hl float default -999,  ri20_hl float default -999,
-gr25_hl float default -999,  gi25_hl float default -999,  ri25_hl float default -999,
-gr30_hl float default -999,  gi30_hl float default -999,  ri30_hl float default -999,
-gr40_hl float default -999,  gi40_hl float default -999,  ri40_hl float default -999,
-gr90_hl float default -999,  gi90_hl float default -999,  ri90_hl float default -999);
-"""
+from mysql.mysql_class import *
+import numpy as np
+import pylab as pl
+import sys
+from matplotlib.backends.backend_pdf import PdfPages
+pp = PdfPages('grads.pdf')
+
+
+class linefit():
+    def __init__(self,x,y,yerr=None):
+        self.x_mat = np.matrix([[1.0,val] for val in x])
+        self.y_mat = np.matrix(y).T
+        if yerr==None:
+            self.c_mat = np.ones_like(y)/y.size
+        else:
+            self.c_mat = np.matrix(np.zeros((yerr.size, yerr.size)))
+            for count, val in enumerate(yerr):
+                self.c_mat[count, count] = val**2
+                    
+        self.b_err =(self.x_mat.T*(self.c_mat**(-1))*self.x_mat)**(-1) 
+        self.b =  self.b_err*(self.x_mat.T*(self.c_mat**(-1))*self.y_mat)
+        print self.b.T
+        print self.b_err
+        return
+
+    def predict(self,xvals):
+        a_calc = np.matrix([[1.0,val] for val in xvals])
+        y_calc = self.b.T*a_calc.T
+        return y_calc
 
 bands = 'gr'
 table_name = 'CAST'
@@ -23,58 +41,112 @@ folder_num = int(sys.argv[1])
 path = '/home/ameert/color_grad/data/%04d' %folder_num
 model = 'ser'
 
-cmd = """select a.galcount, x.r50_r_arcsec,x.r90_r_arcsec from CAST as a, 
-%s_hrad_90_est as x
-where a.galcount = x.galcount and a.galcount between %d and %d 
-order by galcount;""" %(model, (folder_num-1)*250, folder_num*250)
+#cmd = """select a.galcount, x.r50_r_arcsec,x.r90_r_arcsec from CAST as a, 
+#%s_hrad_90_est as x
+#where a.galcount = x.galcount and a.galcount between %d and %d 
+#order by galcount;""" %(model, (folder_num-1)*250, folder_num*250)
+
+cmd = """select a.galcount, a.r_bulge*sqrt(a.ba_bulge), a.n_bulge,b.r_bulge*sqrt(b.ba_bulge), b.n_bulge, m.ProbaE, m.ProbaSab, m.ProbaScd from r_band_%s as a, g_band_%s as b, M2010 as m,Flags_optimize as c 
+where a.galcount = m.galcount and a.galcount=b.galcount and a.galcount = c.galcount and c.band='r' and c.model='ser' and c.ftype='u' and c.flag&1>0 and m.ProbaE>0.75 and a.galcount between %d and %d order by a.galcount;""" %(model, model, (folder_num-1)*250, folder_num*250)
 
 data = cursor.get_data(cmd)
 
 galcount = np.array(data[0], dtype = int)
-profiles = {'g':{}, 'r':{}, 'i':{}, 'gr':[], 'gi':[], 'ri':[] }
 
 for gc, dat in zip(galcount,np.array(data[1:]).transpose()):
-    radlim = 3.0*dat[0]
+    hrad_arcsec = dat[0]
+    if gc>9:
+        break
+    print gc, hrad_arcsec
+    outfile = '%s/%08d_mag_corr_%s.npz' %(path, gc, model)
     try:
-        rads = np.extract(profiles['log_rad_arcsec']< np.log10(radlim), profiles['log_rad_arcsec'])
+        profiles = np.load(outfile)
+        hradlim = 3.0
+        print gc, ' limit ', hrad_arcsec*hradlim, np.log10(hrad_arcsec*hradlim)
+        print profiles.keys()
+    
+        rads_to_use = np.where(profiles['log_rad_arcsec']< np.log10(hrad_arcsec*hradlim),1,0)+np.where(profiles['log_rad_arcsec']< np.log10(3.0*hradlim*hrad_arcsec),1,0)
+        bad_rad = np.extract(rads_to_use== 1, profiles['log_rad_arcsec'])
+        rads = np.extract(rads_to_use == 2, profiles['log_rad_arcsec'])
         
-        for tcount,tb in enumerate(['gr']):#,'gi','ri']):
-            try:
-                color = np.extract(profiles['log_rad_arcsec']< np.log10(radlim), profiles[tb])
-                cerr = np.extract(profiles['log_rad_arcsec']< np.log10(radlim), profiles[tb+'_err'])
-            
+        gmag = np.extract(rads_to_use== 2, profiles['g'])
+        gerr = np.extract(rads_to_use== 2, profiles['gerr'])
+        bad_gmag = np.extract(rads_to_use== 1, profiles['g'])
+        bad_gerr = np.extract(rads_to_use== 1, profiles['gerr'])
 
-                
-            except:
-                #print "skipping gc:%d band:%s" %(gc, tb)
-                pass
-        if 0:
-            cmd = """update %s_colorgrad_%srad set centerrad_arcsec = %f,
-        grCenter = %f,  giCenter = %f,  riCenter = %f,
-        gr05_hl = %f,  gi05_hl = %f,  ri05_hl = %f,
-        gr10_hl = %f,  gi10_hl = %f,  ri10_hl = %f,
-        gr15_hl = %f,  gi15_hl = %f,  ri15_hl = %f,
-        gr20_hl = %f,  gi20_hl = %f,  ri20_hl = %f,
-        gr25_hl = %f,  gi25_hl = %f,  ri25_hl = %f,
-        gr30_hl = %f,  gi30_hl = %f,  ri30_hl = %f,
-        gr40_hl = %f,  gi40_hl = %f,  ri40_hl = %f,
-        gr90_hl = %f,  gi90_hl = %f,  ri90_hl = %f
-        where galcount = %d;""" %(model, model, innerrad,
-                                  rad_vals[0],rad_vals[1],rad_vals[2],
-                                  rad_vals[3],rad_vals[4],rad_vals[5],
-                                  rad_vals[6],rad_vals[7],rad_vals[8],
-                                  rad_vals[9],rad_vals[10],rad_vals[11],
-                                  rad_vals[12],rad_vals[13],rad_vals[14],
-                                  rad_vals[15],rad_vals[16],rad_vals[17],
-                                  rad_vals[18],rad_vals[19],rad_vals[20],
-                                  rad_vals[21],rad_vals[22],rad_vals[23],
-                                  rad_vals[24],rad_vals[25],rad_vals[26],
-                                  gc)
-        
-        cmd = cmd.replace('nan', '-999.0')
-        #print gc
-        #print r50, r90
-        #print cmd
-        cursor.execute(cmd)
-    except IOError:
-        print IOError
+        rmag = np.extract(rads_to_use== 2, profiles['r'])
+        rerr = np.extract(rads_to_use== 2, profiles['rerr'])
+        bad_rmag = np.extract(rads_to_use== 1, profiles['r'])
+        bad_rerr = np.extract(rads_to_use== 1, profiles['rerr'])
+
+        pl.subplot(2,2,1)
+        pl.errorbar(rads,gmag, yerr=gerr, linestyle = 'none', 
+                    color = 'g', ecolor = 'g', marker = 'd',
+                    label='g fitted data', markersize=4)
+        pl.errorbar(bad_rad,bad_gmag, yerr=bad_gerr, linestyle = 'none', 
+                    color = 'c', ecolor = 'c', marker = 'd',
+                    label='g excluded data', markersize=4)
+        pl.errorbar(rads,rmag, yerr=rerr, linestyle = 'none', 
+                    color = 'r', ecolor = 'r', marker = 'd',
+                    label='r fitted data', markersize=4)
+        pl.errorbar(bad_rad,bad_rmag, yerr=bad_rerr, linestyle = 'none', 
+                    color = 'm', ecolor = 'm', marker = 'd',
+                    label='r excluded data', markersize=4)
+        pl.title('radial profiles')
+        pl.xlim(np.min(profiles['log_rad_arcsec']-0.2), np.log10(3.0*hrad_arcsec*hradlim))
+        pl.ylim(pl.ylim()[::-1])
+        pl.legend(bbox_to_anchor=(-0.3, -0.3, 1., .102))
+        pl.text(0.2, 0.4,'r$_r$:%2.2f"' %(dat[0]),horizontalalignment='center',
+                verticalalignment='center',transform=pl.gca().transAxes)
+        pl.text(0.2, 0.3,'r$_g$:%2.2f"' %(dat[2]),horizontalalignment='center',
+                verticalalignment='center',transform=pl.gca().transAxes)
+        pl.text(0.2, 0.2,'n$_r$:%2.2f' %(dat[1]),horizontalalignment='center',
+                verticalalignment='center',transform=pl.gca().transAxes)
+        pl.text(0.2, 0.1,'n$_g$:%2.2f' %(dat[3]),horizontalalignment='center',
+                verticalalignment='center',transform=pl.gca().transAxes)
+
+        color = np.extract(rads_to_use== 2, profiles[bands])
+        cerr = np.extract(rads_to_use== 2, profiles[bands+'_err'])
+        bad_color = np.extract(rads_to_use== 1, profiles[bands])
+        bad_cerr = np.extract(rads_to_use== 1, profiles[bands+'_err'])
+
+        pl.subplot(2,2,2)
+        pl.errorbar(rads, color, yerr=cerr, linestyle = 'none', marker = 's',
+                    label='fitted data', markersize=4)
+        pl.errorbar(bad_rad, bad_color, yerr=bad_cerr, linestyle = 'none', 
+                    marker = 's', label='excluded', markersize=4)
+
+        for hrad_window in [(0.001,1.0,'fit 0-1: %.2f', 'r'),(1.0,2.0, 'fit 1-2: %.2f','g'),
+                            (2.0,3.0, 'fit 2-3: %.2f','c'), (0.001, 3.0, 'fit 0-3: %.2f','m')]:
+            print "window"
+            print hrad_window
+            
+            to_use = np.where(profiles['log_rad_arcsec']<= np.log10(hrad_window[1]*hrad_arcsec),1,0)*np.where(profiles['log_rad_arcsec']> np.log10(hrad_window[0]*hrad_arcsec),1,0)
+            print to_use
+            to_use = np.where(to_use==1) #the elements to use for fitting
+            print to_use
+            tmp_fit = linefit(profiles['log_rad_arcsec'][to_use],
+                              profiles[bands][to_use],
+                              yerr=profiles[bands+'_err'][to_use])
+            
+            calc_rad = np.arange(np.log10(hrad_window[0]*hrad_arcsec), 
+                                 np.log10(hrad_window[1]*hrad_arcsec), 0.01)
+
+            calc_color = np.array(tmp_fit.predict(calc_rad))
+            
+            pl.plot(calc_rad, calc_color[0,:], color = hrad_window[3], 
+                    label=hrad_window[2] %(tmp_fit.b[1]))
+            
+        pl.xlabel('log$_{10}$r (arcsec)')
+        pl.ylabel('g-r')
+        pl.legend(bbox_to_anchor=(-0.3, -0.4, 1., .102))
+        pl.suptitle('color profile for galaxy %d, %.2f, %.2f, %.2f' %(gc, dat[-3], dat[-2], dat[-1]))
+        pl.xlim(np.min(profiles['log_rad_arcsec']-0.2), np.log10(3.0*hrad_arcsec*hradlim))
+        pl.subplots_adjust(wspace=0.4)
+        #pl.show()
+           
+        pp.savefig()
+        pl.close('all')
+    except:
+        pass
+pp.close()
