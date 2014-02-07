@@ -105,35 +105,47 @@ for I_tot and Re"""
 
         return
 
+
+    def rad_to_xy(self):
+        xprime =self.photons*np.sqrt(self.ba)*np.cos(self.pos_ang)
+        yprime = self.photons/np.sqrt(self.ba)*np.sin(self.pos_ang)
+        return xprime, yprime
+
     def make_image(self):
 
-        self.image = np.zeros((self.ysize, self.xsize))
+        imshape = (np.round(self.ysize), np.round(self.xsize))
+        self.image = np.zeros(imshape)
+        
         counts_to_sim = self.I_tot *self.oversim
-    
+        
+        im_range = [np.arange(0,imshape[0]+1,1),np.arange(0, imshape[1]+1,1)]
+        flat_range = np.arange(0,imshape[0]*imshape[1]+1,1)
+
+        
         while counts_to_sim > 0:
             print "remaining photons: %10.0f" %counts_to_sim
             self.get_photons(np.min((counts_to_sim,self.draw_size)))
         
-            self.xprime = self.photons*np.sqrt(self.ba)*np.cos(self.pos_ang)
-            self.yprime = self.photons/np.sqrt(self.ba)*np.sin(self.pos_ang)
+            xprime, yprime = self.rad_to_xy()
 
             # this rotates clockwise from the positive x-axis
-            #xrot = self.xprime*np.cos(self.phi) -  self.yprime*np.sin(self.phi) 
-            #yrot = 1.0*self.xprime*np.sin(self.phi) +  self.yprime*np.cos(self.phi) 
+            #xrot = xprime*np.cos(self.phi) -  yprime*np.sin(self.phi) 
+            #yrot = 1.0*xprime*np.sin(self.phi) +  yprime*np.cos(self.phi) 
             # this rotates counter-clockwise from the positive x-axis
-            xrot = self.xprime*np.cos(self.phi) +  self.yprime*np.sin(self.phi) 
-            yrot = -1.0*self.xprime*np.sin(self.phi) +  self.yprime*np.cos(self.phi) 
+            xrot = xprime*np.cos(self.phi) +  yprime*np.sin(self.phi) 
+            yrot = -1.0*xprime*np.sin(self.phi) +  yprime*np.cos(self.phi) 
 
-            xcoords = xrot+self.xcntr
-            ycoords = yrot+self.ycntr
+            xcoords = np.floor(xrot+self.xcntr).astype(int)
+            ycoords = np.floor(yrot+self.ycntr).astype(int)
 
             running_image, yedge, xedge = np.histogram2d(ycoords,xcoords, 
-                       bins = [self.ysize,self.xsize], 
-                       range = [[0,self.ysize],[0, self.xsize]]) 
+                       bins = im_range) 
             self.image = self.image + running_image
+
+            
             counts_to_sim -= self.draw_size
         self.image = self.image /self.oversim
-            
+        
         return
 
 class point(im_obj):
@@ -187,37 +199,12 @@ for I_tot and Re"""
         tck = splrep(flux, rad)
 
         return tck
- 
-    def make_image(self):
 
-        self.image = np.zeros((self.ysize, self.xsize))
-        counts_to_sim = self.I_tot *self.oversim
-    
-        while counts_to_sim > 0:
-            print "remaining photons: %10.0f" %counts_to_sim
-            self.get_photons(np.min((counts_to_sim,self.draw_size)))
+    def rad_to_xy(self):
+        xprime = self.photons*np.cos(self.pos_ang)
+        yprime = self.photons*self.ba*np.sin(self.pos_ang)
+        return xprime, yprime
 
-            self.xprime = self.photons*np.cos(self.pos_ang)
-            self.yprime = self.photons*self.ba*np.sin(self.pos_ang)
-
-            # this rotates clockwise from the positive x-axis
-            #xrot = self.xprime*np.cos(self.phi) -  self.yprime*np.sin(self.phi) 
-            #yrot = 1.0*self.xprime*np.sin(self.phi) +  self.yprime*np.cos(self.phi) 
-            # this rotates counter-clockwise from the positive x-axis
-            xrot = self.xprime*np.cos(self.phi) +  self.yprime*np.sin(self.phi) 
-            yrot = -1.0*self.xprime*np.sin(self.phi) +  self.yprime*np.cos(self.phi) 
-
-            xcoords = xrot+self.xcntr
-            ycoords = yrot+self.ycntr
-
-            running_image, yedge, xedge = np.histogram2d(ycoords,xcoords, 
-                       bins = [self.ysize,self.xsize], 
-                       range = [[0,self.ysize],[0, self.xsize]]) 
-            self.image = self.image + running_image
-            counts_to_sim -= self.draw_size
-        self.image = self.image /self.oversim
-            
-        return
 
 class galaxy:
         """Holds the galaxy information and plotting routines."""
@@ -322,6 +309,7 @@ class galaxy:
             disk_com.make_image()
             
             new_gal =  im_obj((sersic_com.image+disk_com.image)/self.gain)
+            print new_gal.image.shape
             new_gal.convolve_image(self.psf_name)
 
             header_keys = ['EXPTIME', 'IE','ID','n_ser','BT','rd','re','pixsz','ed','eb','bang',
