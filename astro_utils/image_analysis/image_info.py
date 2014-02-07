@@ -99,6 +99,13 @@ class image_info:
         
         self.rad_pix = np.sqrt(self.ba*(x_pix**2.0) + (y_pix**2)/self.ba)
         
+        #print 'rad original'
+        order = np.argsort(self.rad_pix)
+        sort_image = self.good_image[order]
+        sort_rad = self.rad_pix[order]
+        #print sort_rad[:5]
+        #print sort_image[:5]
+        #raw_input()
         return
 
     def image_moment(self, x_mom, y_mom, x_ctr = 0.0, y_ctr = 0.0):
@@ -156,8 +163,13 @@ class image_info:
         included_pix = []
 
         for curr_edge in np.arange(len(edges)-1):
+            #print 'edges ', edges[curr_edge],edges[curr_edge+1]
             tmp_im = np.extract(rad_pix < edges[curr_edge+1], good_image)
             tmp_rad = np.extract(rad_pix < edges[curr_edge+1], rad_pix)
+
+            #print 'rads1'
+            #print tmp_rad[:10]
+            #raw_input()
 
             if len(tmp_rad)>0:
                 aper_tmp = np.sum(tmp_im)
@@ -165,12 +177,15 @@ class image_info:
             
                 tmp_im = np.extract(tmp_rad >= edges[curr_edge], tmp_im)
                 tmp_rad = np.extract(tmp_rad >= edges[curr_edge], tmp_rad)
-
+                
+                #print 'rads2'
+                #print tmp_rad[:10]
+                #raw_input()
 
                 if len(tmp_rad) > 0:
                     rad_out.append(np.mean(tmp_rad))
                     prof_out.append(np.mean(tmp_im))
-                    proferr_out.append(np.std(tmp_im))
+                    proferr_out.append(np.std(tmp_im))#/(tmp_im.size-1))
                     aperflux.append(aper_tmp)
                     included_pix.append(inc_tmp)
 

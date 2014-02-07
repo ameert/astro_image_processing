@@ -2,13 +2,13 @@
 from sersic_classes import im_obj
 import pyfits as pf
 import numpy as np
-from mysql_class import *
+from mysql.mysql_class import *
 
 bands = 'gri'
 table_name = 'CAST'
-dba = 'pymorph'
+dba = 'catalog'
 usr = 'pymorph'
-pwd = 'pymorph9455'
+pwd = 'pymorph'
 
 def corner_im(rowc, colc, petro_half_light):
     image_size = petro_half_light * 20.0 * 2.0/.396
@@ -42,7 +42,7 @@ def corner_im(rowc, colc, petro_half_light):
     return (rowc_f - row_low, row_high-rowc_f, colc_f- col_low, col_high-colc_f)
 
 def resize_images(galcount, ims):
-    cursor = mysql_connect(dba, usr, pwd, 'shredder')
+    cursor = mysql_connect(dba, usr, pwd, '')
 
     cmd = 'select rowc_g, rowc_r, rowc_i, colc_g, colc_r, colc_i, petroR50_r from CAST where galcount = %d;' %galcount
     data =cursor.get_data(cmd)
