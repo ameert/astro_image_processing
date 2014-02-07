@@ -36,12 +36,18 @@ dba = 'catalog'
 usr = 'pymorph'
 pwd = 'pymorph'
 lhost = ''
+cursor = mysql_connect(dba, usr, pwd, '')
 
 galtype = sys.argv[1]
+magtype = sys.argv[2]
+sky_cmd = {'pogson': 'select r.Galsky+5-c.extinction_g-d.kcorr_g, rs.Galsky+5-c.extinction_r-d.kcorr_r, c.extinction_r+d.kcorr_r-c.extinction_g-d.kcorr_g from r_band_ser as rs, g_band_ser as r, CAST as c, DERT as d where r.galcount = rs.galcount and rs.galcount = c.galcount and rs.galcount = d.galcount and rs.galcount = {gal};' ,
+           'asinh': 'select -2.5/log(10)*log(pow(10.0, -0.4*r.Galsky-2)/2 + sqrt(pow(9.0e-11,2.0)+0.25*pow(10,-0.8*r.Galsky-4)))-c.extinction_g-d.kcorr_g, -2.5/log(10)*log(pow(10.0, -0.4*rs.Galsky-2)/2 + sqrt(pow(1.2e-10,2.0)+0.25*pow(10,-0.8*rs.Galsky-4)))-c.extinction_r-d.kcorr_r, c.extinction_r+d.kcorr_r-c.extinction_g-d.kcorr_g  from r_band_ser as rs, g_band_ser as r, CAST as c, DERT as d where rs.galcount = r.galcount and rs.galcount = c.galcount and rs.galcount = d.galcount and rs.galcount = {gal};'
+           }
+
 pp = PdfPages('grads_%s.pdf' %galtype)
 
 
-path = '/home/ameert/color_grad/data/9999' 
+path = '/home/ameert/Desktop/color_grad/data/9999' 
 model = 'ser'
 
 data = np.loadtxt('grads_%s.txt' %galtype, skiprows=1, unpack=True)
@@ -49,8 +55,14 @@ data = np.loadtxt('grads_%s.txt' %galtype, skiprows=1, unpack=True)
 galcount = np.array(data[0], dtype = int)
 
 for gc, dat in zip(galcount,np.array(data[1:]).transpose()):
+
+    sky_g, sky_r, color_corr = cursor.get_data(sky_cmd[magtype].format(gal=gc))
+    sky_g = sky_g[0]
+    sky_r = sky_r[0]
+    color_corr = color_corr[0]
+
     hrad_arcsec = dat[0]
-    print gc, hrad_arcsec
+    print gc, hrad_arcsec, sky_g, sky_r,sky_g-sky_r,color_corr
     outfile = '%s/%08d_mag_corr_%s.npz' %(path, gc, model)
     datafile = '%s/%08d_mag_corr_data.npz' %(path, gc)
     try:
@@ -61,6 +73,15 @@ for gc, dat in zip(galcount,np.array(data[1:]).transpose()):
         print gc, ' limit ', hrad_arcsec*hradlim, np.log10(hrad_arcsec*hradlim)
         print profiles.keys()
     
+        rad_sky_cut_g = np.max(np.where(profiles['g']<sky_g))
+        rad_sky_cut_r = np.max(np.where(profiles['r']<sky_r))
+
+        print rad_sky_cut_g, rad_sky_cut_r
+        
+        print profiles['log_rad_arcsec'][rad_sky_cut_g],profiles['g'][rad_sky_cut_g]
+        print profiles['log_rad_arcsec'][rad_sky_cut_r],profiles['r'][rad_sky_cut_r]
+#        continue
+
         rads_to_use = np.where(profiles['log_rad_arcsec']< np.log10(hrad_arcsec*hradlim),1,0)+np.where(profiles['log_rad_arcsec']< np.log10(3.0*hradlim*hrad_arcsec),1,0)
         bad_rad = np.extract(rads_to_use== 1, profiles['log_rad_arcsec'])
         rads = np.extract(rads_to_use == 2, profiles['log_rad_arcsec'])
@@ -79,10 +100,10 @@ for gc, dat in zip(galcount,np.array(data[1:]).transpose()):
         data_bad_rad = np.extract(data_rads_to_use== 1, data_profiles['log_rad_arcsec'])
         data_rads = np.extract(data_rads_to_use == 2, data_profiles['log_rad_arcsec'])
         
-        data_gmag = np.extract(rads_to_use== 2, profiles['g'])
-        data_gerr = np.extract(rads_to_use== 2, profiles['gerr'])
-        data_bad_gmag = np.extract(rads_to_use== 1, profiles['g'])
-        data_bad_gerr = np.extract(rads_to_use== 1, profiles['gerr'])
+        data_gmag = np.extract(data_rads_to_use== 2, data_profiles['g'])
+        data_gerr = np.extract(data_rads_to_use== 2, data_profiles['gerr'])
+        data_bad_gmag = np.extract(data_rads_to_use== 1, data_profiles['g'])
+        data_bad_gerr = np.extract(data_rads_to_use== 1, data_profiles['gerr'])
 
         data_rmag = np.extract(data_rads_to_use== 2, data_profiles['r'])
         data_rerr = np.extract(data_rads_to_use== 2, data_profiles['rerr'])
@@ -107,18 +128,18 @@ for gc, dat in zip(galcount,np.array(data[1:]).transpose()):
         print data_gmag
         print  data_gerr
         pl.errorbar(data_rads,data_gmag, yerr=data_gerr, linestyle = '', 
-                    color = 'g', ecolor = 'g', marker = 's',
+                    color = 'g', ecolor = 'k', marker = 's',
                     label='g data', markersize=4)
         pl.errorbar(data_bad_rad,data_bad_gmag, yerr=data_bad_gerr, 
                     linestyle = '', 
-                    color = 'c', ecolor = 'c', marker = 's',
+                    color = 'c', ecolor = 'k', marker = 's',
                     label='g excluded data', markersize=4)
         pl.errorbar(data_rads,data_rmag, yerr=data_rerr, linestyle = '', 
-                    color = 'r', ecolor = 'r', marker = 's',
+                    color = 'r', ecolor = 'k', marker = 's',
                     label='r data', markersize=4)
         pl.errorbar(data_bad_rad,data_bad_rmag, yerr=data_bad_rerr, 
                     linestyle = '', 
-                    color = 'm', ecolor = 'm', marker = 's',
+                    color = 'm', ecolor = 'k', marker = 's',
                     label='r excluded data', markersize=4)
         pl.title('radial profiles')
         pl.xlim(np.min(profiles['log_rad_arcsec']-0.2), np.log10(3.0*hrad_arcsec*hradlim))
@@ -142,21 +163,26 @@ for gc, dat in zip(galcount,np.array(data[1:]).transpose()):
         data_cerr = np.extract(data_rads_to_use== 2, data_profiles[bands+'_err'])
         data_bad_color = np.extract(data_rads_to_use== 1, data_profiles[bands])
         data_bad_cerr = np.extract(data_rads_to_use== 1, data_profiles[bands+'_err'])
-        for rad_pt in np.log10(np.arange(1.0,5.01,1.0)*hrad_arcsec):
+        for rad_pt in np.log10(np.arange(1.0,3.01,1.0)*hrad_arcsec):
             pl.plot((rad_pt,rad_pt),pl.ylim(), 'k:')
+
+        pl.plot(pl.xlim(), [ sky_g]*2, 'g:')
+        pl.plot(pl.xlim(), [sky_r]*2, 'r:')
 
         pl.subplot(2,2,2)
         pl.errorbar(rads, color, yerr=cerr, linestyle = 'none', marker = 's',
-                    label='fitted data', markersize=2)
+                    label='fitted %s' %model, markersize=2, 
+                    markeredgecolor = 'none')
         pl.errorbar(bad_rad, bad_color, yerr=bad_cerr, linestyle = 'none', 
-                    marker = 's', label='excluded', markersize=2)
+                    marker = 's', label='excluded %s' %model, markersize=2,
+                    markeredgecolor = 'none')
         pl.errorbar(data_rads, data_color, yerr=data_cerr, 
                     linestyle = 'none', marker = 'o',
                     label='fitted data', markersize=2,
                     color = 'k', ecolor='k')
         pl.errorbar(data_bad_rad, data_bad_color, yerr=data_bad_cerr, 
                     linestyle = 'none', 
-                    marker = 'o', label='excluded', markersize=2,
+                    marker = 'o', label='excluded data', markersize=2,
                     color = 'k', ecolor='k')
 
     
@@ -169,6 +195,8 @@ for gc, dat in zip(galcount,np.array(data[1:]).transpose()):
                 to_use = np.where(profiles['log_rad_arcsec']<= np.log10(hrad_window[1]*hrad_arcsec),1,0)*np.where(profiles['log_rad_arcsec']> np.log10(hrad_window[0]*hrad_arcsec),1,0)
                 print to_use
                 to_use = np.where(to_use==1) #the elements to use for fitting
+                if len(to_use[0])<2:
+                    continue
                 print to_use
                 tmp_fit = linefit(profiles['log_rad_arcsec'][to_use],
                                   profiles[bands][to_use],
@@ -178,7 +206,9 @@ for gc, dat in zip(galcount,np.array(data[1:]).transpose()):
                                      np.log10(hrad_window[1]*hrad_arcsec), 0.01)
 
                 calc_color = np.array(tmp_fit.predict(calc_rad))
-
+                
+#                print calc_rad, calc_color, calc_color[0,:]
+#                raw_input()
                 pl.plot(calc_rad, calc_color[0,:], color = hrad_window[3], 
                         label=hrad_window[2] %(tmp_fit.b[1]))
             except:
@@ -188,15 +218,25 @@ for gc, dat in zip(galcount,np.array(data[1:]).transpose()):
         pl.legend(bbox_to_anchor=(-0.3, -0.4, 1., .102))
         pl.suptitle('color profile for galaxy %d, %.2f, %.2f, %.2f' %(gc, dat[-3], dat[-2], dat[-1]))
         pl.xlim(np.min(profiles['log_rad_arcsec']-0.2), np.log10(3.0*hrad_arcsec*hradlim))
-        for rad_pt in np.log10(np.arange(1.0,5.01,1.0)*hrad_arcsec):
-            pl.plot((rad_pt,rad_pt),pl.ylim(), 'k:')
+        pl.ylim((np.min(np.extract(rads_to_use>=1, profiles[bands]))-0.2,
+                 np.max(np.extract(rads_to_use>=1, profiles[bands]))+0.2))
 
+        for rad_pt in np.log10(np.arange(1.0,3.01,1.0)*hrad_arcsec):
+            pl.plot((rad_pt,rad_pt),pl.ylim(), 'k:')
+            
+        pl.plot((profiles['log_rad_arcsec'][rad_sky_cut_g],
+                 profiles['log_rad_arcsec'][rad_sky_cut_g]), pl.ylim(), 'g:')
+        pl.plot((profiles['log_rad_arcsec'][rad_sky_cut_r],
+                 profiles['log_rad_arcsec'][rad_sky_cut_r]), pl.ylim(), 'r:')
+        #pl.plot(pl.xlim(),[sky_g-sky_r,sky_g-sky_r], 'm:')
+        #pl.plot(pl.xlim(),[color_corr,color_corr], 'c:')
         pl.subplots_adjust(wspace=0.4)
         #pl.show()
            
         pp.savefig()
         pl.close('all')
     except:
-        pass
+        pl.close('all')      
+
     #break
 pp.close()

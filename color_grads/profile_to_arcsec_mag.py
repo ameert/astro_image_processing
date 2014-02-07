@@ -83,7 +83,7 @@ def counts_to_mag(counts, error, band, aa, kk = 0.0, airmass= 0.0):
     mag = -2.5 * np.log10(fluxrate)
     magerr = 2.5/np.log(10) * error/counts
 
-    if 0:
+    if 1:
         mag = -2.5/np.log(10)*(np.arcsinh(fluxrate/(2.0*softb[band]))+np.log(softb[band]))
         magerr = 2.5/np.log(10) * error/(exptime *0.5*softb[band])*10**(0.4*(aa + kk*airmass))/np.sqrt(1+(fluxrate/(2.0*softb[band]))**2.0)
                           

@@ -43,7 +43,7 @@ galcount = int(sys.argv[1])
 folder_num = (galcount-1)/250 +1
 
 #save_dir = '/scratch/%08d' %galcount
-save_dir = '/home/ameert/color_grad/%08d' %galcount
+save_dir = '/home/ameert/Desktop/color_grad/%08d' %galcount
 #save_dir = '/home/ameert/color_grad/data/0001' 
 #try:
 #    os.system('mkdir %s' %save_dir)
@@ -93,19 +93,19 @@ if 1:
                          x_ctr = imdat.x_ctr, y_ctr = imdat.y_ctr,
                          ell = imdat.ba, pa = imdat.pa)
         #img.profile(outfile = '/home/ameert/color_grads/data/%04d/%08d_%s_ser.txt' %(folder_num,galcount,bands[im_d]))
-        img.profile(outfile = '/home/ameert/color_grad/data/9999/%08d_%s_data.npz' %(galcount,bands[im_d]))
+        img.profile(outfile = '/home/ameert/Desktop/color_grad/data/9999/%08d_%s_data.npz' %(galcount,bands[im_d]))
 
         for im_f in [0,1,2]:
             if im_d == im_f:
                 continue
             im_con = im_obj(image = im[im_d])
             #im_con.convolve_image('/home/ameert/catalog/%s/data/%04d/%08d_%s_psf.fits' %(bands[im_f],folder_num, galcount, bands[im_f]))
-            im_con.convolve_image('/home/ameert/color_grad/%08d/%08d_%s_psf.fits' %(galcount,galcount, bands[im_f]))
+            im_con.convolve_image('/home/ameert/Desktop/color_grad/%08d/%08d_%s_psf.fits' %(galcount,galcount, bands[im_f]))
             img = image_info(im_con.convolved_image, mask = mask[:,:], 
                              x_ctr = imdat.x_ctr, y_ctr = imdat.y_ctr,
                              ell = imdat.ba, pa = imdat.pa)
             #img.profile(outfile = '/home/ameert/color_grads/data/%04d/%08d_%s_%s_ser.txt' %(folder_num,galcount,bands[im_d], bands[im_f]))
-            img.profile(outfile = '/home/ameert/color_grad/data/9999/%08d_%s_%s_data.npz' %(galcount,bands[im_d], bands[im_f]))
+            img.profile(outfile = '/home/ameert/Desktop/color_grad/data/9999/%08d_%s_%s_data.npz' %(galcount,bands[im_d], bands[im_f]))
 
 #except:
 #    pass
