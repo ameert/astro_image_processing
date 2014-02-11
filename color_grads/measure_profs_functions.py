@@ -3,6 +3,7 @@ from sersic_classes import im_obj
 import pyfits as pf
 import numpy as np
 from mysql.mysql_class import *
+import pylab as pl
 
 bands = 'gri'
 table_name = 'CAST'
@@ -68,7 +69,7 @@ def resize_images(galcount, ims):
 
     return new_im
 
-def get_images(im_files, mask_files):
+def get_images(im_files, mask_files, model = 'ser'):
     """return the three images as an image cube with the 4th image as the sum"""
     ims = []
     sims = []
@@ -77,8 +78,19 @@ def get_images(im_files, mask_files):
     for im_file, mask_file  in zip(im_files, mask_files):
         tmp_im = pf.open(im_file)
         
-        sims.append(tmp_im[4].data)
-        ims.append(tmp_im[1].data-tmp_im[5].data)
+        if model =='ser' or model =='dev':
+            sims.append(tmp_im[4].data)
+            tmp_sub_im = tmp_im[1].data
+            for backim in  tmp_im[5:]:
+                tmp_sub_im -= backim.data 
+            ims.append(tmp_sub_im)
+        elif model =='serexp' or model =='devexp':
+            sims.append(tmp_im[4].data+tmp_im[5].data)
+            tmp_sub_im = tmp_im[1].data
+            for backim in  tmp_im[6:]:
+                tmp_sub_im -= backim.data 
+            ims.append(tmp_sub_im)
+                    
         tmp_im.close()
         
         tmp_im = pf.open(mask_file)

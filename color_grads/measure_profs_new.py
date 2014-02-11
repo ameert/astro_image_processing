@@ -43,7 +43,7 @@ galcount = int(sys.argv[1])
 folder_num = (galcount-1)/250 +1
 
 #save_dir = '/scratch/%08d' %galcount
-save_dir = '/home/ameert/color_grad/%08d' %galcount
+save_dir = '/home/ameert/Desktop/color_grad/%08d' %galcount
 #save_dir = '/home/ameert/color_grad/data/0001' 
 #try:
 #    os.system('mkdir %s' %save_dir)
