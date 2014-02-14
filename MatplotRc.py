@@ -103,14 +103,14 @@ def matrc4X6():
                           hspace = 0.15)   # the amount of height reserved for white space between subplots
 
 def galplot6():
-    MatPlotParams = {'axes.titlesize': 12, 'axes.linewidth' : 1.0, 'axes.labelsize': 12, 'xtick.labelsize': 10, 'ytick.labelsize': 10, 'xtick.major.size': 12, 'ytick.major.size' : 12, 'xtick.minor.size': 10, 'ytick.minor.size': 10, 'figure.figsize' : [10.0, 15.0], 'xtick.major.pad' : 6, 'ytick.major.pad' : 6, 'figure.subplot.hspace' : 0.0,'legend.fontsize': 10}
+    MatPlotParams = {'axes.titlesize': 12, 'axes.linewidth' : 1.0, 'axes.labelsize': 12, 'xtick.labelsize': 10, 'ytick.labelsize': 10, 'xtick.major.size': 12, 'ytick.major.size' : 12, 'xtick.minor.size': 10, 'ytick.minor.size': 10, 'figure.figsize' : [10.0, 10.5], 'xtick.major.pad' : 6, 'ytick.major.pad' : 6, 'figure.subplot.hspace' : 0.0,'legend.fontsize': 10}
     rcParams.update(MatPlotParams)
-    pylab.subplots_adjust(left = 0.25,  # the left side of the subplots of the figure
-                          right = 0.97,    # the right side of the subplots of the figure
+    pylab.subplots_adjust(left = 0.2,  # the left side of the subplots of the figure
+                          right = 0.8,    # the right side of the subplots of the figure
                           bottom = 0.1,#.05   # the bottom of the subplots of the figure
-                          top = 0.9,      # the top of the subplots of the figure
+                          top = 0.95,      # the top of the subplots of the figure
                           wspace = 0.30,   # the amount of width reserved for blank space between subplots
-                          hspace = 0.30)#.15   # the amount of height reserved for white space between subplots
+                          hspace = 0.45)#.15   # the amount of height reserved for white space between subplots
 
 
 def matrc6():
