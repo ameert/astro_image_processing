@@ -273,3 +273,91 @@ label_string = '' : text to put in the footer
     plt.close('all')
     del ax
     return
+
+def plot_galaxy_panel(save_name, d2_data_wide, d2_data, d2_model, d2_resid,
+                    d1_data, d1_max_rad, hrad,
+                    one_percent_sky, full_sky, model,
+                    title='blank', add_info_left = '', add_info_right = '', 
+                    label_string = ''):
+
+    """ plot_galaxy_fit(save_name, d2_data, d2_model, d2_resid,
+d1_data, d1_styles, d1_labels, 
+d1_resid_data, d1_styles_resid, d1_labels_resid,
+d1_max_rad, one_percent_sky,full_sky, 
+title='blank', add_info = '', label_string = '')
+
+This function plots a galaxy fit including the 2d data, model and residual.
+It also plots the 1d surface brightness profile and residual.
+
+Inputs to be provided:
+save_name: name of the file to save the plot to (should be a png file)
+d2_data: 2d array of data values in magnitudes
+d2_model: 2d array of fit values in magnitudes
+d2_resid: 2d residual between the data and model
+d1_data: radii,flux, error of the 1d surface brightness profile measurements
+d1_styles: the plotting styles for the 1d data
+d1_labels: Labels for the legend for 1d data
+d1_data_resid: radii, residual, error of the 1d residual (model - data)
+d1_styles_resid: plotting styles for the residual
+d1_labels_resid: labels for the residual plot (currently unused)
+one_percent_sky: the one percent sky label
+full_sky: the full sky level
+title='blank' : the title to place on the plot
+add_info = '' : info to plot in the left margin
+label_string = '' : text to put in the footer
+"""
+    plt.ioff()
+
+    yes_leg = 1   # turns on the legend in the left margin
+    yes_error = 0 # turns on the errorbars on 1d plots
+    arcsec_or_pixels = True #true causes pixel coordinates to be converted to arcsec
+    # now begin the plotting
+    galplot6()
+    fig = plt.figure()
+    galplot6()
+    
+    # get the color limits of the model in the center halflight radius
+    vmin, vmax = get_min_max(d2_model)
+
+    # 2d model
+    fig.add_subplot(424)
+    make_plot(d2_model, arcsec = arcsec_or_pixels)
+    pl.title('Zoomed in Model')
+    pl.clim(vmin, vmax)
+    pl.colorbar(shrink = 1.0)
+    
+    # 2d data
+    fig.add_subplot(421)
+    make_plot(d2_data_wide, arcsec = arcsec_or_pixels)
+    pl.clim(vmin, vmax)
+    pl.colorbar(shrink = 1.0)
+    pl.title('Data')
+
+    fig.add_subplot(422)
+    make_plot(d2_data, arcsec = arcsec_or_pixels)
+    pl.clim(vmin, vmax)
+    pl.colorbar(shrink = 1.0)
+    pl.title('Zoomed in Data')
+
+    # 2d residual
+    fig.add_subplot(423)
+    make_plot(d2_resid, arcsec = arcsec_or_pixels)
+    pl.title('Zoomed in Residual')
+
+    vmin_r, vmax_r = get_min_max(d2_resid) 
+
+    #make the residual symmetric about zero
+    if np.abs(vmin_r)<vmax_r:
+        vmin_r = -1.0*vmax_r
+    else:
+        vmax_r = -1.0*vmin_r
+
+    print "min max %f %f" %(vmin, vmax)
+    pl.clim(vmin_r, vmax_r)
+    pl.colorbar(shrink = 1.0)
+
+    # now save the figure
+    pl.savefig(save_name, bbox_inches='tight')
+    # done!!!!
+    plt.close('all')
+    return
