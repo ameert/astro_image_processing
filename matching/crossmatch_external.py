@@ -2,17 +2,17 @@
 
 import sys
 
-for a in ['/home/ameert/alans-image-processing-pipeline/matching',
-'/home/ameert/python/lib64/python2.6/site-packages/CosmoloPy-0.1.103-py2.6-linux-x86_64.egg',
-'/home/ameert/python/lib/python2.6/site-packages/scikits.bootstrap-0.2dev-py2.6.egg',
-'/home/ameert/python/lib/python2.6/site-packages/scikit_learn-0.12.1-py2.6-linux-x86_64.egg',
-'/home/ameert/python/alan_code',
-'/home/ameert/python/lib64/python2.6/site-packages',
-'/home/ameert/python/lib/python2.6/site-packages',
-'/home/ameert/python/lib64/python2.6/site-packages/PIL',
-'/home/ameert/python/lib64/python2.6/site-packages/healpy'
-]:
-    sys.path.append(a)
+#for a in ['/home/ameert/alans-image-processing-pipeline/matching',
+#'/home/ameert/python/lib64/python2.6/site-packages/CosmoloPy-0.1.103-py2.6-linux-x86_64.egg',
+#'/home/ameert/python/lib/python2.6/site-packages/scikits.bootstrap-0.2dev-py2.6.egg',
+#'/home/ameert/python/lib/python2.6/site-packages/scikit_learn-0.12.1-py2.6-linux-x86_64.egg',
+#'/home/ameert/python/alan_code',
+#'/home/ameert/python/lib64/python2.6/site-packages',
+#'/home/ameert/python/lib/python2.6/site-packages',
+#'/home/ameert/python/lib64/python2.6/site-packages/PIL',
+#'/home/ameert/python/lib64/python2.6/site-packages/healpy'
+#]:
+#    sys.path.append(a)
 
 #print sys.path
 
@@ -26,7 +26,7 @@ import numpy as np
 import healpy as hp
 from optparse import OptionParser, OptParseError
 
-from generate_table import *
+#from generate_table import *
 from create_healpy_map import *
 
 
@@ -97,11 +97,11 @@ cat2 = catalog(galcount2, ra2, dec2, NSIDE=options.nside)
 cat2.map_sample()
 print "Second catalog loaded/mapped!!!"
 
-print "now matching!!!"
+print "now forward matching catalog 1 on catalog 2!!!"
 formatch = cat1.forward_match(cat2, options.maxdist)
 backmatch = cat2.forward_match(cat1, options.maxdist)
 
-print "now cross-matching!!!"
+print "now cross-matching catalog 2 on catalog 1!!!"
 matches = get_crossmatch(formatch, backmatch)
 print "catalogs matched!!!"
 
