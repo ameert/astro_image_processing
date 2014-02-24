@@ -1,0 +1,178 @@
+\documentclass[useAMS,usenatbib,usegraphicx]{./mn2e}
+\bibliographystyle{./mn2e}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{comment}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\eg}{e.\,g. }
+\newcommand{\ie}{i.\,e., }
+\newcommand{\etal}{{et al.~}}
+\newcommand{\chinu}{$\chi^2_\nu$}
+\newcommand{\mnras}{MNRAS}
+\newcommand{\apj}{ApJ}
+\newcommand{\aaps}{A\&AS}
+\newcommand{\aap}{A\&A}
+\newcommand{\aj}{AJ}
+\newcommand{\apjl}{ApJ}
+\newcommand{\apjs}{ApJS}
+\newcommand{\nat}{Nature}
+\newcommand{\araa}{ARA\&A}
+\newcommand{\jcp}{JCP}
+\newcommand{\pasa}{PASA}
+\newcommand{\galcount}{\texttt{galcount} }
+\newcommand{\Dev}{\texttt{Dev}}
+\newcommand{\Ser}{\texttt{Ser}}
+\newcommand{\DevExp}{\texttt{DevExp}}
+\newcommand{\SerExp}{\texttt{SerExp}}
+\newcommand{\simpaper}{M2012b }
+\newcommand{\catalog}{M2012a }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%opening
+\title{External Matching to the Meert Spectroscopic catalog}
+\author{Alan}
+\date{13 May 2013}
+
+
+\begin{document}
+\maketitle
+
+The catalog of fitted SDSS spectroscopic galaxies described in \cite{Meert2013} and \cite{Meert2013a} and used in several papers 
+\citep[\eg][]{Shankar,huertas12,Bernardi2013,Bernardi2013b} can be easily matched to external catalogs using a simple python script. In this short paper, I will describe the structure of the MySQL database, and the method used to extract a preferred catalog.
+
+\section{The Database}\label{database}
+The Meert catalog contains several cross-matched data sets:
+\begin{itemize}
+ \item Selected SDSS DR7 photometric and spectroscopic information \citep{Strauss2002, DR7}
+ \item Calculated values of angular diameter distance, distance modulus, k-corrections using \cite{blantonKcorr}\ldots
+ \item cross-matches to the BAC morphology from \cite{huertas10}
+ \item the original data set used in \cite{Bernardi2009} and \cite{BernardiHyde2007}
+ \item the JHU catalog of stellar masses and star formation rates\footnote{see \url{http://www.mpa-garching.mpg.de/SDSS/}}
+ \item the Yang Group catalog \citep{yang2005}
+ \item the Simard sample \citep{simard11}
+ \item the Lackner and Gunn disk galaxy sample \citep{Lackner2012}
+ \item the NYU VAGC \citep{nyu_vagc}
+ \item as well as cross-matches to GALEX \citep{GALEX} UV data and UKIDSS \citep{Ham08} IR data
+ \item and other data \ldots
+\end{itemize}
+
+The heart of the database is a unique identifier referred to as \texttt{galcount}. This unique ID number serves a purpose similar to the \texttt{objid} parameter in SDSS catalogs. It allows quick matching across data sets and convenient reference to specific targets (references require only this 6-digit number to uniquely identify all other data associated with the galaxy). When matching internal data, using \texttt{galcount} is essential to allowing a quick, efficient search of the database. Additional unique identifiers for individual data tables are retained and are internally consistent for separate tables from the same data source. For example, a unique identifier provided in the Yang group catalog is \texttt{IGAL}. This identifier can still be used in the Meert database for queries specific to tables originally part of the Yang catalog, but has no meaning beyond this scope. Efficient searching of the databases relies on use of a unique identifier. It is still possible to match data based on a non-unique column, but this has the potential to take prohibitively long and produce a meaningless search result, so caution is advised when attempting this task. 
+
+\subsection{The Databases and Tables}\label{db_desc}
+
+The data is organized in a database/table structure. The databases are:
+\begin{description}
+ \item[catalog] Contains the bulk of the data including CasJobs, the Meert fits, the DR6 sample from Bernardi, and ancillary data 
+ \item[yang] Contains the Yang group catalog
+ \item[simulations] Contains the simulation input data and output fits.
+ \item[JHU] Contains the JHU stellar masses and SFRs
+ \item[simard] Contains the raw values from \cite{simard11} a version of these tables is also available in the catalog database
+ \item[lackner] Contains the fits from \cite{Lackner2012}
+ \item[additional dbas] more databases exist. I will exhaust this list at a future date
+\end{description}
+
+Within each database is a set of tables. The tables are large in number ($\sim 300$) and each table contains columns of data. Since the numbers are so large, there is little benefit to enumerating them at this time, but in the future, they will be outlined. In lieu of enumerating the tables here, I provide an example file that queries data later in the paper (Section~\ref{query_program}). 
+
+\section{The matching algorithm}\label{matching}
+The method used to match these data is a simple nearest neighbor cross-match on ra/dec, requiring the two matched galaxies to be neares neighbors in both directions. For example if galaxy $a$ from catalog $A$ and galaxy $b$ from catalog $B$ are matched this implies that $b$ is the closest object to the ra/dec of 
+ $a$ in the entire catalog $B$ and galaxy $a$ is the closest object to the ra/dec of $b$ in the entire catalog $A$. Initial matching was carried out using Topcat\footnote{see \url{http://www.star.bris.ac.uk/~mbt/topcat/} for the Topcat program description}, a Java-based utility used to manipulate large catalogs. The external matching utility is powered by a Healpix mapping of the Meert catalog. Using the python module healpy, external catalogs can be quickly cross-matched. Operation of this basic cross-matching routine is available in Section~\ref{crossmatch_program}. More sophisticated cross-matching is available by downloading the catalog and using your own matching code. 
+
+\section{External cross-matching}\label{crossmatch_program}
+Given a catalog provided by the user, the program \texttt{crossmatch.py} will provide a matched catalog, retaining the same row order as the original catalog. This original catalog should contain at a minimum two columns (ra and dec). Additional columns are allowed, but they will be ignored by the program. \texttt{crossmatch.py} can be run at the command line. Here is the ``help'' string associated with the program:\\
+\begin{verbatim}
+Usage: crossmatch.py OPTIONS
+
+This program will crossmatch an input catalog of 
+ra/dec coordinates to our catalog and output the
+results  In general, you need to specify an input
+table, column file, output table, and a table name.
+
+Options:
+  -h, --help    show this help message and exit
+  -i INCAT, --input-cat=INCAT
+            input catalog to be cross-matched
+  -c IN_FILE, --columns=IN_FILE
+            columns to be in final catalog
+  -o OUTFILE, --output-file=OUTFILE
+            output file for cross-matched catalog
+  -t TBL_FILE, --table-file=TBL_FILE
+            table file containing mysql table list
+  -n TABLENAME, --table-name=TABLENAME
+            name of temporary table for 
+            cross-matched catalog
+\end{verbatim} 
+Note: this database is hosted on chitou.physics.upenn.edu for the time being. Any filepath you specify must be writable by both you and the mysql user (generally this restricts the output path to be either /tmp/ or /scratch/. Be sure to choose an appropriate filepath. The column file \texttt{IN\_FILE} is described in Section~\ref{query_program} because it lists the columns desired in the final output.
+
+\section{The Query program}\label{query_program}
+The query program writes the desired data table to a text file and is executed at the command line. The help string for the program is:
+\begin{verbatim}
+Usage: generate_table.py OPTIONS
+
+This program, when run alone, will generate an
+ascii txt table of data from all of our 
+catalogs. In general, you need to specify at 
+least a column file, output file name, and a 
+table name.
+
+Options:
+  -h, --help   show this help message and exit
+  -c INFILE, --columns=INFILE
+             columns to be in final catalog
+  -o OUTFILE, --output-file=OUTFILE
+             output file for cross-matched catalog
+  -t TBL_FILE, --table-file=TBL_FILE
+             table file containing mysql table list
+  -l LEAD_TABLE, --lead-cat=LEAD_TABLE
+             the table by which the selection 
+             will be made
+\end{verbatim} 
+It is also invoked directly by \texttt{crossmatch.py}. Column list is a file containing the desired output columns. These columns can be complex functions of actual data columns. There are two important rules for the column file. The first rule is that each value to be output into the final table should occupy its own line in the column list. Multiple outputs on the same line will break the program. The second rule is that the ordering of the final output is always based on the first entry in the column list. Therefore, the first column should utilize either the galcount or the rowcount of a table. Objects are sorted in ascending order. Most tables with an order (\eg SSDR6) contain a rowcount variable that stores the original ordering of that catalog. Using catalog.SSDR6.rowcount as the first column would output a catalog that matches the SSDR6 data in row order. 
+
+The LEAD\_TABLE sets the primary table of the matching program. The primary data table is joined on each table from which a data column is requested. The table  identified by the LEAD\_TABLE is the source of all the objects in the final table. If \texttt{crossmatch.py} is the calling program, then the temporary catalog fed to the program will be the leading table. This table will contain a \texttt{rowcount} column. Therefore, the column list provided to the crossmatch program should have 
+\begin{verbatim}
+temp.crossmatch.rowcount
+\end{verbatim} 
+as the first row of the table.
+
+\section{An example query}
+We have already produced many tables based on the data of the SDSS DR4 sample, updated with DR6 values. I refer to this table as the SSDR6 throughout the paper. The column list for this common output is shown in Figure~\ref{example_cols}.
+\begin{figure*}\label{example_cols}
+\begin{verbatim}
+catalog.SSDR6.rowcount
+catalog.CAST.ra_gal
+catalog.CAST.dec_gal 
+catalog.CAST.z
+catalog.r_rerun_ser.m_tot-catalog.CAST.extinction_r-catalog.DERT.dismod-catalog.DERT.kcorr_r
+catalog.r_rerun_ser.n_bulge
+log10(catalog.r_rerun_ser.Hrad_corr/sqrt(catalog.r_rerun_ser.ba_tot_corr)*catalog.DERT.kpc_per_arcsec) 
+catalog.r_rerun_ser.ba_tot_corr 
+catalog.r_rerun_serexp.m_tot-catalog.CAST.extinction_r-catalog.DERT.dismod-catalog.DERT.kcorr_r
+catalog.r_rerun_serexp.n_bulge
+log10(catalog.r_rerun_serexp.Hrad_corr/sqrt(catalog.r_rerun_serexp.ba_tot_corr)*catalog.DERT.kpc_per_arcsec) 
+catalog.r_rerun_serexp.ba_tot_corr 
+catalog.r_rerun_serexp.BT
+catalog.M2010.probaE
+catalog.M2010.probaEll
+catalog.M2010.probaS0
+catalog.M2010.probaSab
+catalog.M2010.probaScd
+catalog.DERT.Vmax
+catalog.DERT.dismod+catalog.DERT.kcorr_r
+catalog.r_rerun_fit.SexMag-catalog.CAST.extinction_r
+\end{verbatim}
+\caption{The example column list used to produce a catalog similar to those commonly used in the past.}
+\end{figure*}
+
+Placing the file from Figure~\ref{example_cols} into a file called \texttt{SSDR6.columns}, we can create our standard table with row-number, ra, dec, z, sersic and ser+exp fit values, morphological probabilities, Vmax, absmagcorr, and SexMag by typing:
+\begin{verbatim}
+ ./generate_table.py -o /tmp/SSDR6_out.txt 
+         -l catalog.SSDR6 -c SSDR6.columns
+\end{verbatim} 
+Note that I have omitted the table file. This causes the program to use a default table file with all the mysql tables in it. In general, this is the preferred method. The output is stored in /tmp/SSDR6\_out.txt which I can then copy to my preferred location.
+
+\bibliography{/home/ameert/svn_stuff/catalog_paper/papers/data/trunk/includes/bibliography.bib}
+
+\end{document}

@@ -1,0 +1,34 @@
+#+++++++++++++++++++++++++++
+#
+# PACKAGE: source_matching 
+#
+# BY: Alan Meert
+#     Department of Physics and Astronomy
+#     University of Pennsylvania
+#
+# DATE: 12 JUNE 2013
+#
+#---------------------------
+
+This package was written by Alan Meert at the University of Pennsylvania
+Department of Physics and Astronomy. The goal of the package is to make 
+quick matching between catalogs of sources with given RA/DEC. The goal 
+is to ultimately provide support for input redshifts as well.
+
+There are also some utilities provided for matching the catalog to a catalog
+stored in a MySQL database.
+
+---------------------------
+DEPENDENCIES:
+---------------------------
+Python 2.6 or later
+numpy
+scipy
+healpy
+matplotlib
+---if you want to use the mysql utilities----
+mysqldb
+
+-----------------------------
+INSTALLATION
+-----------------------------

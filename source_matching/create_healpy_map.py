@@ -1,6 +1,12 @@
+
+# Python imports
 import numpy as np
 import healpy as hp
 import itertools
+
+# internal module imports
+from source_match.util import *
+
 
 def get_crossmatch(formatch, backmatch):
     """the crossmatches should have the nearest neighbor matches be equivalet in either direction, so we test this"""
@@ -22,15 +28,6 @@ def get_crossmatch(formatch, backmatch):
         matches = [[a[1], a[0],a[2]] for a in matches] 
     
     return matches
-
-class MatchError:
-    def __init__(self,etype):
-        self.etype = etype
-        return
-
-    def __repr__(self):
-        return "There was a matching error!!!"
-
 
 class catalog():
     def __init__(self, galcount, ra,dec, NSIDE=256):
