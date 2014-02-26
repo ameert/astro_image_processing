@@ -180,7 +180,7 @@ for I_tot and Re"""
         self.oversim = np.min([1000.0,10**(9.0-np.log10(self.I_tot))])
         self.draw_size = 10.0**6
 
-        if self.I_tot >=1:
+        if self.I_tot >=0:
             self.tck = self.construct_rad_dist()
         else:
             #Spline not necessary
@@ -323,6 +323,9 @@ class galaxy:
                             'pixel size (arcsec/pixel)','ed parameter','eb parameter',
                             'bulge anlge (deg)','disk angle (deg)','kk parameter',
                             'zeropoint parameter','airmass parameter']
+            
+
+            new_gal.save_image(self.main_path+"/"+self.outdir+"/"+self.Name + "_nopsf.fits", image = new_gal.image,  header_keys = header_keys, key_vals = key_vals, key_comments = key_comments)        
 
             new_gal.save_image(self.main_path+"/"+self.outdir+"/"+self.Name + "_flat.fits", image = new_gal.convolved_image,  header_keys = header_keys, key_vals = key_vals, key_comments = key_comments)        
 

@@ -1,4 +1,5 @@
-from numpy import * 
+from numpy import *
+import numpy as np 
 import pyfits as pf
 import os
 
@@ -47,8 +48,9 @@ def prepare_psf(gal, bands, data_stem, out_path):
             os.system('gzip -f '+data_path+nm)
 
             a = pf.open('%s%s/%s/%spsf.fits' %(out_path, band_char, path_app, file_base),'update' )
-            # remove 1000 count soft-bias from images
+            # remove 1000 count soft-bias from images and normalize
             a[0].data = a[0].data - 1000
+            a[0].data = a[0].data/np.sum(a[0].data)
             
             a.close()
 
