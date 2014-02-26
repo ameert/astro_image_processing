@@ -56,8 +56,14 @@ p.petroR50_u, p.petroR50_g, p.petroR50_r, p.petroR50_i, p.petroR50_z,
 p.petroMag_u, p.petroMag_g, p.petroMag_r, p.petroMag_i, p.petroMag_z,
 p.devRad_u, p.devRad_g, p.devRad_r, p.devRad_i, p.devRad_z, 
 p.devab_u, p.devab_g, p.devab_r, p.devab_i, p.devab_z, 
+p.devPhi_u,p.devPhi_g,p.devPhi_r,p.devPhi_i,p.devPhi_z,
 p.devmag_u, p.devmag_g, p.devmag_r, p.devmag_i, p.devmag_z, 
 p.fracdev_u, p.fracdev_g, p.fracdev_r, p.fracdev_i, p.fracdev_z, 
+p.expRad_u, p.expRad_g, p.expRad_r, p.expRad_i, p.expRad_z, 
+p.expab_u, p.expab_g, p.expab_r, p.expab_i, p.expab_z, 
+p.expPhi_u,p.expPhi_g,p.expPhi_r,p.expPhi_i,p.expPhi_z,
+p.expmag_u, p.expmag_g, p.expmag_r, p.expmag_i, p.expmag_z, 
+p.PSFmag_u, p.PSFmag_g, p.PSFmag_r, p.PSFmag_i, p.PSFmag_z, 
 p.dered_u, p.dered_g, p.dered_r, p.dered_i, p.dered_z, 
 p.extinction_u, p.extinction_g, p.extinction_r, p.extinction_i,
     p.extinction_z, 
@@ -125,8 +131,7 @@ p.objid, (p.flags & @bad_flags)  as badflag, p.nchild,
 p.run,p.rerun,p.camCol,p.field,p.obj, c.stripe,
 c.startmu, s.specobjid, s.plate, s.mjd, s.fiberid,  
 p.ra as ra_gal, p.dec as dec_gal, s.z as redshift, 
-s.veldisp, s.veldispErr, s.eclass, 
-999,999,999,999,999,
+s.veldisp, s.veldispErr, s.eclass, p.probPSF,
 p.petroR90_u, p.petroR90_g, p.petroR90_r, p.petroR90_i, p.petroR90_z,
 p.petroR50_u, p.petroR50_g, p.petroR50_r, p.petroR50_i, p.petroR50_z,
 p.petroMag_u, p.petroMag_g, p.petroMag_r, p.petroMag_i, p.petroMag_z,
@@ -139,6 +144,7 @@ p.expRad_u, p.expRad_g, p.expRad_r, p.expRad_i, p.expRad_z,
 p.expab_u, p.expab_g, p.expab_r, p.expab_i, p.expab_z, 
 p.expPhi_u, p.expPhi_g, p.expPhi_r, p.expPhi_i, p.expPhi_z, 
 p.expmag_u, p.expmag_g, p.expmag_r, p.expmag_i, p.expmag_z, 
+p.PSFmag_u, p.PSFmag_g, p.PSFmag_r, p.PSFmag_i, p.PSFmag_z, 
 p.dered_u, p.dered_g, p.dered_r, p.dered_i, p.dered_z, 
 p.extinction_u, p.extinction_g, p.extinction_r, p.extinction_i,
     p.extinction_z, 
@@ -159,8 +165,8 @@ x.kcorr_u,x.kcorr_g,x.kcorr_r,x.kcorr_i,x.kcorr_z
 INTO
 mydb.cl_out
 FROM
-photoobj as p LEFT OUTER JOIN SpecObj as s on p.objID = s.BestObjID,
-segment g, field f,  chunk c, Photoz x\n""" 
+(photoobj as p LEFT OUTER JOIN SpecObj as s on p.objID = s.BestObjID) LEFT OUTER JOIN Photoz as x on x.objid =p.objid ,
+segment g, field f,  chunk c\n""" 
 
     if stripe_82:
         # This cross apply pulls out objects in stripe 82
@@ -179,7 +185,6 @@ segment g, field f,  chunk c, Photoz x\n"""
         out = out + """WHERE
 g.segmentID = f.segmentID and
 f.fieldID = p.fieldID and  c.chunkID=g.chunkID 
-and x.objid =p.objid 
 and p.run=%d and p.rerun = %d and p.camcol = %d and p.field = %d \n
 """ %(run, rerun, camcol, field)
         

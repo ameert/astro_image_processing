@@ -59,7 +59,7 @@ def download_files(gal, data_dir, band = 'r'):
             # see if fpC file exists, if not, then get it from SDSS
             nm  = 'fpC-%06d-%s%d-%04d.fit.gz' %(run_tmp, band, camCol_tmp, field_tmp)
             str1 = 'http://das.sdss.org/imaging/%d/%d/corr/%d/%s' %(run_tmp, rerun_tmp, camCol_tmp, nm)
-            get_file(nm, str1, data_dir)
+            #get_file(nm, str1, data_dir)
 
             ##### These files are currently commented out, because we aren't
             ##### currently using them
@@ -72,7 +72,7 @@ def download_files(gal, data_dir, band = 'r'):
             # # see if tsObj file exists, if not, then get it from SDSS
             nm  = 'tsObj-%06d-%d-%d-%04d.fit' %(run_tmp, camCol_tmp, rerun_tmp,field_tmp)
             str1 = 'http://das.sdss.org/imaging/%d/%d/calibChunks/%d/%s' %(run_tmp, rerun_tmp, camCol_tmp, nm)
-            #get_file(nm, str1, data_dir)
+            get_file(nm, str1, data_dir)
 
             # # see if tsField file exists, if not, then get it from SDSS
             # nm  = 'tsField-%06d-%d-%d-%04d.fit' %(run_tmp, camCol_tmp, rerun_tmp,field_tmp)
@@ -119,11 +119,17 @@ def get_file(nm, str1, download_dir):
 
 
 if __name__ == "__main__":
-    gal = {'galcount':[138529,142447,149162,558387,561842],
-           'run':[2583,2662,2738,3325,3325],
-           'rerun':[40,40,40,41,41],
-           'camCol':[4,3,4,1,4],
-           'field':[130,285,24,136,180]
+    #gal = {'galcount':[138529,142447,149162,558387,561842],
+    #       'run':[2583,2662,2738,3325,3325],
+    #       'rerun':[40,40,40,41,41],
+    #       'camCol':[4,3,4,1,4],
+    #       'field':[130,285,24,136,180]
+    #       }
+    gal = {'galcount':[437411],
+           'run':[5112],
+           'rerun':[40],
+           'camCol':[5],
+           'field':[344]
            }
     download_files(gal, './', band = 'i')
 
