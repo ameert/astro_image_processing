@@ -103,7 +103,7 @@ def casjobs(gal_cat, data_dir, username, wsid, password, search_82 = 0):
     print casjobs + cmd
     exec_cmd(casjobs + cmd)
     print 'GALMORPH: Downloading Results'
-    cmd = 'extract -force -type "fits" -download %s -table cl_out' %(jn)
+    cmd = 'extract -force -type "FITS" -download %s -table cl_out' %(jn)
     print casjobs + cmd 
     casjobs_out = exec_cmd(casjobs + cmd)
     down_file = get_filename(casjobs_out)
@@ -144,7 +144,7 @@ if __name__ == "__main__":
     wsid = '396840617'
     password = 'pymorph_upenn'
 
-    for a in [#(138529, 2583, 40, 4, 130, 419),
+    for a in [(138529, 2583, 40, 4, 130, 419),
               (142447,  2662, 40, 3, 285, 210),
               (149162,  2738, 40, 4, 24, 201),
               (558387,  3325, 41, 1, 136, 212),
