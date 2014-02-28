@@ -11,6 +11,7 @@ from mysql.mysql_class import *
 import time
 import pylab as pl
 import scipy.signal as signal
+import scipy.ndimage as ndimage 
 
 seed_val = int(time.time())
 s.random.seed(seed_val)
@@ -139,7 +140,7 @@ def cut_im(new_dat, rowc, colc, petrorad_pix,
 
 def add_real_back(main_path, nm_stm, gal_im, ICL_im, useICL,back_im,
                   rowc, colc, petrorad_pix):
-
+    sigma = 1.0
     
     back_image = pf.open(main_path+back_im)
     back_head = back_image[0].header 
@@ -148,6 +149,7 @@ def add_real_back(main_path, nm_stm, gal_im, ICL_im, useICL,back_im,
             
     data_image = pf.open(main_path+gal_im)
     data = data_image[0].data
+    data = ndimage.filters.gaussian_filter(data,sigma,mode='constant',cval=0.0)
     header = data_image[0].header
     data_image.close()
 
@@ -156,6 +158,7 @@ def add_real_back(main_path, nm_stm, gal_im, ICL_im, useICL,back_im,
     if useICL:
         ICL_image = pf.open(main_path+ICL_im)
         ICL = ICL_image[0].data
+        ICL=ndimage.filters.gaussian_filter(ICL,sigma,mode='constant',cval=0.0)
         ICLheader = ICL_image[0].header
         ICL_image.close()
     
@@ -163,8 +166,8 @@ def add_real_back(main_path, nm_stm, gal_im, ICL_im, useICL,back_im,
         new_head = combine_head(ICLheader, new_head, rowc,colc,icl=True)
 
     new_dat = cut_im(new_dat, rowc, colc, petrorad_pix)
-
-
+    new_head.update("PSF", sigma, "gaussian sigma used in convolution")
+    
     ext = pf.PrimaryHDU(new_dat, new_head)
     ext.writeto(main_path+nm_stm+"chipflat.fits", clobber = 1)
             
@@ -250,7 +253,7 @@ if __name__=="__main__":
 
     ICL_num = gal_num +63
 
-    nm_stm = '%08d_%s_' %(gal_num, band)
+    nm_stm = '%08d_%s_nopsf_' %(gal_num, band)
     if useICL:
         nm_stm +="ICL_"
     else:
@@ -263,10 +266,10 @@ if __name__=="__main__":
         print "NOT adding ICL"
     print 'ICL ',ICL_num
 
-    gal_im = '%08d_%s_flat.fits' %(gal_num, band)
-    ICL_im = '%08d_%s_flat.fits' %(ICL_num, band)
-    back_im = 'bkrd_%s_%d.fits' %(band,gal_cat['galcount'][choice])
-    #'bkrd_zeros.fits'#
+    gal_im = '%08d_%s_nopsf.fits' %(gal_num, band)
+    ICL_im = '%08d_%s_nopsf.fits' %(ICL_num, band)
+    back_im = 'bkrd_zeros.fits'#'bkrd_%s_%d.fits' %(band,gal_cat['galcount'][choice])
+
     print gal_im
     print ICL_im
     print back_im
