@@ -224,7 +224,7 @@ for model in models:
         print 'plotting'
 
         try:
-            plot_galaxy_panel(save_name, two_d_ims['data_wide'], two_d_ims['data'], two_d_ims['model'],two_d_ims['resid'], d1_data, d1_max_rad,gal_info['hrad_corr'][model],one_percent_sky,full_sky, model, title ='%06d_%s_%s' %(gal_info['galcount'][model],band,model), add_info_left =add_info_left,add_info_right = add_info_right, label_string = label_string)
+            plot_galaxy_fit(save_name, two_d_ims['data_wide'], two_d_ims['data'], two_d_ims['model'],two_d_ims['resid'], d1_data, d1_max_rad,gal_info['hrad_corr'][model],one_percent_sky,full_sky, model, title ='%06d_%s_%s' %(gal_info['galcount'][model],band,model), add_info_left =add_info_left,add_info_right = add_info_right, label_string = label_string)
             print "Plotting complete!!!"
         except Exception, inst:
             print type(inst)     # the exception instance
