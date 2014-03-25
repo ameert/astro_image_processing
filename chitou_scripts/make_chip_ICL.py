@@ -277,5 +277,5 @@ if __name__=="__main__":
                                   gal_cat['colc'][band][choice],
                                   gal_cat['petror50_arcsec'][choice]/0.396)
 
-    #add_noise(image, header, main_path+nm_stm,gal_cat['gain'][band][choice], gal_cat['darkvar'][band][choice])
-    #mkwgt(main_path +nm_stm, gal_cat['gain'][band][choice], gal_cat['darkvar'][band][choice])
+    add_noise(image, header, main_path+nm_stm,gal_cat['gain'][band][choice], gal_cat['darkvar'][band][choice])
+    mkwgt(main_path +nm_stm, gal_cat['gain'][band][choice], gal_cat['darkvar'][band][choice])

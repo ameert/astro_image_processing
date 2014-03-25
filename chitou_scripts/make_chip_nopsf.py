@@ -253,7 +253,7 @@ if __name__=="__main__":
 
     ICL_num = gal_num +63
 
-    nm_stm = '%08d_%s_nopsf_' %(gal_num, band)
+    nm_stm = '%08d_%s_flat_' %(gal_num, band)
     if useICL:
         nm_stm +="ICL_"
     else:
@@ -266,8 +266,8 @@ if __name__=="__main__":
         print "NOT adding ICL"
     print 'ICL ',ICL_num
 
-    gal_im = '%08d_%s_nopsf.fits' %(gal_num, band)
-    ICL_im = '%08d_%s_nopsf.fits' %(ICL_num, band)
+    gal_im = '%08d_%s_flat.fits' %(gal_num, band)
+    ICL_im = '%08d_%s_flat.fits' %(ICL_num, band)
     back_im = 'bkrd_zeros.fits'#'bkrd_%s_%d.fits' %(band,gal_cat['galcount'][choice])
 
     print gal_im
