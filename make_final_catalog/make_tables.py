@@ -27,7 +27,7 @@
 import numpy as np
 import pylab as pl
 import scipy as sc
-from mysql_class import *
+from mysql.mysql_class import *
 import os
 import sys
 
@@ -40,8 +40,8 @@ usr = 'pymorph'
 cursor = mysql_connect(dba, usr, pwd)
 
 bands = 'r'
-#models = ['dev', 'ser', 'devexp','serexp'] 
-models = ['ser'] 
+models = ['dev']#, 'devexp','serexp'] 
+#models = ['ser'] 
 #models = ['exp','dev', 'ser', 'devexp', 'serexp', 'cmodel']
 
 def build_tables(bands, models, new_tablestem = 'band'):
@@ -93,8 +93,8 @@ def build_tables(bands, models, new_tablestem = 'band'):
 
     return
 
-def separate_CASGM(bands, models, old_tablestem='full_dr7', new_tablestem='band'):
-    base_cmd = """update {band}_{new_tablestem}_fit as a, raw_catalog_fits.{old_tablestem}_{band}_{model} as b set {argument} where a.galcount = b.galcount {condition};"""
+def separate_CASGM(bands, models, old_tablestem='raw_catalog_fits.full_dr7', new_tablestem='band'):
+    base_cmd = """update {band}_{new_tablestem}_fit as a, {old_tablestem}_{band}_{model} as b set {argument} where a.galcount = b.galcount {condition};"""
     for band in bands:
         for model in models:
             # now do CASgm
@@ -108,10 +108,10 @@ def separate_CASGM(bands, models, old_tablestem='full_dr7', new_tablestem='band'
     return
 
 
-def load_fit_uncalc(bands, models, old_tablestem='full_dr7', new_tablestem='band'):
+def load_fit_uncalc(bands, models, old_tablestem='raw_catalog_fits.full_dr7', new_tablestem='band'):
      for band in bands:
          for model in models:
-             base_cmd = """update {band}_{new_tablestem}_fit as a, raw_catalog_fits.{old_tablestem}_{band}_{model} as b set {argument} where a.galcount = b.galcount {condition};"""
+             base_cmd = """update {band}_{new_tablestem}_fit as a, {old_tablestem}_{band}_{model} as b set {argument} where a.galcount = b.galcount {condition};"""
              
              # now do num_targets 
              cmd = base_cmd.format(band = band, model = model, old_tablestem = old_tablestem, 
@@ -123,11 +123,11 @@ def load_fit_uncalc(bands, models, old_tablestem='full_dr7', new_tablestem='band
 
      return
 
-def load_fit_calc(bands, models, old_tablestem='full_dr7', new_tablestem='band'):
+def load_fit_calc(bands, models, old_tablestem='raw_catalog_fits.full_dr7', new_tablestem='band'):
      models = models[::-1]
      for band in bands:
          for model in models:
-             base_cmd = """update {band}_{new_tablestem}_fit as a, raw_catalog_fits.{old_tablestem}_{band}_{model} as b set {argument} where a.galcount = b.galcount {condition};"""
+             base_cmd = """update {band}_{new_tablestem}_fit as a, {old_tablestem}_{band}_{model} as b set {argument} where a.galcount = b.galcount {condition};"""
              
              # now do SexHRad 
              cmd = base_cmd.format(band = band, model = model,old_tablestem = old_tablestem, 
@@ -139,7 +139,7 @@ def load_fit_calc(bands, models, old_tablestem='full_dr7', new_tablestem='band')
              cursor.execute(cmd)
 
              # now do SexSky, SexMag, and SexMagErr 
-             base_cmd = """update {band}_{new_tablestem}_fit as a, raw_catalog_fits.{old_tablestem}_{band}_{model} as b, CAST as c set {argument} where a.galcount = b.galcount and c.galcount = a.galcount {condition};"""
+             base_cmd = """update {band}_{new_tablestem}_fit as a, {old_tablestem}_{band}_{model} as b, CAST as c set {argument} where a.galcount = b.galcount and c.galcount = a.galcount {condition};"""
 
              cmd = base_cmd.format(band = band, model = model,old_tablestem = old_tablestem, 
                                        new_tablestem = new_tablestem,
@@ -151,7 +151,7 @@ def load_fit_calc(bands, models, old_tablestem='full_dr7', new_tablestem='band')
 
      return
 
-def load_model_uncalc(bands, models, old_tablestem='full_dr7', new_tablestem='band'):
+def load_model_uncalc(bands, models, old_tablestem='raw_catalog_fits.full_dr7', new_tablestem='band'):
     params_to_copy = [['ba_tot_corr','hrad_ba_corr'],
                       ['BT', 'BT'],
                       ['xctr_bulge','bulge_xctr'],
@@ -175,7 +175,7 @@ def load_model_uncalc(bands, models, old_tablestem='full_dr7', new_tablestem='ba
 
     for band in bands:
         for model in models:
-            base_cmd = """update {band}_{new_tablestem}_{model} as a, raw_catalog_fits.{old_tablestem}_{band}_{model} as b set {argument} where a.galcount = b.galcount {condition};"""
+            base_cmd = """update {band}_{new_tablestem}_{model} as a, {old_tablestem}_{band}_{model} as b set {argument} where a.galcount = b.galcount {condition};"""
              
              # now do params
             for val in params_to_copy:
@@ -203,7 +203,7 @@ def load_model_uncalc(bands, models, old_tablestem='full_dr7', new_tablestem='ba
             cursor.execute(cmd)
     return
 
-def load_model_calc(bands, models, old_tablestem='full_dr7', new_tablestem='band'):
+def load_model_calc(bands, models, old_tablestem='raw_catalog_fits.full_dr7', new_tablestem='band'):
     rads_to_copy = [['Hrad_corr','hrad_pix_corr'],
                     ['r_bulge','re_pix'],['r_bulge_err', 're_pix_err'],
                     ['r_disk','rd_pix'],['r_disk_err', 'rd_pix_err']
@@ -213,7 +213,7 @@ def load_model_calc(bands, models, old_tablestem='full_dr7', new_tablestem='band
 
     for band in bands:
         for model in models:
-            base_cmd = """update {band}_{new_tablestem}_{model} as a, raw_catalog_fits.{old_tablestem}_{band}_{model} as b, CAST as c set {argument} where a.galcount = b.galcount and c.galcount = a.galcount {condition};"""
+            base_cmd = """update {band}_{new_tablestem}_{model} as a, {old_tablestem}_{band}_{model} as b, CAST as c set {argument} where a.galcount = b.galcount and c.galcount = a.galcount {condition};"""
             # now do rads
             for val in rads_to_copy:
                 if (model in ['dev','ser']) and ((val[0] == 'r_disk') or (val[0] == 'r_disk_err')):
@@ -278,7 +278,7 @@ def load_model_calc(bands, models, old_tablestem='full_dr7', new_tablestem='band
 
 #build_tables(bands, models)#, new_tablestem='rerun')
 #load_fit_uncalc(bands, models[:],old_tablestem='deep_rerun', new_tablestem='deep')
-#separate_CASGM(bands, ['dev'])#, old_tablestem='CASGM')#, new_tablestem='band')
+separate_CASGM(bands, ['dev'], old_tablestem='deep_rerun', new_tablestem='deep')
 #load_fit_calc(bands, models[:],old_tablestem='deep_rerun', new_tablestem='deep')
-load_model_uncalc(bands, models,old_tablestem='deep_rerun', new_tablestem='deep')
-load_model_calc(bands, models,old_tablestem='deep_rerun', new_tablestem='deep')
+#load_model_uncalc(bands, models,old_tablestem='deep_rerun', new_tablestem='deep')
+#load_model_calc(bands, models,old_tablestem='deep_rerun', new_tablestem='deep')

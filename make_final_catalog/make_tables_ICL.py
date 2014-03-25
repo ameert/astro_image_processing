@@ -33,7 +33,7 @@ import sys
 
 this_dir = os.getcwd()
 
-dba = 'z_sim_ICL'
+dba = 'z_sim_ICL_dev'
 pwd = 'pymorph'
 usr = 'pymorph'
 
@@ -94,7 +94,7 @@ def build_tables(bands, models, new_tablestem = 'band'):
 def load_fit_uncalc(bands, models, old_tablestem='full_dr7', new_tablestem='band'):
      for band in bands:
          for model in models:
-             base_cmd = """update {band}_{new_tablestem}_fit as a, {old_tablestem}_{model} as b set {argument} where a.galcount = b.galcount {condition};"""
+             base_cmd = """update {band}_{new_tablestem}_fit as a, {band}_{old_tablestem}_{model}_raw as b set {argument} where a.galcount = b.galcount {condition};"""
              
              # now do num_targets 
              cmd = base_cmd.format(band = band, model = model, old_tablestem = old_tablestem, 
@@ -118,7 +118,7 @@ def load_fit_calc(bands, models, old_tablestem='full_dr7', new_tablestem='band')
      models = models[::-1]
      for band in bands:
          for model in models:
-             base_cmd = """update {band}_{new_tablestem}_fit as a, {old_tablestem}_{model} as b set {argument} where a.galcount = b.galcount {condition};"""
+             base_cmd = """update {band}_{new_tablestem}_fit as a, {band}_{old_tablestem}_{model}_raw as b set {argument} where a.galcount = b.galcount {condition};"""
              
              # now do SexHRad 
              cmd = base_cmd.format(band = band, model = model,old_tablestem = old_tablestem, 
@@ -129,7 +129,7 @@ def load_fit_calc(bands, models, old_tablestem='full_dr7', new_tablestem='band')
              cursor.execute(cmd)
 
              # now do SexSky, SexMag, and SexMagErr 
-             base_cmd = """update {band}_{new_tablestem}_fit as a, {old_tablestem}_{model} as b, CAST as c set {argument} where a.galcount = b.galcount and c.galcount = a.galcount {condition};"""
+             base_cmd = """update {band}_{new_tablestem}_fit as a, {band}_{old_tablestem}_{model}_raw as b, CAST as c set {argument} where a.galcount = b.galcount and c.galcount = a.galcount {condition};"""
 
              cmd = base_cmd.format(band = band, model = model,old_tablestem = old_tablestem, 
                                        new_tablestem = new_tablestem,
@@ -164,7 +164,7 @@ def load_model_uncalc(bands, models, old_tablestem='full_dr7', new_tablestem='ba
 
     for band in bands:
         for model in models:
-            base_cmd = """update {band}_{new_tablestem}_{model} as a, {old_tablestem}_{model} as b set {argument} where a.galcount = b.galcount {condition};"""
+            base_cmd = """update {band}_{new_tablestem}_{model} as a, {band}_{old_tablestem}_{model}_raw as b set {argument} where a.galcount = b.galcount {condition};"""
              
              # now do params
             for val in params_to_copy:
@@ -202,7 +202,7 @@ def load_model_calc(bands, models, old_tablestem='full_dr7', new_tablestem='band
 
     for band in bands:
         for model in models:
-            base_cmd = """update {band}_{new_tablestem}_{model} as a, {old_tablestem}_{model} as b, CAST as c set {argument} where a.galcount = b.galcount and c.galcount = a.galcount {condition};"""
+            base_cmd = """update {band}_{new_tablestem}_{model} as a, {band}_{old_tablestem}_{model}_raw as b, CAST as c set {argument} where a.galcount = b.galcount and c.galcount = a.galcount {condition};"""
             # now do rads
             for val in rads_to_copy:
                 cmd = base_cmd.format(band = band, model = model, old_tablestem = old_tablestem, 
@@ -252,8 +252,8 @@ def load_model_calc(bands, models, old_tablestem='full_dr7', new_tablestem='band
             
     return
 
-#build_tables(bands, models, new_tablestem='sims')
-load_fit_uncalc(bands, models,old_tablestem='psf', new_tablestem='sims')
-#load_fit_calc(bands, models[:],old_tablestem='psf', new_tablestem='sims')
-#load_model_uncalc(bands, models,old_tablestem='psf', new_tablestem='sims')
-#load_model_calc(bands, models,old_tablestem='psf', new_tablestem='sims')
+#build_tables(bands, models, new_tablestem='ICL')
+#load_fit_uncalc(bands, models,old_tablestem='ICL', new_tablestem='ICL')
+#load_fit_calc(bands, models[:],old_tablestem='ICL', new_tablestem='ICL')
+#load_model_uncalc(bands, models,old_tablestem='ICL', new_tablestem='ICL')
+load_model_calc(bands, models,old_tablestem='ICL', new_tablestem='ICL')
