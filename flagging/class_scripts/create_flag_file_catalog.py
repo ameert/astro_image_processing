@@ -75,7 +75,9 @@ if __name__ == "__main__":
     model = sys.argv[2]
     band = sys.argv[3]
     info_dict = {'dba':'catalog', 'usr':'pymorph', 'pwd':'pymorph', 'host':'',
-                 'band':band, 'model':model,'cursor':mysql_connect(info_dict['dba'],info_dict['usr'],info_dict['pwd'],info_dict['host'])}
+                 'band':band, 'model':model}
+
+    info_dict['cursor']=mysql_connect(info_dict['dba'],info_dict['usr'],info_dict['pwd'],info_dict['host'])
   
     create_flag_pickle(folder_num, info_dict, print_info=True)
 

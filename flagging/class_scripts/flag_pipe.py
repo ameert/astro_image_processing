@@ -39,8 +39,9 @@ from u_flags import *
 
 
 if __name__ == "__main__":
+    model = sys.argv[1]
     info_dict = {'dba':'catalog', 'usr':'pymorph', 'pwd':'pymorph', 'host':'',
-                 'band':'r', 'model':'serexp','autoflag_ftype':'r',
+                 'band':'r', 'model':model,'autoflag_ftype':'r',
                  'uflag_ftype':'u',
                  }
     info_dict['cursor']=mysql_connect(info_dict['dba'],info_dict['usr'],info_dict['pwd'],info_dict['host'])
@@ -50,7 +51,7 @@ if __name__ == "__main__":
     for folder_number in range(1,2684):
         print "folder number:", folder_number
         create_flag_pickle(folder_number, info_dict, print_info=False)
-        run_auto_flags('serexp','r', folder_number, print_flags=False)
+        run_auto_flags(info_dict['model'],'r', folder_number, print_flags=False)
         load_autoflag(folder_number, info_dict, print_info = False)
 
         galcount, uflags_out = run_uflags(folder_number, info_dict,print_flags = False)
