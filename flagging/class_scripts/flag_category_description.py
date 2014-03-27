@@ -1,7 +1,10 @@
-from mysql_class import *
-from flag_defs import new_finalflag_vals, new_finalflag_dict
+from mysql.mysql_class import *
 import pylab as pl
 import matplotlib.ticker as mticker
+
+from flag_configuration import autoflag_dict, table_order_uflags as uflag_vals
+from flag_analysis import flag_set, get_percent, print_flag_table
+
 
 class flag_set():
     def __init__(self, flag_vals):
@@ -194,20 +197,20 @@ def anal_table2(flags, BT):
 
     return
         
-
 cursor = mysql_connect('catalog','pymorph','pymorph','')
 
-cmd = """select a.galcount, a.flag, z.BT from Flags_optimize as a, M2010 as b, classify_test as c, r_band_serexp as z where a.flag >=0 and a.band = 'r' and a.model = 'serexp' and a.ftype = 'r' and c.band='r' and a.galcount = b.galcount and a.galcount = c.galaxy and a.galcount = z.galcount order by a.galcount limit 1000000;"""
-#galcount, flags, BT = cursor.get_data(cmd)
+cmd = """select a.galcount, a.flag, z.BT from Flags_optimize as a, M2010 as b, classify_test as c, r_band_serexp as z where a.flag >=0 and a.band = 'r' and a.model = 'serexp' and a.ftype = 'u' and c.band='r' and a.galcount = b.galcount and a.galcount = c.galaxy and a.galcount = z.galcount order by a.galcount limit 1000000;"""
+galcount, flags, BT = cursor.get_data(cmd)
 
-#galcount = np.array(galcount, dtype = int)
-#flags = np.array(flags, dtype = int)
-#BT = np.array(BT, dtype =float)
+galcount = np.array(galcount, dtype = int)
+flags = np.array(flags, dtype = int)
+BT = np.array(BT, dtype =float)
 
 print "For the test sample"
 #anal_table(flags, BT, 'Test_catalog.table')
+print_flag_table(uflag_vals,flags, 'Test_catalog.table')
 
-cmd = """select a.galcount, a.flag, z.BT from Flags_optimize as a, M2010 as b, r_band_serexp as z where a.flag >=0 and a.band = 'r' and a.model = 'serexp' and a.ftype = 'r' and a.galcount = b.galcount and a.galcount = z.galcount order by a.galcount limit 50000;"""
+cmd = """select a.galcount, a.flag, z.BT from Flags_optimize as a, M2010 as b, r_band_serexp as z where a.flag >=0 and a.band = 'r' and a.model = 'serexp' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;"""
 galcount, flags, BT = cursor.get_data(cmd)
 
 galcount = np.array(galcount, dtype = int)
@@ -215,14 +218,14 @@ flags = np.array(flags, dtype = int)
 BT = np.array(BT, dtype =float)
 
 print "\n\nFor the SerExp Catalog"
-anal_table(flags, BT, 'SerExp_catalog.table')
+print_flag_table(uflag_vals,flags, 'SerExp_catalog.table')
 
-cmd = """select a.galcount, a.flag, z.BT from Flags_optimize as a, M2010 as b, r_band_serexp as z where a.flag >=0 and a.band = 'r' and a.model = 'devexp' and a.ftype = 'r' and a.galcount = b.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;"""
-#galcount, flags, BT = cursor.get_data(cmd)
+cmd = """select a.galcount, a.flag, z.BT from Flags_optimize as a, M2010 as b, r_band_devexp as z where a.flag >=0 and a.band = 'r' and a.model = 'devexp' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;"""
+galcount, flags, BT = cursor.get_data(cmd)
 
-#galcount = np.array(galcount, dtype = int)
-#flags = np.array(flags, dtype = int)
-#BT = np.array(BT, dtype =float)
+galcount = np.array(galcount, dtype = int)
+flags = np.array(flags, dtype = int)
+BT = np.array(BT, dtype =float)
 
-#print "\n\nFor the DevExp Catalog"
-#anal_table(flags, BT, 'DevExp_catalog.table')
+print "\n\nFor the DevExp Catalog"
+print_flag_table(uflag_vals,flags, 'DevExp_catalog.table')

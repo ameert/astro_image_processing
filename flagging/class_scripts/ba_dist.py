@@ -1,7 +1,7 @@
 import sys
 import os
 import numpy as np
-import bin_stats as bs
+import statistics.bin_stats as bs
 import pylab as pl
 from MatplotRc import *
 
@@ -40,7 +40,6 @@ for count, gal_opt in enumerate(['Ell','S0','Sab','Scd']):
 
     print 'Type ', gal_opt
     print np.extract(ba_bulge<0.1, data['galcount'])
-    continue
     pl.subplot(2,2,count+1)
     pl.hist(ba_bulge, range=(0,1), bins = 50, log = True)
     pl.ylabel('counts')

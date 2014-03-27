@@ -26,6 +26,9 @@ autoflag_vals = [
                   ('bad bulge', 21),
                   ('high chi^2', 22),
                   ('flip components', 23),
+                  ('polluted', 24),
+                  ('fractured', 25),
+                  ('tinybulge', 26),
                   ]
 
 autoflag_dict = dict(autoflag_vals)
@@ -54,6 +57,8 @@ uflag_vals = [("Good Total Magnitudes and Sizes", 0),
               ("\t\tExp Inner Only", 16),
               ("\t\tGood Ser, Bad Exp, B/T$>=$0.5", 17),
               ("\t\tBad Ser, Good Exp, B/T$<$0.5", 18),
+              ("\t\tTiny Bulge, otherwise good", 26),
+              
 
               ("Bad Total Magnitudes and Sizes", 19),
               ("\tCentering Problems", 20),      #8388608
@@ -61,9 +66,18 @@ uflag_vals = [("Good Total Magnitudes and Sizes", 0),
               ("\tExp Component Contamination by Neighbors or Sky", 22),
               ("\tBad Ser and Bad Exp Components", 23),      #8388608
               ("\tGalfit Failure", 24),      #8388608
+              ("\tPolluted or Fractured", 25)
               ]
 
 uflag_dict = dict(uflag_vals)
+
+table_order_uflags = [("Trust 2com mags and sizes", 10)]
+table_order_uflags += uflag_vals[10:14]
+table_order_uflags += [("Trust total mags and sizes only", [1,4,14])]
+table_order_uflags += uflag_vals[1:10]+uflag_vals[14:]
+
+
+
 
 visualflag_vals =  [('Bad Central Fit', 0), 
                     ("Bad Middle Fit",1), 

@@ -7,7 +7,7 @@ import os
 import sys 
 
 from flag_defs import *
-from mysql_class import *
+from mysql.mysql_class import *
 #from gal_panel import *
 
 model = 'serexp'

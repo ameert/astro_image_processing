@@ -1,4 +1,4 @@
-from mysql_class import *
+from mysql.mysql_class import *
 from flag_defs import *
 import pylab as pl
 import matplotlib.ticker as mticker
