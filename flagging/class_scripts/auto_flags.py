@@ -1,7 +1,7 @@
 import numpy as np
 import pyfits as pf
 import pickle
-from mysql_class import *
+from mysql.mysql_class import *
 from flag_configuration import autoflag_vals, autoflag_dict, autoflag_config
 
 
@@ -165,7 +165,7 @@ to a mysql database"""
 
     auto_disk_total = np.where(disk_is_sky+disk_contamination+ disk_fitting_inner*np.where(bulge_is_disk_flag+bulge_fitting_outer+bulge_low_n_flag+ parallel_com_flag>0,0,1)+high_e_disk*posang_disk+parallel_com_flag>0,1,0)
     auto_bulge_total = np.where(bulge_fitting_outer*np.where(disk_fitting_inner+bulge_is_disk_flag>0,0,1)+bulge_is_sky+bulge_contamination+ high_e_bulge*posang_bulge+parallel_com_flag>0,1,0)
-    bad_total_flag = np.where((np.where(disk_is_sky+disk_contamination+bulge_is_sky+bulge_contamination+center_probs>0, 1,0) + np.where(no_bulge+no_disk+disk_dominates_always+bulge_dominates_always>1,1,0))>0,1,0)+high_chi
+    bad_total_flag = np.where((np.where(disk_is_sky+disk_contamination+bulge_is_sky+bulge_contamination+center_probs>0, 1,0) + np.where(no_bulge+no_disk+disk_dominates_always+bulge_dominates_always>1,1,0))>0,1,0)+high_chi+neighbor_contamination
 
     # if galfit failed, or some measurement is wrong in the pa
     galfit_fail = np.where(data['galfit_flag']==1,1,0) #| np.where((bulge_dominates_always+disk_dominates_always+no_bulge+no_disk)>1, 1,0)

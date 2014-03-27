@@ -29,9 +29,19 @@ class flag_set():
 def get_percent(flag_arr):
     return 100.0*np.sum(flag_arr)/flag_arr.size
 
-def print_flag_table(flag_list, flag_vals):
+def print_flag_table(flag_list, flag_vals, outfile = None):
     for a in flag_list:
-        flag_arr = np.where(flag_vals&2**a[1]>0,1,0)
+        print a
+        flag_arr = np.where(flag_vals&int(np.sum(2**np.array(a[1],dtype=int)))>0,1,0)
         print '%s: %5.3f' %(a[0], get_percent(flag_arr))
+
+    try:
+        outf = open(outfile, 'w')
+        for a in flag_list:
+            flag_arr = np.where(flag_vals&np.sum(2**np.array(a[1],dtype=int))>0,1,0)
+            outf.write('%s: %5.3f\n' %(a[0], get_percent(flag_arr)))
+        outf.close()
+    except:
+        pass
     return
 

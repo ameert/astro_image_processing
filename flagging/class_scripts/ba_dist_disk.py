@@ -1,7 +1,7 @@
 import sys
 import os
 import numpy as np
-import bin_stats as bs
+import statistics.bin_stats as bs
 import pylab as pl
 from MatplotRc import *
 

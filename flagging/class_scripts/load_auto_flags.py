@@ -7,7 +7,7 @@ cursor = mysql_connect('catalog','pymorph','pymorph','')
 band = sys.argv[1]
 model = sys.argv[2]
 
-for folder_num in range(1, 2):#684):
+for folder_num in range(1, 2684):
     print 'folder %d' %folder_num
     print '/home/ameert/to_classify/flagfiles/%s/%s/autoflags_%d_revised.pickle' %(band,model,folder_num)
     infile = open('/home/ameert/to_classify/flagfiles/%s/%s/autoflags_%d_revised.pickle' %(band,model,folder_num))

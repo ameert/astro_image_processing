@@ -17,48 +17,51 @@ for mod in models:
     indata.append(indat1)
 
 indata = np.array(indata).T
+print indata.shape
 
-outstr = ["""\\begin{tabular}{l l l l l %s}""",
-"""\\textbf{Fit Type} & \\multicolumn{4}{l}{\\textbf{Descriptive Category}} &  %s \\\\ \\hline""",
-""" & \\multicolumn{4}{l}{\\textbf{Trustable 2-com Total Fit}} & %s\\\\""",
 
-"""1 & & \\multicolumn{3}{l}{\\textbf{Probable Single-Component Galaxies, Components OK}} & %s\\\\""",
-"""2 & & & \\multicolumn{2}{l}{No \Ser} & %s\\\\""",
-"""& & &\\multicolumn{2}{l}{No \Exp} & %s \\\\""",
-"""3 & & & & Good \Ser, n$_{\Ser}>$2, No \Exp & %s\\\\""",
-"""2 & & & & Good \Ser, n$_{\Ser}<$2, No \Exp, Flip Components & %s\\\\""",
+outstr="""\\multicolumn{3}{l}{\\textbf{Trust Total and Component Magnitudes and Sizes}}&  %s  \\\\ \\hline
+& \\multicolumn{2}{l}{\\textbf{Two-Component Galaxies}} &  %s \\\\
+& & No Flags &  %s \\\\
+& & Good \\Ser{}, Good \\Exp\\ (Some Flags) &  %s  \\\\
+& & Flip Components &  %s \\\\ \\hline
+\\multicolumn{3}{l}{\\textbf{Trust Total Magnitudes and Sizes Only}} &  %s \\\\ \\hline
+& \\multicolumn{2}{l}{\\textbf{Bulge Galaxies}} &  %s \\\\
+& &No \\Exp\\ Component, n$_{\\Ser}>$2&  %s \\\\
+& &\\Ser{} Dominates Always &  %s \\\\
+& \\multicolumn{2}{l}{\\textbf{Disk Galaxies}} &  %s \\\\
+& & No \\Ser{} Component &  %s \\\\
+& & No \\Exp, n$_{Ser}<$2, Flip Components &  %s \\\\
+& & \\Ser{} Dominates Always, n$_{\\Ser}<$2 & %s \\\\
+& & \\Exp\\ Dominates Always &  %s \\\\
+& & Parallel Components &  %s \\\\
+& \\multicolumn{2}{l}{\\textbf{Problematic Two-Component Galaxies}} & %s \\\\
+& & \\Ser{} Outer Only &  %s \\\\
+& & \\Exp\\ Inner Only &  %s \\\\
+& & Good \\Ser{}, Bad \\Exp, B/T$>=$0.5 &  %s \\\\
+& & Bad \\Ser{}, Good \\Exp, B/T$<$0.5 & %s \\\\ 
+& & Bulge is point & %s \\\\ \\hline \\hline
+\\multicolumn{3}{l}{\\textbf{Bad Total Magnitudes and Sizes}} & %s \\\\
+& \multicolumn{2}{l}{Centering Problems} & %s \\\\
+& \multicolumn{2}{l}{\Ser{} Component Contamination by Neighbors or Sky} & %s \\\\
+& \multicolumn{2}{l}{\Exp\ Component Contamination by Neighbors or Sky} & %s \\\\ 
+& \multicolumn{2}{l}{Bad \Ser{} and Bad \Exp\ Components} & %s \\\\
+& \multicolumn{2}{l}{\galfit{} Failure} & %s \\\\
+& \multicolumn{2}{l}{Polluted or Fractured} & %s \\\\
+\\end{tabular}
+"""
 
-"""4 & & \\multicolumn{3}{l}{\\textbf{Possible Two-Component Galaxies, Components OK}} & %s \\\\""",
-""" & & & \\multicolumn{2}{l}{No Flags} & %s \\\\""",
-""" & & &\\multicolumn{2}{l}{Good \Ser, Good \Exp\ (Some Flags)} & %s \\\\""",
-""" & & &\\multicolumn{2}{l}{Good \Ser, Bad \Exp, B/T$>=$0.5} & %s \\\\""",
-""" & & &\\multicolumn{2}{l}{Bad \Ser, Good \Exp, B/T$<$0.5} & %s \\\\""",
-""" & & &\\multicolumn{2}{l}{Flip Components, Otherwise Good} & %s \\\\""",
-
-"""1 & & \\multicolumn{3}{l}{\\textbf{Probable Single-Component Galaxies, Component Problems}} & %s\\\\""",
-"""3 & & &  \\multicolumn{2}{l}{\Ser\ Dominates Always} & %s \\\\""",
-"""2 & & & \\multicolumn{2}{l}{\Exp\ Dominates Always} & %s \\\\""",
-"""2 & & & \\multicolumn{2}{l}{Parallel Components} & %s \\\\""",
-
-"""4 & & \\multicolumn{3}{l}{\\textbf{Possible Two-Component Galaxies, Component Problems}} & %s \\\\""",
-"""& & &\\multicolumn{2}{l}{\Ser\ Outer Only} & %s \\\\""",
-"""& & &\\multicolumn{2}{l}{\Exp\ Inner Only} & %s \\\\""",
-"""& & &\\multicolumn{2}{l}{Flip Components, and Bad Components} & %s \\\\""",
-"""& & & \\multicolumn{2}{l}{Bad \Ser, Bad \Exp} & %s \\\\""",
-"""5 & \\multicolumn{4}{l}{\\textbf{2-com Total Fit Problems}} & %s\\\\""",
-"""& & \\multicolumn{3}{l}{\\textbf{Bad Total}} & %s \\\\""",
-"""& & \\multicolumn{3}{l}{\\textbf{Galfit Failure}} & %s \\\\""",
-"""\\end{tabular}"""
-]
-
-outstr[0] = outstr[0] %row1str
-outstr[1] = outstr[1] %row2str
-
+intup = []
 for rowcount, row in enumerate(indata):
-    rowvals = ['%.3f' %a for a in row]
+    print rowcount, row
+    rowvals = ['%0.3f' %a for a in row]
     rowvals = ' & '.join(rowvals)
-    outstr[2+rowcount]= outstr[2+rowcount] %rowvals
+    intup.append(rowvals)
+
+outstr = """\\begin{tabular}{l l l c  c  c}
+\\multicolumn{3}{l}{\\textbf{Descriptive Category}} &  \\textbf{\\% Test} & \\textbf{\\% SerExp} & \\textbf{\\% DevExp} \\\\ \\hline \\hline
+"""+outstr %(tuple(intup))
 
 outfile = open('table_tex.tex', 'w')
-outfile.write( "\n".join(outstr))
+outfile.write(outstr)
 outfile.close()
