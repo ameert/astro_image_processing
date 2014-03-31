@@ -71,9 +71,10 @@ class meert_table():
         return values
 
 
-
-CAST_entries = [ ('galcount','1J',''), ('objid','1K',''),('badflag','1J',''), 
-                 ('nchild','1I',''), ('run','1I',''), ('rerun','1I',''), 
+CAST_entries = [ [('galcount','1J',''), ('objid','1K',''),
+                  ('SDSSIAU','24A','','SDSS_IAU'),('badflag','1J',''), 
+                 ('nchild','1I',''), ('mode','1I',''),
+                  ('run','1I',''), ('rerun','1I',''), 
                  ('camCol','1I',''), ('field','1I',''), ('obj','1I',''), 
                  ('stripe','1J',''), ('startmu','1J','arcsec'),
                  ('specobjid','1K',''),  ('plate','1I',''), 
@@ -83,21 +84,31 @@ CAST_entries = [ ('galcount','1J',''), ('objid','1K',''),('badflag','1J',''),
                  ('z','1E',''), ('veldisp','1E','km/s'), 
                  ('veldispErr','1E','km/s'), ('eclass','1E',''),
                  ('p_el_debiased','1E',''), ('p_cs_debiased','1E',''), 
-                 ('petroR90','3E','arcsec'), ('petroR50','3E','arcsec'), 
-                 ('petroMag','3E','mag'), ('petroMagErr','3E','mag'), 
-                 ('ModelMagErr','3E','mag'), ('ModelMag','3E','mag'), 
-                 ('devRad','3E','arcsec'), ('devab','3E',''),
-                 ('devmag','3E','mag'), ('fracdev','3E',''),
-                 ('extinction','3E','mag'),
-                 ('aa','3E','mag'), ('kk','3E','mag'),
-                 ('airmass','3E',''), ('gain','3E','electrons/DN'),
-                 ('darkvariance','3E',''), ('sky','3E','magnitude/arcsec^2'),
-                 ('skyErr','3E','magnitude/arcsec^2'),
-                 ('psfWidth','3E','arcsec'), ('rowc','3E','pixels'),
-                 ('colc','3E','pixels') ]
-CAST = meert_table(CAST_entries)
+                 ('spiral','1J',''),('elliptical','1J',''),
+                 ('uncertain','1J','')],
 
-M2010_entries =[ ('galcount','1J',''), ('id_marc','1J',''), 
+                 [('petroR90','1E','arcsec'), ('petroR50','1E','arcsec'), 
+                 ('petroMag','1E','mag'), ('petroMagErr','1E','mag'), 
+                 ('ModelMagErr','1E','mag'), ('ModelMag','1E','mag'), 
+                 ('devRad','1E','arcsec'), ('devab','1E',''),
+                 ('devmag','1E','mag'),  ('devPhi','1E','degrees'),
+                  ('expRad','1E','arcsec'), ('expab','1E',''),
+                 ('expmag','1E','mag'), ('expPhi','1E','degrees'),
+                  ('fracdev','1E',''),
+                 ('extinction','1E','mag'),
+                 ('aa','1E','mag'), ('kk','1E','mag'),
+                 ('airmass','1E',''), ('gain','1E','electrons/DN'),
+                 ('darkvariance','1E',''), ('sky','1E','magnitude/arcsec^2'),
+                 ('skyErr','1E','magnitude/arcsec^2'),
+                 ('psfWidth','1E','arcsec'), ('rowc','1E','pixels'),
+                 ('colc','1E','pixels') ]]
+
+CAST = [meert_table(CAST_entries[0])]
+
+CAST_models = [meert_table(CAST_entries[1]),meert_table(CAST_entries[1]),
+               meert_table(CAST_entries[1])]
+
+H2010_entries =[ ('galcount','1J',''), ('id_marc','1J',''), 
                  ('specObjID','1K','','specObjID_marc'),
                  ('ra','1E','decimal degrees', 'ra_marc'), 
                  ('dec','1E','decimal degrees','dec_marc'),
@@ -105,53 +116,74 @@ M2010_entries =[ ('galcount','1J',''), ('id_marc','1J',''),
                  ('probaEll','1E',''), ('probaS0','1E',''),
                  ('probaSab','1E',''), ('probaScd','1E',''), 
                  ('ask_class','1E','') ]
-M2010 = meert_table(M2010_entries)
+H2010 = [meert_table(H2010_entries)]
 
 
-DERT_entries = [ ('galcount','1J',''), ('dismod' ,'1E', 'mag'),
+DERT_entries = [ [('galcount','1J',''), ('dismod' ,'1E', 'mag'),
                  ('kpc_per_arcsec' ,'1E', 'kpc per arcsec'), 
-                 ('Vmax' ,'1E', 'Mpc^3'), ('SN' ,'3E', ''),  
-                 ('kcorr' ,'3E', 'mag')
+                 ('Vmax' ,'1E', 'Mpc^3')],
+
+                 [('SN' ,'1E', ''),  ('kcorr' ,'1E', 'mag')]
                  ]
 
-DERT = meert_table(DERT_entries)
+DERT = [meert_table(DERT_entries[0]),meert_table(DERT_entries[1]),
+        meert_table(DERT_entries[1]),meert_table(DERT_entries[1])]
 
 
-Meert_entries = [ ('galcount','1J',''),
-                  ('SexMag','3E','mag'),
-                  ('SexMag_Err','3E','mag'),
-                  ('Sex_Rad','3E','arcsec', 'SexHrad'),
-                  ('SexSky','3E','mag/arcsec^2'),
-                  ('C','3E',''), ('C_err','3E',''),
-                  ('A','3E',''), ('A_err','3E',''),
-                  ('S','3E',''), ('S_err','3E',''),
-                  ('G','3E',''), ('M20','3E',''),
-                  ('m_tot', '3E', 'mag'), ('BT','3E',''), 
-                  ('m_bulge','3E','mag'),
-                  ('m_bulge_err','3E','mag'),
-                  ('r_bulge','3E','arcsec'), 
-                  ('r_bulge_err','3E','arcsec'),
-                  ('n_bulge','3E',''), ('n_bulge_err','3E',''),
-                  ('ba_bulge','3E',''), ('ba_bulge_err','3E',''),
-                  ('pa_bulge','3E','degrees'), ('pa_bulge_err','3E','degrees'),
-                  ('xctr_bulge','3E','pixels'),
-                  ('xctr_bulge_err','3E','pixels'),
-                  ('yctr_bulge','3E','pixels'),
-                  ('yctr_bulge_err','3E','pixels'),
-                  ('m_disk','3E','mag'),
-                  ('m_disk_err','3E','mag'),
-                  ('r_disk','3E','arcsec'), 
-                  ('r_disk_err','3E','arcsec'),
-                  ('ba_disk','3E',''), ('ba_disk_err','3E',''),
-                  ('pa_disk','3E','degrees'), ('pa_disk_err','3E','degrees'),
-                  ('xctr_disk','3E','pixels'),
-                  ('xctr_disk_err','3E','pixels'),
-                  ('yctr_disk','3E','pixels'),
-                  ('yctr_disk_err','3E','pixels'),
-                  ('fit','3E',''), ('flag','3E',''),
-                  ('chi2nu','3E',''), ('GalSky','3E','mag/arcsec^2'),
-                  ]
+Meert_entries = [ [('SexMag','1E','mag'),
+                   ('SexMag_Err','1E','mag'),
+                   ('SexHrad','1E','arcsec', 'SexHrad'),
+                   ('SexSky','1E','mag/arcsec^2'),
+                   ('num_targets','1I',''),
+                   ('num_neighborfit','1I',''),
+                   ('C','1E',''), ('C_err','1E',''),
+                   ('A','1E',''), ('A_err','1E',''),
+                   ('S','1E',''), ('S_err','1E',''),
+                   ('G','1E',''), ('M20','1E',''),
+                   ('extinction','1E','mag','c.extinction_{band}'),
+                   ('dismod' ,'1E', 'mag', 'd.dismod'),
+                   ('kpc_per_arcsec' ,'1E', 'kpc per arcsec', 'd.kpc_per_arcsec'), 
+                   ('Vmax' ,'1E', 'Mpc^3', 'd.Vmax'),
+                   ('SN' ,'1E', '', 'd.SN_{band}'),  
+                   ('kcorr' ,'1E', 'mag','d.kcorr_{band}')
+                   ],
 
+
+                  [('m_tot', '1E', 'mag'), 
+                   ('BT','1E',''), 
+                   ('r_tot', '1E', 'arcsec', 'Hrad_corr'),
+                   ('ba_tot', '1E', '', 'ba_tot_corr'),
+                   ('xctr_bulge','1E','pixels'),
+                   ('xctr_bulge_err','1E','pixels'),
+                   ('yctr_bulge','1E','pixels'),
+                   ('yctr_bulge_err','1E','pixels'),
+                   ('m_bulge','1E','mag'),
+                   ('m_bulge_err','1E','mag'),
+                   ('r_bulge','1E','arcsec'), 
+                   ('r_bulge_err','1E','arcsec'),
+                   ('n_bulge','1E',''), ('n_bulge_err','1E',''),
+                   ('ba_bulge','1E',''), ('ba_bulge_err','1E',''),
+                   ('pa_bulge','1E','degrees'), ('pa_bulge_err','1E','degrees'),
+                   ('xctr_disk','1E','pixels'),
+                   ('xctr_disk_err','1E','pixels'),
+                   ('yctr_disk','1E','pixels'),
+                   ('yctr_disk_err','1E','pixels'),
+                   ('m_disk','1E','mag'),
+                   ('m_disk_err','1E','mag'),
+                   ('r_disk','1E','arcsec'), 
+                   ('r_disk_err','1E','arcsec'),
+                   ('ba_disk','1E',''), ('ba_disk_err','1E',''),
+                   ('pa_disk','1E','degrees'), ('pa_disk_err','1E','degrees'),
+                   ('GalSky','1E','mag/arcsec^2'),
+                   ('GalSky_err','1E','mag/arcsec^2'),
+                   ('chi2nu','1E',''),
+                   ('finalflag','1J','','f.flag'),
+                   ('autoflag','1J','','f.flag'),
+                   ('pyflag','1J','','flag'),
+                   ('pyfitflag','1J','','FitFlag')]]
+
+meert = [meert_table(Meert_entries[0])]
+meert_models = [meert_table(Meert_entries[1])]
 
 
 tables = {}

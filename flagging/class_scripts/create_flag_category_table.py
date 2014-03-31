@@ -2,8 +2,12 @@ import os
 import sys
 import numpy as np
 
+fulltab=True
 
-models = ['Test', 'SerExp', 'DevExp']
+if fulltab:
+    models = ['Dev','Ser', 'DevExp','SerExp']
+else:
+    models = ['Test','SerExp', 'DevExp']
 
 row1str = ' c '*len(models)
 row2str = ["""\\textbf{{\% {modname}}}""".format(modname=modname) for modname in models]
@@ -58,10 +62,18 @@ for rowcount, row in enumerate(indata):
     rowvals = ' & '.join(rowvals)
     intup.append(rowvals)
 
-outstr = """\\begin{tabular}{l l l c  c  c}
+if fulltab:
+    outstr = """\\begin{tabular}{l l l c c  c  c}
+\\multicolumn{3}{l}{\\textbf{Descriptive Category}} &  \\textbf{\\% Dev}&  \\textbf{\\% Ser} & \\textbf{\\% DevExp} & \\textbf{\\% SerExp} \\\\ \\hline \\hline
+"""+outstr %(tuple(intup))
+else:
+    outstr = """\\begin{tabular}{l l l c  c  c}
 \\multicolumn{3}{l}{\\textbf{Descriptive Category}} &  \\textbf{\\% Test} & \\textbf{\\% SerExp} & \\textbf{\\% DevExp} \\\\ \\hline \\hline
 """+outstr %(tuple(intup))
 
-outfile = open('table_tex.tex', 'w')
+if fulltab:
+    outfile = open('full_table_tex.tex', 'w')
+else:
+    outfile = open('table_tex.tex', 'w')
 outfile.write(outstr)
 outfile.close()
