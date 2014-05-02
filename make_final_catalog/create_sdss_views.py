@@ -263,3 +263,41 @@ sky_r as Galsky , skyErr_r as Galsky_err ,
 -999 as flag, -999 as Manual_flag,
 -999 as FinalFlag, '-999' as Comments
 FROM CAST;
+
+
+create table r_band_best like r_band_dev;
+
+create table r_lackner_best like r_band_dev;
+
+create table r_simard_best like r_band_dev;
+
+create table r_mendel_best like r_band_dev;
+
+
+
+insert into r_band_best (galcount, m_tot) select a.galcount, a.m_tot from r_band_serexp as a, Flags_optimize as x where a.galcount = x.galcount  and x.band = 'r' and x.ftype = 'u' and x.model = 'serexp'  and ( x.flag&pow(2,19)=0 ) ;
+
+insert into r_lackner_best (galcount, m_tot) select a.galcount, a.m_tot-0.071648 from r_lackner_dev as a, r_lackner_fit as b where a.galcount = b.galcount and b.model ='dvc';
+
+insert into r_lackner_best (galcount, m_tot) select a.galcount, a.m_tot-0.0103 from r_lackner_exp as a, r_lackner_fit as b where a.galcount = b.galcount and b.model ='exp';
+
+insert into r_lackner_best (galcount, m_tot) select a.galcount, a.m_tot from r_lackner_ser as a, r_lackner_fit as b where a.galcount = b.galcount and b.model ='ser';
+
+insert into r_lackner_best (galcount, m_tot) select a.galcount, a.m_tot-0.0103 from r_lackner_nb1 as a, r_lackner_fit as b where a.galcount = b.galcount and b.model ='nb1';
+
+insert into r_lackner_best (galcount, m_tot) select a.galcount, -2.5*log10(pow(10,-0.4*(a.m_bulge-0.0637)) + pow(10,-0.4*(a.m_disk-0.0103))) from r_lackner_devexp as a, r_lackner_fit as b where a.galcount = b.galcount and b.model ='nb4';
+
+insert into r_simard_best (galcount, m_tot) select a.galcount, a.m_tot from r_simard_ser as a, r_simard_fit as x where a.galcount = x.galcount  and  x.Prob_Ps > 0.32 ;
+
+insert into r_simard_best (galcount, m_tot) select a.galcount, a.m_tot from r_simard_devexp as a, r_simard_fit as x where a.galcount = x.galcount  and  x.Prob_Ps <= 0.32 and x.Prob_n4>0.32;
+
+insert into r_simard_best (galcount, m_tot) select a.galcount, a.m_tot from r_simard_serexp as a, r_simard_fit as x where a.galcount = x.galcount  and  x.Prob_Ps <= 0.32 and x.Prob_n4<=0.32;
+
+
+
+insert into r_mendel_best (galcount, m_tot) select a.galcount, a.m_tot from r_simard_ser as a, r_simard_fit as x where a.galcount = x.galcount  and  x.ProfType <=2 ;
+
+insert into r_mendel_best (galcount, m_tot) select a.galcount, a.m_tot from r_simard_devexp as a, r_simard_fit as x where a.galcount = x.galcount  and  x.ProfType =3 ;
+
+
+

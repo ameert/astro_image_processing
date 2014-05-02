@@ -8,7 +8,8 @@ a.m_disk-c.extinction_r , a.r_disk, a.ba_disk, a.pa_disk, a.galsky,
 b.m_tot-c.extinction_r , b.Hrad_corr, b.ba_tot_corr, b.BT,
 b.m_bulge-c.extinction_r , b.r_bulge, b.n_bulge, b.ba_bulge, b.pa_bulge, 
 b.m_disk-c.extinction_r , b.r_disk, b.ba_disk, b.pa_disk,b.galsky, 
-d.kcorr_r + d.dismod, d.kpc_per_arcsec, c.z, d.vmax
+d.kcorr_r + d.dismod, d.kpc_per_arcsec, c.z, d.vmax,
+c.PetroMag_r-c.extinction_r, c.PetroR50_r
 from %s as a, %s as b, CAST as c, DERT as d %s,  
 Flags_optimize as x
 where a.galcount = b.galcount and a.galcount = c.galcount and 
@@ -31,7 +32,8 @@ d.galcount = c.galcount
                  'padisk_1', 'sky_1','mtot_2', 'hrad_2', 'batot_2', 
                  'BT_2', 'mbulge_2', 'rbulge_2', 'nbulge_2', 'babulge_2', 
                  'pabulge_2', 'mdisk_2', 'rdisk_2', 'badisk_2','padisk_2', 
-                 'sky_2', 'magcorr','kpc_per_arcsec','z', 'vmax']
+                 'sky_2', 'magcorr','kpc_per_arcsec','z', 'vmax',
+                 'petromag_1', 'petrorad_1']
 
     data = {}
     for a,b in zip(data_list, data_name):
@@ -42,6 +44,13 @@ d.galcount = c.galcount
     
     data['mtot_abs_1'] = data['mtot_1'] - data['magcorr']
     data['mtot_abs_2'] = data['mtot_2'] - data['magcorr']
+    
+
+    data['petromag_2'] = data['petromag_1']
+    data['petrorad_2'] = data['petrorad_1']
+
+    data['petromag_abs_1'] = data['petromag_1'] - data['magcorr']
+    data['petromag_abs_2'] = data['petromag_2'] - data['magcorr']
     
     data['n_1'] = data['nbulge_1']
     data['n_2'] = data['nbulge_2']

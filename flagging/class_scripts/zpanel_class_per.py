@@ -67,7 +67,8 @@ def plot_props(xlab, props, magbins, delta, flags_to_use,plot_info):
     xloc = plt.MaxNLocator(max_xticks)
 
     for flag in flags_to_use:
-        ax2.plot(magbinctr, props[flag], marker = plot_info[flag]['marker'],
+        ax2.plot(magbinctr, np.array(props[flag])*np.array(props['total'])/np.sum(np.array(props[flag])*np.array(props['total'])), 
+                 marker = plot_info[flag]['marker'],
                  ms = plot_info[flag]['ms'], ls = plot_info[flag]['ls'], 
                  color = plot_info[flag]['color'], 
                  label = plot_info[flag]['label'])
@@ -81,7 +82,7 @@ def plot_props(xlab, props, magbins, delta, flags_to_use,plot_info):
         ax2.yaxis.tick_left()
         ax2.yaxis.set_label_position("left")
 
-        ax2.set_ylim(0,1.0)
+        #ax2.set_ylim(0,1.0)
 
     ax1.bar(magbins[:-1], props['total'], width = delta, color = plot_info['total']['color'], log = False, zorder = -100) 
 
@@ -172,24 +173,6 @@ props = get_flag_props(flags_to_use, autoflag, rad, radbins)
 ax1, ax2 = plot_props('R$_{hl, kpc}$', props, radbins, delta, flags_to_use,plot_info)
 print "ABSrad" 
 
-if 0:
-    pl.subplot(3,2,7)
-
-    delta = 0.5
-    magbins = np.arange(-25.0, -17.0, delta)
-    #galcount, autoflag, mag = get_vals("c.petromag_r-d.dismod-d.kcorr_r-c.extinction_r")
-    galcount, autoflag, mag = get_vals("f.m_tot-d.dismod-d.kcorr_r-c.extinction_r")
-    props = get_flag_props(flags_to_use, autoflag, mag, magbins)
-    plot_inflag_prop('M$_r$', props, magbins, delta, flags_to_use,plot_info)
-
-    pl.subplot(3,2,6)
-
-    delta = 2.5
-    radbins = np.arange(0.0, 20.01, delta)
-    #galcount, autoflag, rad = get_vals("c.petror50_r*d.kpc_per_arcsec")
-    galcount, autoflag, rad = get_vals("f.Hrad_corr*d.kpc_per_arcsec")
-    props = get_flag_props(flags_to_use, autoflag, rad, radbins)
-    plot_inflag_prop('R$_{hl, kpc}$', props, radbins, delta, flags_to_use,plot_info)
 
 #print "z" 
 #pl.subplot(3,2,6)
@@ -205,7 +188,7 @@ l = ax2.legend(loc='center', bbox_to_anchor=(0.5, -1.05), fontsize='10')
 
 
 #pl.show()
-pl.savefig('./dist_obs.eps')
+pl.savefig('./dist_obs_class_per.eps')
 #pl.savefig('./dist_obs_petro.eps')
 #pl.savefig('./dist_obs_small_petro.eps')
 

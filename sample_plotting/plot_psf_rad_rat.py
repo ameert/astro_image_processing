@@ -78,62 +78,46 @@ cursor = mysql_connect(dba, usr, pwd)
 
 fig_size = get_fig_size()
 fig = start_fig(fig_size)            
-plot_set = pub_plots(xmaj = 15, xmin = 5, xstr = '%d', 
+plot_set = pub_plots(xmaj = 1, xmin = 0.2, xstr = '%d', 
                      ymaj = 0.05, ymin = 0.01, ystr =  '% 03.2f')
 
-plotrange = (0,75)
+plotrange = (0,10)
 binnum = 40
 lsl = [1,1,1]
 
 def make_plot(data, color, binnum, plotrange, cls):
-    galcount, Ie, Id, magzp, hrad, sky, gain, dark_var  = data
+    hrad, psf  = data
 
-    galcount = np.array(galcount)
-    Ie = np.array(Ie)
-    Id = np.array(Id)
-    magzp = np.array(magzp)
     hrad = np.array(hrad) 
-    galsky = np.array(sky, dtype = float )
-    gain = np.array(gain)
-    dark_var = np.array(dark_var)
+    psf = np.array(psf)
+    weight = np.ones_like(hrad)/len(hrad)
 
-    tot_mag = mag_sum(Ie, np.abs(Id))[0]
-    counts =  mag_to_counts( tot_mag, -1.0*magzp, kk = 0 , airmass = 0)
+    pl.hist(2.0*hrad/psf, range = plotrange,bins = binnum, weights = weight, 
+            histtype = 'step', color = color, lw = cls)
 
-    #galsky = nanomaggies_to_mags(galsky)
-    galsky = mag_to_counts(galsky, -1.0*magzp, kk = 0 , airmass = 0)
-    galsky *=0.396*0.396 #convert to counts per pixel
+    return 2.0*hrad/psf
 
-    sn = measure_sn(hrad, counts, galsky, gain, dark_var)
-
-    weight = np.ones_like(sn)/len(sn)
-
-    pl.hist(sn, range = plotrange,bins = binnum, weights = weight, histtype = 'step', color = color, lw = cls)
-
-    return sn
-
-cmd = "select b.galcount, b.petromag_g, 999, -b.aa_g-b.kk_g*b.airmass_g, b.petroR50_g/0.396, b.sky_g, b.gain_g, b.darkvariance_g from  catalog.CAST as b;"      
+cmd = "select b.petroR50_g, b.PSFWidth_g from  catalog.CAST as b;"      
 data = cursor.get_data(cmd)
 make_plot(data, 'g', binnum, plotrange, 2)
 #print stats.ks_2samp(sn_real, sn_tmp)
 
-cmd = "select b.galcount, b.petromag_r, 999, -b.aa_r-b.kk_r*b.airmass_r, b.petroR50_r/0.396, b.sky_r, b.gain_r, b.darkvariance_r from  catalog.CAST as b;"      
+cmd = "select b.petroR50_r, b.PSFWidth_r from  catalog.CAST as b;"      
 data = cursor.get_data(cmd)
 make_plot(data, 'r', binnum, plotrange, 2)
 
-
-cmd = "select b.galcount, b.petromag_i, 999, -b.aa_i-b.kk_i*b.airmass_i, b.petroR50_i/0.396, b.sky_i, b.gain_i, b.darkvariance_i from  catalog.CAST as b;"      
+cmd = "select b.petroR50_i, b.PSFWidth_i from  catalog.CAST as b;"      
 data = cursor.get_data(cmd)
 make_plot(data, 'k', binnum, plotrange, 2)
 
-pl.xlim((0,55))
-pl.ylim((0,.16))
-pl.xlabel('S/N')
-pl.ylabel('n(S/N)')
+pl.xlim((0,9.5))
+pl.ylim((0,.11))
+pl.xlabel('r/HWHM')
+pl.ylabel('n(r/HWHM)')
     
 ax = pl.gca()
 plot_set.set_plot(ax)
-pl.savefig("data_cmp_sn_all.eps" , format = 'eps')
+pl.savefig("data_cmp_psf_all.eps" , format = 'eps')
 
 
 #vals_real, bins_real, patches =  pl.hist(sn_real, range = plotrange,bins = binnum, normed = True, cumulative = True)

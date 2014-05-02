@@ -1,5 +1,4 @@
 
-
 # standard python code imports
 import numpy as np
 import pylab as pl
@@ -33,27 +32,29 @@ print data[options['xchoice']+'_1'],data[options['ychoice']+'_1'],data[options['
 
 # we want radial differences in percents
 # this sets up the calculation so that the plotting below works
-for name in ['hrad', 'rbulge', 'rdisk']:
+for name in ['hrad', 'rbulge', 'rdisk', 'petrorad']:
     data[name+'_2'] =  (data[name+'_2']/data[name+'_1'])-1.0 +data[name+'_1']
+#    data[name+'_2'] =  -(data[name+'_1']/data[name+'_2']) +data[name+'_1']
 
-if options['model2'] == 'dev':
-    if options['table2'] in ['sdss', 'lackner']:
-        data['mtot_2'] = data['mtot_2']-0.071648 #corrects for mag offset due to truncation
-        data['mtot_abs_2'] = data['mtot_abs_2']-0.071648
-if options['model2'] == 'exp':
-    if options['table2'] in ['sdss', 'lackner']:
-        data['mtot_2'] = data['mtot_2']-0.0103 #corrects for mag offset due to truncation
-        data['mtot_abs_2'] = data['mtot_abs_2']-0.0103
+for posnum in ['1','2']:
+    if options['model%s' %posnum] == 'dev':
+        if options['table%s' %posnum] in ['sdss', 'lackner']:
+            data['mtot_%s' %posnum] = data['mtot_%s' %posnum]-0.071648 #corrects for mag offset due to truncation
+            data['mtot_abs_%s' %posnum] = data['mtot_abs_%s' %posnum]-0.071648
+    if options['model%s' %posnum] == 'exp':
+        if options['table%s' %posnum] in ['sdss', 'lackner']:
+            data['mtot_%s' %posnum] = data['mtot_%s' %posnum]-0.0103 #corrects for mag offset due to truncation
+            data['mtot_abs_%s' %posnum] = data['mtot_abs_%s' %posnum]-0.0103
 
 
-if options['model2'] == 'devexp':
-    if options['table2'] in ['lackner']:
-        data['mbulge_2'] = data['mbulge_2']-0.071648 #corrects for mag offset due to truncation
-        data['mdisk_2'] = data['mdisk_2']-0.0103 #corrects for mag offset due to truncation
-        
-        data['mtot_2'] = -2.5*np.log10(10**(-0.4*data['mdisk_2'])+10**(-0.4*data['mbulge_2']))
-        data['mtot_abs_2'] = data['mtot_2'] - data['magcorr']
-        data['surf_bright_2'] = -2.5*np.log10(10**(-0.4*data['mtot_2'])/(2.0*np.pi*data['hrad_2']**2))
+    if options['model%s' %posnum] == 'devexp':
+        if options['table%s' %posnum] in ['lackner']:
+            data['mbulge_%s' %posnum] = data['mbulge_%s' %posnum]-0.071648 #corrects for mag offset due to truncation
+            data['mdisk_%s' %posnum] = data['mdisk_%s' %posnum]-0.0103 #corrects for mag offset due to truncation
+
+            data['mtot_%s' %posnum] = -2.5*np.log10(10**(-0.4*data['mdisk_%s' %posnum])+10**(-0.4*data['mbulge_%s' %posnum]))
+            data['mtot_abs_%s' %posnum] = data['mtot_%s' %posnum] - data['magcorr']
+            data['surf_bright_%s' %posnum] = -2.5*np.log10(10**(-0.4*data['mtot_%s' %posnum])/(2.0*np.pi*data['hrad_%s' %posnum]**2))
     
 
 data['sky_1'] =100.0*( 10.0**(-0.4*(data['sky_1']-data['sky_2']))-1) # quote sky in percent difference
@@ -96,8 +97,17 @@ if options['model1'] == 'ser':
     if options['ychoice'] == 'nbulge':
         ylabs[options['ychoice']]=ylabs[options['ychoice']].replace('bulge', 'ser')
 
-pl.xlabel(xlabs[options['xchoice']].replace('{band}', options['band']))
-pl.ylabel(ylabs[options['ychoice']].replace('{band}', options['band']))
+if options['xlab']!= None:
+    xlabs[options['xchoice']]=options['xlab']
+if options['ylab']!= None:
+    ylabs[options['ychoice']]=options['ylab']
+if options['bins']!= None:
+    bins[options['key_x']]=options['bins']
+
+print bins[options['key_x']]
+
+pl.xlabel(xlabs[options['xchoice']].replace('{band}', options['band']), fontsize=10)
+pl.ylabel(ylabs[options['ychoice']].replace('{band}', options['band']), fontsize=10)
 oplot.bin_it(bins[options['key_x']], bin_lims[options['key_x']][options['key_y']][0],
             bin_lims[options['key_x']][options['key_y']][1])
 oplot.add_bars('r')

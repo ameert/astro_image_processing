@@ -39,8 +39,8 @@ usr = 'pymorph'
 
 cursor = mysql_connect(dba, usr, pwd)
 
-bands = 'r'
-models = ['ser']#, 'devexp','serexp'] 
+bands = 'g'
+models = ['dev','ser', 'devexp','serexp'] 
 #models = ['ser'] 
 #models = ['exp','dev', 'ser', 'devexp', 'serexp', 'cmodel']
 
@@ -277,8 +277,8 @@ def load_model_calc(bands, models, old_tablestem='raw_catalog_fits.full_dr7', ne
     return
 
 #build_tables(bands, models)#, new_tablestem='rerun')
-#load_fit_uncalc(bands, models[:],old_tablestem='deep_rerun', new_tablestem='deep')
-#separate_CASGM(bands, ['dev'], old_tablestem='deep_rerun', new_tablestem='deep')
-#load_fit_calc(bands, models[:],old_tablestem='deep_rerun', new_tablestem='deep')
-load_model_uncalc(bands, models,old_tablestem='deep_sample', new_tablestem='sampledeep')
-load_model_calc(bands, models,old_tablestem='deep_sample', new_tablestem='sampledeep')
+load_fit_uncalc(bands, models[:],old_tablestem='test.dr7_neighbor',new_tablestem='band')
+separate_CASGM(bands, ['dev'],old_tablestem='test.dr7_neighbor',new_tablestem='band')
+load_fit_calc(bands, models[:],old_tablestem='test.dr7_neighbor',new_tablestem='band')
+load_model_uncalc(bands, models,old_tablestem='test.dr7_neighbor',new_tablestem='band')
+load_model_calc(bands, models,old_tablestem='test.dr7_neighbor',new_tablestem='band')

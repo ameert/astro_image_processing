@@ -67,7 +67,8 @@ def plot_props(xlab, props, magbins, delta, flags_to_use,plot_info):
     xloc = plt.MaxNLocator(max_xticks)
 
     for flag in flags_to_use:
-        ax2.plot(magbinctr, props[flag], marker = plot_info[flag]['marker'],
+        ax2.plot(magbinctr, np.array(props[flag])*np.array(props['total'])/np.sum(np.array(props['total'])), 
+                 marker = plot_info[flag]['marker'],
                  ms = plot_info[flag]['ms'], ls = plot_info[flag]['ls'], 
                  color = plot_info[flag]['color'], 
                  label = plot_info[flag]['label'])
@@ -81,7 +82,7 @@ def plot_props(xlab, props, magbins, delta, flags_to_use,plot_info):
         ax2.yaxis.tick_left()
         ax2.yaxis.set_label_position("left")
 
-        ax2.set_ylim(0,1.0)
+        #ax2.set_ylim(0,1.0)
 
     ax1.bar(magbins[:-1], props['total'], width = delta, color = plot_info['total']['color'], log = False, zorder = -100) 
 
@@ -205,7 +206,7 @@ l = ax2.legend(loc='center', bbox_to_anchor=(0.5, -1.05), fontsize='10')
 
 
 #pl.show()
-pl.savefig('./dist_obs.eps')
+pl.savefig('./dist_obs_total_per.eps')
 #pl.savefig('./dist_obs_petro.eps')
 #pl.savefig('./dist_obs_small_petro.eps')
 

@@ -49,7 +49,7 @@ def start_fig(sizech = (13,13)):
 def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
                 plot_stem = '', colors = ['k']):
     
-    lsl = [2,1,1,1,2]
+    lsl = [2,2,2,2,2]
     if len(plot_stem)> 0 and plot_stem[-1]!='_':
         plot_stem += "_"
 
@@ -66,11 +66,12 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     #fig_size = (10,10)
     fig = start_fig(fig_size)            
     plot_set = pub_plots(xmaj = 0.1, xmin = 0.025, xstr = '%02.1f', 
-                         ymaj = 2, ymin = 1, ystr =  '% 02.1f')
+                         ymaj = 0.01, ymin = 0.001, ystr =  '%03.2f')
 
-    for curr_z, curr_weight, curr_color, cls, label  in zip(z, weights, colors, lsl, ['all','z1']): 
+    for curr_z, curr_weight, curr_color, cls, label  in zip(z, weights, colors, lsl, ['all']): 
+        curr_color = 'k'
         n,bins,patches = pl.hist(curr_z, bins= 15*4, weights = curr_weight, range=(0,0.3), histtype = 'step', 
-                color = curr_color, lw = cls, normed = True)
+                color = curr_color, lw = cls)
 
         fout = open('/home/ameert/Desktop/%s_z.txt' %label, 'w')
         fout.write('#bins, pdf\n')
@@ -81,7 +82,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     pl.xlabel('z')
     pl.ylabel('n(z)')
     pl.xlim((0, 0.325))
-    pl.ylim((0,9.5))
+    pl.ylim((0,0.05))
     ax = pl.gca()
     plot_set.set_plot(ax)
     pl.savefig(plot_stem + 'z_dist.eps')#, bbox_inches = 'tight')
@@ -90,12 +91,12 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     # now do absmag distribution... 
 
     fig = start_fig(fig_size)            
-    plot_set = pub_plots(xmaj = 0.1, xmin = 0.025, xstr = '%02.1f', 
+    plot_set = pub_plots(xmaj = 2, xmin = 0.5, xstr = '%d', 
                          ymaj = 2, ymin = 1, ystr =  '% 02.1f')
 
-    for curr_absmag, curr_color, cls, label in zip(absMag,  colors,lsl, ['all','z1']): 
+    for curr_absmag, curr_color, cls, label in zip(absMag,  colors,lsl, ['g-band','r-band', 'i-band']): 
     
-        n, bins, patches = pl.hist(curr_absmag, bins = 18*4, range=(-25,-16), log = True, color = curr_color, linestyle = 'solid', histtype = 'step', lw = cls, normed = True)
+        n, bins, patches = pl.hist(curr_absmag, bins = 18*4, range=(-30,-10), color = curr_color, linestyle = 'solid', histtype = 'step', lw = cls, weights = np.ones_like(curr_absmag)/curr_absmag.size )
     
         fout = open('/home/ameert/Desktop/%s_absmag.txt' %label, 'w')
         fout.write('#bins, pdf\n')
@@ -103,15 +104,13 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
         for a,b in zip(binctr, n):
             fout.write('%f %f\n' %(a,b))
         
-    plot_set = pub_plots(xmaj = 2, xmin = 1, xstr = '%d', 
-                         ymaj = 10, ymin = 5, ystr =  '% 02.1f')
-
-    pl.xlim((-16,-25))
-    #pl.ylim((10**-7.0,.1))
-    pl.xlabel('M$_{r}$')
+    pl.xlim((-13.5,-25.5))
+    #pl.ylim((-6.0,0.0))
+    pl.xlabel('M$_{petro}$')
     pl.ylabel('log(n)')
     
     ax = pl.gca()
+    ax.set_yscale('log')
     plot_set.set_plot(ax)
     pl.yticks((1,1/10.,1/100.,1/1000.,1/10000.,1/100000.,1/1000000.,1/10000000.),(' 0.0', '','-2.0','','-4.0','','-6.0',''))#ax.set_yscale('log')
     pl.savefig(plot_stem+'absmag.eps')#, bbox_inches = 'tight')
@@ -120,13 +119,13 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     # now do luminosity distribution... 
 
     fig = start_fig(fig_size)            
-    plot_set = pub_plots(xmaj = 0.1, xmin = 0.025, xstr = '%02.1f', 
+    plot_set = pub_plots(xmaj = 2, xmin = 0.5, xstr = '%d', 
                          ymaj = 2, ymin = 1, ystr = '% 02.1f')
 
-    for curr_absmag,curr_V, curr_weight, curr_color, cls, label in zip(absMag, V_max, weights, colors,lsl, ['all','z1']): 
+    for curr_absmag,curr_V, curr_weight, curr_color, cls, label in zip(absMag, V_max, weights, colors,lsl, ['g-band','r-band', 'i-band']): 
     
         V_weight = 1.0/curr_V
-        n, bins, patches = pl.hist(curr_absmag, bins = 18, weights = V_weight/np.sum(V_weight), range=(-25,-16), log = True, color = curr_color, linestyle = 'solid', histtype = 'step', lw = cls, normed = True)
+        n, bins, patches = pl.hist(curr_absmag, bins = 24, weights = V_weight/np.sum(V_weight), range=(-25,-13), color = curr_color, linestyle = 'solid', histtype = 'step', lw = cls)
 
         fout = open('/home/ameert/Desktop/%s_lumfunc.txt' %label, 'w')
         fout.write('#bins, pdf\n')
@@ -134,17 +133,15 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
         for a,b in zip(binctr, n):
             fout.write('%f %f\n' %(a,b))
 
-    plot_set = pub_plots(xmaj = 2, xmin = 1, xstr = '%d', 
-                         ymaj = 10, ymin = 5, ystr =  '% 02.1f')
-
-    pl.xlim((-16,-25))
+    pl.xlim((-13.5,-25.5))
     #pl.ylim((10**-7.0,.1))
-    pl.xlabel('M$_{r}$')
+    pl.xlabel('M$_{petro}$')
     pl.ylabel('log(n)')
     
     ax = pl.gca()
+    ax.set_yscale('log')
     plot_set.set_plot(ax)
-    pl.yticks((1,1/10.,1/100.,1/1000.,1/10000.,1/100000.,1/1000000.,1/10000000.),(' 0.0', '','-2.0','','-4.0','','-6.0',''))#ax.set_yscale('log')
+    pl.yticks((1,1/10.,1/100.,1/1000.,1/10000.,1/100000.,1/1000000.,1/10000000.),(' 0.0', '','-2.0','','-4.0','','-6.0',''))
     pl.savefig(plot_stem+'lum_func.eps')#, bbox_inches = 'tight')
     pl.close(fig)
 
@@ -154,9 +151,9 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     plot_set = pub_plots(xmaj = 1, xmin = 0.5, xstr = '%d', 
                          ymaj = 0.2, ymin = 0.1, ystr =  '% 02.1f')
     
-    for curr_appmag, curr_weight, curr_color, cls, label in zip(appMag, weights, colors, lsl, ['all', 'z1']): 
-        n, bins, patches = pl.hist(curr_appmag, weights = curr_weight, bins = 10*4, 
-                                   range=(13,18), histtype = 'step', color = curr_color, lw = cls, normed = True)
+    for curr_appmag, curr_weight, curr_color, cls, label in zip(appMag, weights, colors, lsl, ['g-band','r-band', 'i-band']): 
+        n, bins, patches = pl.hist(curr_appmag, weights = curr_weight, bins = 10*8, 
+                                   range=(13,22), histtype = 'step', color = curr_color, lw = cls)
 
         fout = open('/home/ameert/Desktop/%s_appmag.txt' %label, 'w')
         fout.write('#bins, pdf\n')
@@ -164,10 +161,10 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
         for a,b in zip(binctr, n):
             fout.write('%f %f\n' %(a,b))
 
-    pl.xlim((13.5,18.5))
-    pl.ylim((0,1.19))
-    pl.xlabel('m$_{r}$')
-    pl.ylabel('n(m$_{r}$)')
+    pl.xlim((14.0,19.5))
+    pl.ylim((0,0.201))
+    pl.xlabel('m$_{petro}$')
+    pl.ylabel('n(m$_{petro}$)')
     
     ax = pl.gca()
     plot_set.set_plot(ax)
@@ -183,12 +180,12 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
 
     for curr_rhl, curr_weight, curr_color, cls in zip(rhl_arcsec, weights, colors, lsl): 
         n, bins, patches = pl.hist(curr_rhl, weights = curr_weight,bins = 20, 
-                                   range=(0,10), histtype = 'step', color = curr_color, lw = cls, normed = True)
+                                   range=(0,10), histtype = 'step', color = curr_color, lw = cls)
 
     pl.xlim((0,8.5))
-    pl.ylim((0,.55))
-    pl.xlabel('r$_{r, hl}$ [arcsec]')
-    pl.ylabel('n(r$_{r, hl}$)')
+    pl.ylim((0,.301))
+    pl.xlabel('r$_{hl}$ [arcsec]')
+    pl.ylabel('n(r$_{hl}$)')
     
     ax = pl.gca()
     plot_set.set_plot(ax)
@@ -203,12 +200,12 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     
     for curr_sb, curr_weight, curr_color, cls in zip(surf_bright, weights, colors,lsl): 
         n, bins, patches = pl.hist(curr_sb, weights = curr_weight,bins = 12, 
-                                   range=(18,24), histtype = 'step', color = curr_color, lw = cls, normed = True)
+                                   range=(18,24), histtype = 'step', color = curr_color, lw = cls)
 
     pl.xlim((18,24.5))
-    pl.ylim((0,0.601))
-    pl.xlabel('$\mu_{r, hl}$')
-    pl.ylabel('n($\mu_{r, hl}$)')
+    pl.ylim((0,0.301))
+    pl.xlabel('$\mu_{hl}$')
+    pl.ylabel('n($\mu_{hl}$)')
     
     ax = pl.gca()
     plot_set.set_plot(ax)

@@ -51,6 +51,13 @@ def get_options():
     parser.add_option("--yl", action="store", type="string", 
                       dest="ylims", default=None,
                       help="ylimit override")
+
+    parser.add_option("--xlabel", action="store", type="string", 
+                      dest="xlab", default=None,
+                      help="xlabel override")
+    parser.add_option("--ylabel", action="store", type="string", 
+                      dest="ylab", default=None,
+                      help="ylabel override")
     # parses command line aguments for pymorph
     (options, args) = parser.parse_args()
 
@@ -153,8 +160,16 @@ def get_options_main():
     parser.add_option("--ytl", action="store", type="string", 
                       dest="ytlab", default=None,
                       help="yticklabel override")
-    
+    parser.add_option("--xlabel", action="store", type="string", 
+                      dest="xlab", default=None,
+                      help="xlabel override")
+    parser.add_option("--ylabel", action="store", type="string", 
+                      dest="ylab", default=None,
+                      help="ylabel override")
 
+    parser.add_option("--bins", action="store", type="string", 
+                      dest="bins", default=None,
+                      help="bins override")
 
 
     # parses command line aguments for pymorph
@@ -163,6 +178,12 @@ def get_options_main():
     options.key_x = get_key(options.xchoice)
     options.key_y = get_key(options.ychoice)
 
+    try:
+        options.bins = np.arange(float(options.bins.split(',')[0]),
+                        float(options.bins.split(',')[1]),
+                        float(options.bins.split(',')[2]))
+    except:
+        options.bins = None
 
     try:
         options.xlims = (float(options.xlims.split(',')[0]),
@@ -179,11 +200,11 @@ def get_options_main():
 
 def get_key(choice):
     """converts the axis choice to the common dictionary keys used to define axis labels, plot ranges, bin sizes, etc."""
-    if choice in ['mtot', 'mtot_app', 'mbulge', 'mdisk']:
+    if choice in ['mtot', 'mtot_app', 'mbulge', 'mdisk','petromag']:
         key_choice = 'mag'
-    elif choice in ['mtot_abs']:
+    elif choice in ['mtot_abs', 'petromag_abs']:
         key_choice = 'absmag'
-    elif choice in ['hrad','hrad_psf','rbulge','rdisk']:
+    elif choice in ['hrad','hrad_psf','rbulge','rdisk', 'petrorad']:
         key_choice = 'rad'
     elif choice in ['n', 'nbulge']:
         key_choice = 'n'

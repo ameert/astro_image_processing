@@ -16,30 +16,28 @@ pwd = 'pymorph'
 
 cursor = mysql_connect(dba, usr, pwd)
 
-cmd = """select d.galcount,c.flag, If(d.model='dvc',1,0)+If(d.model='exp',2,0)+If(d.model='ser',3,0)+If(d.model='nb1',4,0)+If(d.model='nb4',5,0), f.n_bulge from catalog.Flags_optimize as c, catalog.r_lackner_fit as d, catalog.r_lackner_ser as f where d.galcount = f.galcount and c.galcount = d.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by d.galcount;""".format(model = model, band = 'r')
+cmd = """select d.galcount, If(l12.model='dvc',1,0)+If(l12.model='exp',2,0)+If(l12.model='ser',3,0)+If(l12.model='nb1',4,0)+If(l12.model='nb4',5,0), f.n_bulge, d.Prob_pS,  d.Prob_n4, z.n_bulge from catalog.Flags_optimize as c, catalog.r_simard_fit as d, catalog.r_simard_ser as z, catalog.r_lackner_fit as l12, catalog.r_lackner_ser as f where d.galcount = f.galcount and l12.galcount = c.galcount and c.galcount = d.galcount and c.galcount = z.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by d.galcount;""".format(model = model, band = 'r')
 
 data = cursor.get_data(cmd)
 
 data = np.array([np.array(d) for d in data]).T
 
-
-galcount = data[:,0].astype(int)
-meert_flag = data[:,1].astype(int)
-lmodel= data[:,2]
-lack_ser= data[:,3]
+lmodel = data[:,1].astype(int)
+lser = data[:,2]
+pS= data[:,3]
+pn4= data[:,4]
+sim_ser= data[:,5]
 
 names=[ 'bulge', 'disk', '2com'] 
 name_flags = [1, 2, 32]
 group_labels = names
 fits_labels = names
 
-meert_class = meert_flag_to_class(meert_flag)
-lack_class = lg12_to_class(lmodel, lack_ser)
-
-cov_mat =  cov(meert_class, lack_class, name_flags, name_flags)
+lack_class = lg12_to_class(lmodel, lser)
+simard_class = sim_prob_to_class(pS, pn4, sim_ser)
+cov_mat =  cov(lack_class, simard_class, name_flags, name_flags)
 
 np.set_printoptions(precision=3, suppress = True, linewidth = 150)
-#print cov_mat
 
 fig = pl.figure(figsize =(3,3))
 ax = fig.add_subplot(111)
@@ -56,9 +54,6 @@ pl.xticks(np.arange(len(group_labels)), group_labels, fontsize = 8)
 pl.yticks(np.arange(len(group_labels)), group_labels, fontsize = 8)
 
 pl.xticks(rotation=90)
-pl.xlabel('LG12')
-pl.ylabel('This work')
-
-pl.xticks(rotation=90)
-pl.savefig('./%s_type_lackner_mcc.eps' %(model))
-
+pl.xlabel('S11')
+pl.ylabel('LG12')
+pl.savefig('./lackner_type_simard_mcc.eps')
