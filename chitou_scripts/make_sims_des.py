@@ -69,7 +69,7 @@ for g1, run1, camcol1, field1, n1, re1, re_kpc1, Ie1, eb1, rd1, Id1, ed1, BT1, z
         if 1:
         #try:
             
-            gal = galaxy('/home/ameert/hst_sims/',name,Ie_count,Id_count, rd1, inc, dpa1, re1, eb1, bpa1, n1, bulge_mag = Ie1, disk_mag = Id1, zp = zeropoint_sdss_r1, half_light_arcsec = half_rad1, psf_name= psf_image, pix_sz = pixscale)
+            gal = galaxy('/home/ameert/des_sims/',name,Ie_count,Id_count, rd1, inc, dpa1, re1, eb1, bpa1, n1, bulge_mag = Ie1, disk_mag = Id1, zp = zeropoint_sdss_r1, half_light_arcsec = half_rad1, psf_name= psf_image, pix_sz = pixscale)
             gal.make_profile()
 
             #gal.add_noise()
