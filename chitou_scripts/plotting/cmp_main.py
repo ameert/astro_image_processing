@@ -81,8 +81,10 @@ if options['ytlab']!=None:
 
 oplot.set_ticks(ticksx[options['key_x']][0], ticksx[options['key_x']][1], ticksx[options['key_x']][2], 
                 ticksy[options['key_y']][0], ticksy[options['key_y']][1], ticksy[options['key_y']][2])
-oplot.setdenselims(1,options['upper_dense'] )
-oplot.setminval(0.01*options['upper_dense'])
+#oplot.setdenselims(1,options['upper_dense'] )
+#oplot.setminval(0.01*options['upper_dense'])
+oplot.setdenselims(0.000025*len(data['galcount']),0.0025*len(data['galcount']))
+oplot.setminval(0.00001*len(data['galcount']))
 #oplot.makeplot(data[options['xchoice']+'_1'],data[options['ychoice']+'_1']-data[options['ychoice']+'_2'], xlims[options['xchoice']],
 
 if options['xlims']!= None:

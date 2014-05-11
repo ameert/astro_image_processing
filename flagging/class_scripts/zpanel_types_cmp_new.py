@@ -4,10 +4,17 @@ import pylab as pl
 import matplotlib.ticker as mticker
 import scikits.bootstrap as bootstrap  
 
-def print_flags(flag_vals):
-    flag_num = np.sum(flag_vals)/float(len(flag_vals))
+def print_flags(autoflag, test_flag, print_gals = False):
+    #if test_flag == 10:
+    #    flag_vals = np.where(autoflag&2**test_flag>0, 1,0)*np.where(autoflag&2**14==0, 1,0)
+    #else:
+    flag_vals = np.where(autoflag==test_flag, 1,0)
+    flag_num = np.sum(flag_vals)
     if np.isnan(flag_num):
         flag_num = 0.0
+    #print "%d: %.4f" %(test_flag, flag_num)
+    #if print_gals:
+    #    print np.extract(flag_vals==1, galcount)
     return flag_num
 
 class MyLocator(mticker.MaxNLocator):
@@ -22,28 +29,21 @@ def get_ci(data, ci):
                            n_samples = 10)
     return ci_vals
         
-
 def get_flag_props(flags_to_use, autoflag, binval, bins):
-    props = dict([(f, []) for f in flags_to_use] + [(str(f)+'_err', []) for f in flags_to_use])
+    props = dict([(f, []) for f in flags_to_use])
     props['total'] = []
 
     binpos = np.digitize(binval, bins)
     
     for scanval in range(1, bins.size):
-        print scanval
         new_arr = np.extract(binpos == scanval, autoflag)
+        print new_arr
+        print new_arr.shape
         for flag in flags_to_use:
-            print "flag ", flag
-            flag_vals = np.where(np.abs(new_arr-flag)<0.1, 1,0)
-            props[flag].append(print_flags(flag_vals))
-            print "percent ", props[flag][-1]
-            if props[flag][-1]>0.01:
-                props[str(flag)+'_err'].append((get_ci(flag_vals, 0.05)- props[flag][-1])*np.array([-1,1]))
-            else:
-                props[str(flag)+'_err'].append((np.nan,np.nan))
-            print "CI ", props[str(flag)+'_err'][-1]
+            props[flag].append(float(print_flags(new_arr, flag)))
         props['total'].append(new_arr.size)
     return props
+
 
 
 def get_vals(binval,tname='m2010'):
@@ -68,54 +68,53 @@ def get_vals(binval,tname='m2010'):
 
     return galcount, autoflag, flag2
 
-def plot_props(xlab, props, magbins, flags_to_use,plot_info):
-    print "plotting"
-    print "mask"
-    print props['datamask']
-    print 'data'
+def plot_props(xlab, props, magbins, delta, flags_to_use,plot_info):
     magbinctr = (magbins[1:]+magbins[0:-1])/2
 
-    ax2 = pl.gca()
+    ax1 = pl.gca()
     pl.xlabel(xlab)
 
-#    ax2 = pl.twinx()
+    ax2 = pl.twinx()
+
+    max_yticksl = 6
+    max_yticksr = 5
+    max_xticks = 5
+    ylocl = pl.MaxNLocator(max_yticksl,prune='lower')
+    ylocr = pl.MaxNLocator(max_yticksr,prune='lower')
+    xloc = pl.MaxNLocator(max_xticks, prune='lower')
 
     for flag in flags_to_use:
-        print magbinctr
-        print props[flag]
-        print props[str(flag)+'_err']
-        print magbinctr[props['datamask']]
-        print np.array(props[flag])[props['datamask']]
-        print np.array(props[str(flag)+'_err'])[props['datamask'],:].T
-#        ax2.plot(magbinctr, props[flag], marker = 'o', ms = plot_info[flag]['ms'], ls = '-', color = plot_info[flag]['color'], label = plot_info[flag]['label'])
-        ax2.errorbar(magbinctr[props['datamask']],  np.array(props[flag])[props['datamask']], yerr=np.array(props[str(flag)+'_err'])[props['datamask'],:].T,
-                 fmt='-', ecolor=plot_info[flag]['color'], elinewidth=1, 
-                 capsize=3, marker = 'o', ms = plot_info[flag]['ms'], 
-                 label = plot_info[flag]['label'], color =plot_info[flag]['color'] )
+        ax2.plot(magbinctr, np.array(props[flag])/np.array(props['total']), 
+                 marker = plot_info[flag]['marker'],
+                 ms = plot_info[flag]['ms'], ls = plot_info[flag]['ls'], 
+                 color = plot_info[flag]['color'], 
+                 label = plot_info[flag]['label'])
 
         ax2.set_ylabel('fraction of galaxies', fontsize=8)
-        #ax2.set_ylabel('Total galaxies', fontsize=8)
+        ax1.set_ylabel('Total galaxies', fontsize=8)
 
-        #ax1.yaxis.tick_right()
-        #ax1.yaxis.set_label_position("right")
-        #ax2.yaxis.tick_left()
-        #ax2.yaxis.set_label_position("left")
+        ax1.yaxis.tick_right()
+        ax1.yaxis.set_label_position("right")
+        ax2.yaxis.tick_left()
+        ax2.yaxis.set_label_position("left")
 
         ax2.set_ylim(0,1.0)
 
-    #ax1.bar(magbins[:-1], props['total'],width = 0.5,  color = plot_info['total']['color'], log = False, zorder = -100) 
+    ax1.bar(magbins[:-1], props['total'], width = delta, color = plot_info['total']['color'], log = False, zorder = -100) 
 
+    ax1.xaxis.set_major_locator(xloc)
+    ax2.xaxis.set_major_locator(xloc)
+    ax1.yaxis.set_major_locator(ylocr)
+    ax2.yaxis.set_major_locator(ylocl)
     
     #for tick in ax1.yaxis.get_major_ticks():
     #    tick.set_label('%2.1e' %float(tick.get_label())) 
-    
+            
         #ticklabs = ax1.get_yticklabels()
         #print ticklabs
         #print ['%2.1e' %float(x.get_text()) for x in ticklabs]
         #ax1.set_yticklabels( ['%2.1e' %float(x) for x in ticklabs] )
-    #l = ax2.legend(loc=3, bbox_to_anchor=(0.75, 0.9), prop={'size':6})
-
-    return ax2
+    return ax1, ax2
 
 cursor = mysql_connect('catalog','pymorph','pymorph','')
 
@@ -123,29 +122,35 @@ band = 'r'
 model = 'serexp'
 
 
-plot_info = {1:{'color':'r', 'label':'bulges', 'ms':3},
-             2:{'color':'b', 'label':'disks', 'ms':3},
-             3:{'color':'g', 'label':'2com', 'ms':3},
-             4:{'color':'y', 'label':'bad 2com', 'ms':3},
-             5:{'color':'k', 'label':'bad', 'ms':3},
-             6:{'color':'c', 'label':'2nh', 'ms':3},
-             7:{'color':'r', 'label':'dvc', 'ms':3},
-             8:{'color':'b', 'label':'exp', 'ms':3},
-             9:{'color':'g', 'label':'nb1', 'ms':3},
-             10:{'color':'y', 'label':'nb4', 'ms':3},
-             11:{'color':'c', 'label':'ser, n<2', 'ms':3},
-             12:{'color':'k', 'label':'ser, n>=2', 'ms':3},
-             13:{'color':'g', 'label':'devexp', 'ms':3},
-             14:{'color':'y', 'label':'serexp', 'ms':3},
+plot_info = {1:{'color':'r', 'label':'bulges', 'ms':3, 'marker':'o', 'ls':'-'},
+             2:{'color':'b', 'label':'disks', 'ms':3, 'marker':'s', 'ls':'-'},
+             3:{'color':'g', 'label':'2com', 'ms':3, 'marker':'d', 'ls':'-'},
+             4:{'color':'y', 'label':'bad 2com', 'ms':3, 'marker':'o', 'ls':'--'},
+             5:{'color':'k', 'label':'bad', 'ms':3, 'marker':'d', 'ls':'--'},
+             6:{'color':'c', 'label':'n8', 'ms':3, 'marker':'s', 'ls':'--'},
+             
+             7:{'color':'r', 'label':'dvc', 'ms':3, 'marker':'o', 'ls':'-'},
+             8:{'color':'b', 'label':'exp', 'ms':3, 'marker':'s', 'ls':'-'},
+             9:{'color':'g', 'label':'nb1', 'ms':3, 'marker':'d', 'ls':':'},
+             10:{'color':'y', 'label':'nb4', 'ms':3, 'marker':'d', 'ls':'-'},
+             11:{'color':'c', 'label':'ser, n<2', 'ms':3, 'marker':'s', 'ls':'-'},
+             12:{'color':'k', 'label':'ser, n>=2', 'ms':3, 'marker':'o', 'ls':'-'},
+             13:{'color':'g', 'label':'devexp', 'ms':3, 'marker':'d', 'ls':'--'},
+             14:{'color':'y', 'label':'serexp', 'ms':3, 'marker':'d', 'ls':'-'},
+             15:{'color':'r', 'label':'dev', 'ms':3, 'marker':'o', 'ls':'-'},
+             16:{'color':'b', 'label':'exp', 'ms':3, 'marker':'s', 'ls':'-'},
+             17:{'color':'g', 'label':'devexp', 'ms':3, 'marker':'d', 'ls':'-'},
+             18:{'color':'k', 'label':'unknown', 'ms':3, 'marker':'o', 'ls':'--'},
              'total': {'color':"#D0D0D0",'label':'total'}
              }
 
 names=[ plot_info[key]['label'] for key in plot_info.keys()] 
-fig = pl.figure(figsize=(8,3))
-pl.subplots_adjust(right = 0.95, top = 0.8, left =0.1, bottom=0.13,
-                   hspace = 0.38, wspace = 0.5)
+fig = pl.figure(figsize=(8,2.5))
+pl.subplots_adjust(right = 0.85, top = 0.8, left =0.1, bottom=0.30,
+                   hspace = 0.38, wspace = 1.1)
 
-typebins = np.arange(-6.5, 12.51, 1.0)
+delta = 1.0
+typebins = np.arange(-6.5, 12.51, delta)
 x_names= [str(int(a)) for a in typebins+0.5]
 x_names = [ x_names[a] if a%2 ==0 else "" for a in range(len(x_names))] 
 
@@ -156,11 +161,11 @@ flags_to_use = np.array([1,2,3,4,5,6])
 galcount, autoflag, stype = get_vals('meert')
 props = get_flag_props(flags_to_use, autoflag, stype,typebins)
 props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-ax2 =plot_props('T', props, typebins, flags_to_use,plot_info)
-pl.xticks(typebins+0.5, x_names, fontsize = 8)
-pl.title('Meert', fontsize=8)
+ax1,ax2 =plot_props('T', props, typebins, delta, flags_to_use,plot_info)
+#pl.xticks(typebins+0.5, x_names, fontsize = 8)
+pl.title('This Work', fontsize=8)
 pl.xticks(rotation=90)
-l = ax2.legend(loc=3, bbox_to_anchor=(0.05, 0.6), prop={'size':6})
+l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.09), prop={'size':6})
 pl.xlim(-6,7)
 
 print "simard" 
@@ -169,10 +174,10 @@ flags_to_use = np.array([11,12,13,14])
 galcount, autoflag, stype = get_vals('simard')
 props = get_flag_props(flags_to_use, autoflag, stype,typebins)
 props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-ax2=plot_props('T', props, typebins, flags_to_use,plot_info)
-pl.xticks(typebins+0.5, x_names, fontsize = 8)
+ax1,ax2 =plot_props('T', props, typebins, delta, flags_to_use,plot_info)
+#pl.xticks(typebins+0.5, x_names, fontsize = 8)
 pl.title('S11', fontsize=8)
-l = ax2.legend(loc=3, bbox_to_anchor=(0.05, 0.7), prop={'size':6})
+l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.09), prop={'size':6})
 #pl.xticks(rotation=90)
 pl.xlim(-6,7)
 
@@ -182,10 +187,10 @@ flags_to_use = np.array([7,8,9,10,11,12])
 galcount, autoflag, stype = get_vals('lackner')
 props = get_flag_props(flags_to_use, autoflag, stype,typebins)
 props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-ax2=plot_props('T', props, typebins, flags_to_use,plot_info)
-pl.xticks(typebins+0.5, x_names, fontsize = 8)
-pl.title('L12', fontsize=8)
-l = ax2.legend(loc=3, bbox_to_anchor=(0.5, 0.6), prop={'size':6})
+ax1,ax2 =plot_props('T', props, typebins, delta, flags_to_use,plot_info)
+#pl.xticks(typebins+0.5, x_names, fontsize = 8)
+pl.title('LG12', fontsize=8)
+l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.09), prop={'size':6})
 #pl.xticks(rotation=90)
 pl.xlim(-6,7)
 
@@ -193,46 +198,6 @@ print props.keys()
 print props[12]
 print props[10]
 print np.array(props[12])/np.array(props[10])
-
-
-if 0:
-    print "meert" 
-    pl.subplot(2,3,4)
-    flags_to_use = np.array([1,2,3,4,5,6])
-    galcount, autoflag, stype = get_vals('nair_meert')
-    props = get_flag_props(flags_to_use, autoflag, stype,typebins)
-    props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-    ax2 =plot_props('T', props, typebins, flags_to_use,plot_info)
-    pl.xticks(typebins+0.5, x_names, fontsize = 8)
-    pl.title('Meert  (Nair)', fontsize=8)
-    pl.xticks(rotation=90)
-    #l = ax2.legend(loc='center', bbox_to_anchor=(-1.5, 0.5))
-    pl.xlim(-6,14)
-
-    print "simard" 
-    pl.subplot(2,3,5)
-    flags_to_use = np.array([11,12,13,14])
-    galcount, autoflag, stype = get_vals('nair_simard')
-    props = get_flag_props(flags_to_use, autoflag, stype,typebins)
-    props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-    plot_props('T', props, typebins, flags_to_use,plot_info)
-    pl.xticks(typebins+0.5, x_names, fontsize = 8)
-    pl.title('Simard  (Nair)', fontsize=8)
-    #pl.xticks(rotation=90)
-    pl.xlim(-6,14)
-
-    print "lackner" 
-    pl.subplot(2,3,6)
-    flags_to_use = np.array([7,8,9,10,11,12])
-    galcount, autoflag, stype = get_vals('nair_lackner')
-    props = get_flag_props(flags_to_use, autoflag, stype,typebins)
-    props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-    plot_props('T', props, typebins, flags_to_use,plot_info)
-    pl.xticks(typebins+0.5, x_names, fontsize = 8)
-    pl.title('Lackner (Nair)', fontsize=8)
-    #pl.xticks(rotation=90)
-    pl.xlim(-6,14)
-
 
 #pl.show()
 pl.savefig('./types_dist.eps', bbox_inches = 'tight')

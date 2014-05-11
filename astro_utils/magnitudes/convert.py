@@ -36,13 +36,13 @@ def mag_to_counts( mag, magerr, zeropoint, kk = defaults['kk'] ,
 """
     if magtype == 'pogson':
         fluxrate = 10.0**(-0.4*mag) 
-        fluxrate_err = (np.log(10)/2.5)*fluxrate*magerr 
+        fluxrate_err = (np.log(10)/2.5)*fluxrate*magerr     
     elif magtype == 'asinh':
         fluxrate = 2.0 * softb[band]*np.sinh((np.log(10)-mag)/2.5 -np.log(softb[band]))
         fluxrate_err = (np.log(10)/2.5)*(2.0 *magerr*np.sqrt(1.0 + (fluxrate/(2.0*softb[band]))**2.0))/softb[band] 
 
-    counts = fluxrate*exptime / 10.0**(-0.4(zeropoint - kk*airmass)) 
-    count_err = fluxrate_err*exptime / 10.0**(-0.4(zeropoint - kk*airmass))
+    counts = fluxrate*exptime / 10.0**(-0.4*(zeropoint - kk*airmass)) 
+    count_err = fluxrate_err*exptime / 10.0**(-0.4*(zeropoint - kk*airmass))
     
     return counts, count_err
 

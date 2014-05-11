@@ -2,8 +2,8 @@ import pylab as pl
 import numpy as np
 from MatplotRc import *
 
-bins = {'mag':np.arange(13.0, 20.1, .5),
-        'absmag':np.arange(-25.0, -13.99, .5), 'rad':np.arange(0.0, 12.1, 1.0),
+bins = {'mag':np.arange(14.0, 18.1, .5),
+        'absmag':np.arange(-24.0, -15.99, .5), 'rad':np.arange(0.0, 12.1, 1.0),
         'n':np.arange(0.0, 8.01, 1.0), 'BT':np.arange(0.0, 1.01, .1),
         'pa':np.arange(0.0, 360.01, 30.0), 'ba':np.arange(0.0, 1.01, .1),
         'rbulgerdisk': np.arange(0.0, 1.51, 0.1),'sky':np.arange(-2.0, 2.01, .2)}
@@ -101,10 +101,10 @@ xlabs = {'petromag':'m$_{\mathrm{petro,\ {band}}}$',
          'cutsize': 'size', 
          'sky':'$\Delta$sky$_{\mathrm{{band}}}$ (%)'}
 
-xlims = {'mtot':(13.5, 18.5),
-         'mtot_app':(13.5, 18.5),
+xlims = {'mtot':(14.0, 17.8),
+         'mtot_app':(14.0, 17.8),
          'mtot_abs':(-25.0, -14.0),
-         'petromag':(13.5, 18.5),
+         'petromag':(14.0, 17.8),
          'petromag_abs':(-25.0, -14.0),
          'mbulge':(15.0, 20.0) , 
          'mdisk':(15.0, 20.0),
