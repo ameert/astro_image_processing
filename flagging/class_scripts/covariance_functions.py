@@ -25,7 +25,7 @@ def get_score(true_val, test_val, trueflag, testflag):
     f1 = 2.0*precision*recall/(precision+recall)
     mcc_max = np.min([(TP+FP)*(TN+FP),(TP+FN)*(TN+FN)])/np.sqrt((TP+FP)*(TP+FN)*(TN+FP)*(TN+FN))
 
-    mcc = mcc/mcc_max
+    #mcc = mcc/mcc_max
     #mcc=f1
     print "tp: %d, tn: %d, fp: %d, fn:%d, mcc:%f" %(TP,TN,FP,FN, mcc)
     return mcc
