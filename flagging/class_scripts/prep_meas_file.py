@@ -10,10 +10,10 @@ from flag_defs import *
 from mysql.mysql_class import *
 #from gal_panel import *
 
-model = sys.argv[1]
+model = sys.argv[2]
 uname = 'alan'
 cursor = mysql_connect('catalog','pymorph','pymorph','')
-band = 'r'
+band = sys.argv[1]
 
 cmd = """select x.galcount, z.Hrad_corr,z.BT, 
 z.m_tot, -x.aa_{band} - x.kk_{band}*x.airmass_{band},
@@ -21,9 +21,9 @@ y.SexHrad, x.petroR50_{band}
 from 
 {band}_band_{model} as z,
 {band}_band_fit as y,
-CAST as x, DERT as s, r_predeep_fit as a 
+CAST as x, DERT as s
 where 
-x.galcount = s.galcount and y.galcount = x.galcount and a.galcount = x.galcount and
+x.galcount = s.galcount and y.galcount = x.galcount and
 x.galcount=z.galcount order by x.galcount;""".format(model = model, band = band)
 
 data = cursor.get_data(cmd)
@@ -41,6 +41,6 @@ new_data['r_sex']=data[pos_dict['hrad_sex']]
 new_data['r_petro']=data[pos_dict['petrorad']]
 new_data['BT']=data[pos_dict['BT']]
 
-outfile = open('deep_catalog_info_%s_%s.pickle' %(band,model), 'w')
+outfile = open('full_catalog_info_%s_%s.pickle' %(band,model), 'w')
 pickle.dump(new_data, outfile)
 outfile.close()

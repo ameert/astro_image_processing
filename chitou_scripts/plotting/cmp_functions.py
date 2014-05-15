@@ -287,7 +287,7 @@ class outlier_fig():
                               ecolor = ebar_color, capsize = 5, 
                               linestyle = 'None', elinewidth = 2, 
                               barsabove=True, zorder = 10)
-        self.barbin.lay_bounds(sigma_choice = [68,95], zorder = 9, color='b')
+        self.barbin.lay_bounds(sigma_choice = [68], zorder = 9, color='b')
         return
 
     def savefig(self, figname):
