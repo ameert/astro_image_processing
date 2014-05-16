@@ -57,16 +57,16 @@ uflag_vals = [("Good Total Magnitudes and Sizes", 0),
               ("\t\tExp Inner Only", 16),
               ("\t\tGood Ser, Bad Exp, B/T$>=$0.5", 17),
               ("\t\tBad Ser, Good Exp, B/T$<$0.5", 18),
-              ("\t\tTiny Bulge, otherwise good", 26),
+              ("\t\tTiny Bulge, otherwise good", 19),
               
 
-              ("Bad Total Magnitudes and Sizes", 19),
-              ("\tCentering Problems", 20),      #8388608
-              ("\tSer Component Contamination by Neighbors or Sky", 21), 
-              ("\tExp Component Contamination by Neighbors or Sky", 22),
-              ("\tBad Ser and Bad Exp Components", 23),      #8388608
-              ("\tGalfit Failure", 24),      #8388608
-              ("\tPolluted or Fractured", 25)
+              ("Bad Total Magnitudes and Sizes", 20),
+              ("\tCentering Problems", 21),      #8388608
+              ("\tSer Component Contamination by Neighbors or Sky", 22), 
+              ("\tExp Component Contamination by Neighbors or Sky", 23),
+              ("\tBad Ser and Bad Exp Components", 24),      #8388608
+              ("\tGalfit Failure", 25),      #8388608
+              ("\tPolluted or Fractured", 26)
               ]
 
 uflag_dict = dict(uflag_vals)

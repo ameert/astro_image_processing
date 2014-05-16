@@ -163,9 +163,11 @@ to a mysql database"""
 
     flip_com_flag = np.where(bulge_is_disk_flag+bulge_fitting_outer+disk_fitting_inner >1, 1,0)| np.where(disk_fitting_inner+bulge_low_n_flag >1, 1,0)|np.where(bulge_is_disk_flag >=1, 1,0)|np.where(no_disk+bulge_low_n_flag >1, 1,0)
 
+    tiny_bulge = np.where(data['r_bulge']*np.sqrt(data['ba_bulge'])/0.396>0,1,0)* np.where(data['r_bulge']*np.sqrt(data['ba_bulge'])/0.396<=0.5,1,0)
+
     auto_disk_total = np.where(disk_is_sky+disk_contamination+ disk_fitting_inner*np.where(bulge_is_disk_flag+bulge_fitting_outer+bulge_low_n_flag+ parallel_com_flag>0,0,1)+high_e_disk*posang_disk+parallel_com_flag>0,1,0)
     auto_bulge_total = np.where(bulge_fitting_outer*np.where(disk_fitting_inner+bulge_is_disk_flag>0,0,1)+bulge_is_sky+bulge_contamination+ high_e_bulge*posang_bulge+parallel_com_flag>0,1,0)
-    bad_total_flag = np.where((np.where(disk_is_sky+disk_contamination+bulge_is_sky+bulge_contamination+center_probs>0, 1,0) + np.where(no_bulge+no_disk+disk_dominates_always+bulge_dominates_always>1,1,0))>0,1,0)+high_chi+neighbor_contamination
+    bad_total_flag = np.where((np.where(disk_is_sky+disk_contamination+bulge_is_sky+bulge_contamination+center_probs>0, 1,0) + np.where(no_bulge+no_disk+disk_dominates_always+bulge_dominates_always>1,1,0))>0,1,0)+high_chi
 
     # if galfit failed, or some measurement is wrong in the pa
     galfit_fail = np.where(data['galfit_flag']==1,1,0) #| np.where((bulge_dominates_always+disk_dominates_always+no_bulge+no_disk)>1, 1,0)
@@ -198,12 +200,17 @@ to a mysql database"""
     auto_flags += center_probs * 2**autoflag_dict['centering']
     auto_flags += high_chi * 2**autoflag_dict['high chi^2']
     auto_flags += bad_total_flag * 2**autoflag_dict['Bad total fit']
+    auto_flags += data['polluted_flag'] * 2**autoflag_dict['polluted']
+    auto_flags += data['fractured_flag'] * 2**autoflag_dict['fractured']
+    auto_flags += tiny_bulge * 2**autoflag_dict['tinybulge']
+
+
 
     # if galfit failed, lets clear out all the flags...They are junk!
     auto_flags = np.where(galfit_fail==1, 0, auto_flags)
     auto_flags += galfit_fail * 2**autoflag_dict['galfit failure']
 
-    outfile = open('/home/ameert/to_classify/flagfiles/%s/%s/autoflags_%d_revised.pickle' %(band, model,folder_num), 'w')
+    outfile = open('/home/ameert/to_classify/flagfiles/%s/%s/autoflags_%d.pickle' %(band, model,folder_num), 'w')
     pickle.dump({'galcount':data['galcount'],'autoflags':auto_flags},outfile)
     outfile.close()
     if print_flags:
@@ -218,13 +225,13 @@ def load_autoflag(folder_num, info_dict, print_info = False):
 
     if print_info:
         print 'loading folder %d' %folder_num
-        print '/home/ameert/to_classify/flagfiles/%s/%s/autoflags_%d_revised.pickle' %(info_dict['band'],info_dict['model'],folder_num)
-    infile = open('/home/ameert/to_classify/flagfiles/%s/%s/autoflags_%d_revised.pickle' %(info_dict['band'],info_dict['model'],folder_num))
+        print '/home/ameert/to_classify/flagfiles/%s/%s/autoflags_%d.pickle' %(info_dict['band'],info_dict['model'],folder_num)
+    infile = open('/home/ameert/to_classify/flagfiles/%s/%s/autoflags_%d.pickle' %(info_dict['band'],info_dict['model'],folder_num))
     data = pickle.load(infile)
     infile.close()
 
     for galcount,flagval in zip(data['galcount'], data['autoflags']):
-        cmd = """update {table} set flag = {finalval} where galcount = {galcount} and band = '{band}' and model = '{model}' and ftype = '{autoflag_ftype}';""".format(table = 'Flags_optimize', finalval = flagval, band=info_dict['band'], model=info_dict['model'], galcount = galcount, autoflag_ftype=info_dict['autoflag_ftype'])
+        cmd = """update {table} set flag = {finalval} where galcount = {galcount} and band = '{band}' and model = '{model}' and ftype = '{autoflag_ftype}';""".format(table = 'Flags_catalog', finalval = flagval, band=info_dict['band'], model=info_dict['model'], galcount = galcount, autoflag_ftype=info_dict['autoflag_ftype'])
         if print_info:
             print cmd
         cursor.execute(cmd)
