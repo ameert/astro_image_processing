@@ -32,7 +32,7 @@ import numpy as np
 import os
 import sys
 
-from mysql_class import *
+from mysql.mysql_class import *
 from create_flag_file_catalog import *
 from auto_flags import *
 from u_flags import *
@@ -49,9 +49,9 @@ if __name__ == "__main__":
 
 
 
-        for folder_number in range(1,2684):
+        for folder_number in range(1,51):
             print "folder number:", folder_number
-            create_flag_pickle(folder_number, info_dict, print_info=False)
+            #create_flag_pickle(folder_number, info_dict, print_info=False)
             run_auto_flags(info_dict['model'],info_dict['band'], folder_number, print_flags=False)
             load_autoflag(folder_number, info_dict, print_info = False)
 

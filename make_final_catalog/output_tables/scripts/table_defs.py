@@ -220,67 +220,100 @@ tables['simard_sample'] = {1 :['galcount','1J',''], 2 :['objid','1K',''], 3 :['z
                            59 :['re_hl_r_serexp','1E','kpc'], 60 :['ed_ser','1E',''], 61 :['ed_devexp','1E',''],
                            62 :['ed_serexp','1E','']}
 
+UKIDSS_entries = [[('galcount','1J',''),  
+                   ('objid','1K',''), 
+                   ('SourceID','1K', ''), 
+                   ('FrameSetID', '1K',  ''),  
+                   ('ra_ukidss' , '1D', 'radians'),  
+                   ('dec_ukidss' , '1D', 'radians'),  
+                   ('distance_arcmin' , '1E', 'arcmins'),  
+                   ('epoch', '1K', 'years'), 
+                   ('PriOrSec', '1E', ''), 
+                   ('PGalaxy', '1E', ''), 
+                   ('eBV', '1E', '')
+                   ],
+          
+                  [('a', '1E', 'mag','a_{band[0]}'), 
+                   ('PetroMag', '1E', 'mag','PetroMag_{band}'), 
+                   ('PetroMagErr', '1E', 'mag','PetroMagErr_{band}'), 
+                   ('SerMag2D', '1E', 'mag','SerMag2D_{band}'),   
+                   ('SerMag2DErr', '1E', 'mag','SerMag2DErr_{band}'), 
+                   ('AperMag3', '1E', 'mag','AperMag3_{band}'), 
+                   ('AperMag3Err', '1E', 'mag','AperMag3Err_{band}'),   
+                   ('Ell', '1E', '','Ell_{band}'), 
+                   ('PA', '1E', 'degrees','PA_{band}'),  
+                   ('ErrBits', '1J', '','ErrBits_{band}'), 
+                   ('Deblend', '1J', '','Deblend_{band}')       
+                   ] 
+                  ]
+UKIDSS = [meert_table(UKIDSS_entries[0])] + [meert_table(UKIDSS_entries[1]) for count in range(0,5)]
 
-tables['DERT'] = {1: ['galcount','1J',''], 2:['dismod' ,'1E', ''],  3:['DERT_flag' ,'1K',''],
-                  4:['mag_zp_g','1E', 'mag'],   5:['mag_zp_r','1E' , 'mag'], 6:['mag_zp_i','1E', 'mag'],
-                  7:['total_cor_g' ,'1E', 'mag'], 8:['total_cor_r' ,'1E', 'mag'], 9:['total_cor_i' ,'1E', 'mag'],
-                  10:['kcorr_g' ,'1E', 'mag'], 11:['kcorr_r' ,'1E', 'mag'], 12:['kcorr_i'  ,'1E', 'mag']}
 
-tables['UKIDSS'] = {1: ['galcount','1J',''],  2:['objid','1K',''], 3:['SourceID','1K', ''], 4:['FrameSetID', '1K',  ''],  
-                    5:['ra_ukidss' , '1D', 'radians'],  6:['dec_ukidss' , '1D', 'radians'],  7:['distance_arcmin' , '1E', 'arcmins'],  
-                    8:['epoch', '1K', 'years'], 9:['PriOrSec', '1E', ''], 10:['PGalaxy', '1E', ''], 11:['eBV', '1E', ''],
-                    12:['a_Y', '1E', 'mag'], 13:['a_J', '1E', 'mag'],  14:['a_H', '1E', 'mag'],  15:['a_K', '1E', 'mag'], 
-                    16:['PetroMag_Y', '1E', 'mag'], 17:['PetroMagErr_Y', '1E', 'mag'], 18:['SerMag2D_Y', '1E', 'mag'],   
-                    19:['SerMag2DErr_Y', '1E', 'mag'], 20:['AperMag3_Y', '1E', 'mag'], 21:['AperMag3Err_Y', '1E', 'mag'],   
-                    22:['Ell_Y', '1E', ''], 23:['PA_Y', '1E', 'degrees'],  24:['ErrBits_Y', '1J', ''], 25:['Deblend_Y', '1J', ''],       
-                    26:['PetroMag_J1', '1E', 'mag'], 27:['PetroMagErr_J1', '1E', 'mag'],  28:['SerMag2D_J1', '1E', 'mag'],     
-                    29:['SerMag2DErr_J1', '1E', 'mag'],  30:['AperMag3_J1', '1E', 'mag'], 31:['AperMag3Err_J1', '1E', 'mag'],  
-                    32:['Ell_J1', '1E', ''], 33:['PA_J1', '1E', 'degrees'],  34:['ErrBits_J1', '1E', ''], 35:['Deblend_J1', '1E', ''],      
-                    36:['PetroMag_J2', '1E', 'mag'], 37:['PetroMagErr_J2', '1E', 'mag'],  38:['SerMag2D_J2', '1E', 'mag'],     
-                    39:['SerMag2DErr_J2', '1E', 'mag'], 40:['AperMag3_J2', '1E', 'mag'], 41:['AperMag3Err_J2', '1E', 'mag'],  
-                    42:['Ell_J2', '1E', ''], 43:['PA_J2', '1E', 'degrees'],  44:['ErrBits_J2', '1J', ''], 45:['Deblend_J2', '1J', ''],      
-                    46:['PetroMag_H', '1E', 'mag'], 47:['PetroMagErr_H', '1E', 'mag'],   48:['SerMag2D_H', '1E', 'mag'],      
-                    49:['SerMag2DErr_H', '1E', 'mag'],  50:['AperMag3_H', '1E', 'mag'],      51:['AperMag3Err_H', '1E', 'mag'],   
-                    52:['Ell_H', '1E', ''], 53:['PA_H', '1E', 'degrees'],  54:['ErrBits_H', '1J', ''], 55:['Deblend_H', '1J', ''],       
-                    56:['PetroMag_K', '1E', 'mag'], 57:['PetroMagErr_K', '1E', 'mag'],   58:['SerMag2D_K', '1E', 'mag'],      
-                    59:['SerMag2DErr_K', '1E', 'mag'],  60:['AperMag3_K', '1E', 'mag'],  61:['AperMag3Err_K', '1E', 'mag'],   
-                    62:['Ell_K', '1E', ''], 63:['PA_K', '1E', 'degrees'], 64:['ErrBits_K', '1J', ''], 65:['Deblend_K', '1J', '']
-                    }
+GALEX_entries = [[('gid', '1K', ''),
+         ('photoExtractID',  '1K', ''), 
+         ('imgID', '1K', ''),  
+         ('band',   '1I', ''), 
+         ('survey', '10A',  ''), 
+         ('ra_galex',  '1E', 'deg'), 
+         ('dec_galex', '1E', 'deg'),
+         ('ra_galex_band_merged', '1E', 'deg'),
+         ('dec_galex_band_merged', '1E', 'deg'),
+         ('misc_flags', '1J', ''),
+         ('primary_flag', '1J', ''),
+         ('galextype',   '1J', ''), 
+         ('e_bv','1E', 'mag'), 
+         ('IsThereSpectrum', '1J', ''),
+         ('GToSDstArcSec','1E', 'arcsec'),
+         ('distanceRank', '1J', ''), 
+         ('reverseDistanceRank', '1J', ''),
+         ('multipleMatchCount', '1J', ''), 
+         ('reverseMultipleMatchCount', '1J', ''), 
+         ('SDSSobjid',  '1K', ''),
+         ('SDSStype', '1J', ''),
+         ('SDSSprobPSF', '1E', ''),
+         ('nuv_fileNPath',  '125A', '')], 
 
-tables['GALEX'] = {1:['galcount','1J',''],2:['gid', '1K', ''],
-                   3:['photoExtractID',  '1K', ''], 4:['imgID', '1K', ''],  
-                   5:['band',   '1I', ''], 6:['survey', '10A',  ''], 
-                   7:['nuvExposureTime', '1E',  'seconds'],
-                   8:['fuvExposureTime', '1E', 'seconds'],
-                   9:['ra_galex',  '1E', 'deg'], 10:['dec_galex', '1E', 'deg'],
-                   11:['ra_galex_band_merged', '1E', 'deg'],
-                   12:['dec_galex_band_merged', '1E', 'deg'],
-                   13:['misc_flags', '1J', ''],14:['primary_flag', '1J', ''],
-                   15:['galextype',   '1J', ''], 16:['nuv_det_x', '1J', 'pix'],
-                   17:['nuv_det_y', '1J', 'pix'],18:['fuv_det_x', '1J', 'pix'],
-                   19:['fuv_det_y', '1J', 'pix'], 20:['nuv_mag', '1E', 'mag'],
-                   21:['nuv_magerr', '1E', 'mag'], 22:['fuv_mag',  '1E','mag'],
-                   23:['fuv_magerr',  '1E' ,'mag'], 
-                   24:['nuv_artifact', '1J',''], 25:['fuv_artifact','1J', ''],
-                   26:['nuv_skybg', '1E', 'counts'], 
-                   27:['fuv_skybg','1E', 'counts'],  
-                   28:['e_bv','1E', 'mag'], 29:['nuv_rad50','1E', 'arcsec'],
-                   30:['nuv_rad90','1E', 'arcsec'], 
-                   31:['fuv_rad50', '1E' , 'arcsec'],
-                   32:['fuv_rad90','1E' , 'arcsec'],
-                   33:['IsThereSpectrum', '1J', ''],
-                   34:['GToSDstArcSec','1E' 'arcsec'],
-                   35:['distanceRank', '1J', ''], 
-                   36:['reverseDistanceRank', '1J', ''],
-                   37:['multipleMatchCount', '1J', ''], 
-                   38:['reverseMultipleMatchCount', '1J', ''], 
-                   39:['SDSSobjid',  '1K', ''],40:['SDSStype', '1J', ''],
-                   41:['SDSSprobPSF', '1E', ''],
-                   42:['nuv_fileNPath',  '125A', ''], 
-                   43:['n_zpmag', '1E', 'mag'],
-                   44:['f_zpmag', '1E', 'mag'], 45:['nsxsfwhm','1E', 'arcsec'], 
-                   46:['fsxsfwhm','1E', 'arcsec']
-                   }
+         [('ExposureTime', '1E',  'seconds','{band}ExposureTime'),
+         ('det_x', '1J', 'pix','{band}_det_x'),
+         ('det_y', '1J', 'pix','{band}_det_y'),
+         ('mag', '1E', 'mag', '{band}_mag'),
+         ('magerr', '1E', 'mag','{band}_magerr'), 
+         ('artifact', '1J','','{band}_artifact'), 
+         ('skybg', '1E', 'counts','{band}_skybg'), 
+         ('rad50','1E', 'arcsec','{band}_rad50'),
+         ('rad90','1E', 'arcsec','{band}_rad90'), 
+         ('zpmag', '1E', 'mag','{band[0]}_zpmag'),
+         ('sxsfwhm','1E', 'arcsec','{band[0]}sxsfwhm')] 
+                   ]
+
+
+GALEX = [meert_table(GALEX_entries[0]), meert_table(GALEX_entries[1]), meert_table(GALEX_entries[1])]
+
+YANG_entries = [('groupID', '1J', ''),
+                 ('brightest','1J',''),
+                 ('most_massive','1J',''),
+                 ('L_group' ,'1E'   ,''),
+                 ('Mstar_group','1E' ,''),
+                 ('HaloMass_1','1E' ,''),
+                 ('HaloMass_2','1E' ,''),
+                 ('fEdge' ,'1E'  ,''),
+                 ('ID1','1J',''),
+                 ('ID2','1J',''),
+                 ('group_counts','1J',''),
+                 ('group_Z','1E' ,''),
+                 ('zgal_yang','1E','')
+                 ]
+
+YANG = [meert_table(YANG_entries)]
+
+JHU_matches_entries = [('SPECOBJID', '1K',''),
+                       ('objid'    , '1K' ,''),
+                       ('plate' ,'1J',''),
+                       ('mjd'  ,'1J',''),
+                       ('fiberID' ,'1J','')
+                       ]
+JHU_matches = [meert_table(JHU_matches_entries)]
+
 
 #count = 0
 #for a_col, b_col, c_col in zip(r_full_cols, r_full_fits_format, r_full_fits_units):

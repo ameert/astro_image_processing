@@ -20,7 +20,7 @@ d.galcount = c.galcount
     if flags:
         cmd += """ and ( x.flag&pow(2,19)=0 ) 
 """
-    cmd += """ %s  ;"""  %conditions  
+    cmd += """ %s ;"""  %conditions  
     # x.flag&pow(2,14)=0 and x.flag&pow(2,10)>0 and
     # and  a.r_bulge*sqrt(a.ba_bulge)>0.396
     print cmd

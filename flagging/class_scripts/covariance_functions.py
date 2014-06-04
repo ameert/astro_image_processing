@@ -3,7 +3,7 @@ import numpy as np
 import sys
 import pylab as pl
 import matplotlib.cm as cm
-from flag_defs import category_flag_dict
+from flag_configuration import uflag_dict
 
 def get_score(true_val, test_val, trueflag, testflag):
 
@@ -28,7 +28,7 @@ def get_score(true_val, test_val, trueflag, testflag):
     #mcc = mcc/mcc_max
     #mcc=f1
     print "tp: %d, tn: %d, fp: %d, fn:%d, mcc:%f" %(TP,TN,FP,FN, mcc)
-    return mcc
+    return accuracy
 
 def cov(data1, data2, d1flags, d2flags):
     cov_mat = np.zeros((len(d1flags), len(d2flags)))

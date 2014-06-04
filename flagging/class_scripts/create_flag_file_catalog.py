@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 import sys 
-from mysql_class import *
+from mysql.mysql_class import *
 
 
 def create_flag_pickle(folder_num, info_dict, print_info=False):

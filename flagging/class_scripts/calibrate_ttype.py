@@ -2,11 +2,11 @@ import numpy as np
 import pylab as pl
 from sklearn import linear_model
 from sklearn.cross_validation import train_test_split
+from cmp_functions import *
 
-ttype, pell, ps0, psab, pscd, zoo_ell, zoo_sp = np.loadtxt('claib_gals_again.txt', unpack=True)
+ttype, pell, ps0, psab, pscd = np.loadtxt('claib_gals_again.txt', unpack=True)
 
 probs = np.array([list(pell), list(ps0), list(psab), list(pscd)]).T
-#probs = np.array([list(zoo_ell), list(zoo_sp)]).T
 
 perfect_t = np.array([-6, -3, 2, 8])
 perfect_probs = np.array([[1.0,0.0,0.0,0.0], [0.0,1.0,0.0,0.0], [0.0,0.0,1.0,0.0], [0.0,0.0,0.0,1.0]])
@@ -74,11 +74,28 @@ print('Variance score: %.2f' % regr.score(probs_cross, ttype_cross))
 print perfect_probs
 #print x
 
-pl.scatter(ttype_cross, regr.predict(probs_cross), s=2, edgecolor='none',
-           color='black')
-pl.plot(perfect_t, regr.predict(perfect_probs),  color='blue', linewidth=3)
-#pl.plot(perfect_t, np.sum(perfect_probs*x,axis=1),  color='g', linewidth=3)
-pl.plot([-10,10],[-10,10], 'r')
+
+
+
+oplot = outlier_fig(figsize=(6,6))
+
+oplot.set_ticks(2, 0.5, '%d',2, 0.5, '%d',)
+oplot.setdenselims(0.01*len(perfect_probs),0.25*len(perfect_probs))
+oplot.setminval(0.01*len(perfect_probs))
+
+#oplot.makeplot(regr.predict(probs_cross), regr.predict(probs_cross)-ttype_cross,
+#           (-6.5,12.0),(-10.0,10.0)) 
+oplot.makeplot(ttype_cross, regr.predict(probs_cross)-ttype_cross,
+           (-6.5,12.0),(-10.0,10.0)) 
+
+pl.xlabel('Tin', fontsize=10)
+pl.ylabel('Tout-Tin', fontsize=10)
+oplot.bin_it(np.arange(-6.5, 12.51,1.0),-10,10)
+oplot.add_bars('r')
+#pl.plot(pl.xlim(), [0,0], 'k-')
+#pl.title(options['title'], fontsize=8)
+#oplot.savefig('%s_%s_%s_%s_%s_%s%s.eps' %(options['band'], options['table1'],options['table2'], options['model2'], options['xchoice'], options['ychoice'], options['postfix']))
+
 pl.show()
 
 prob_range = np.arange(0.0,1.0, 0.001)

@@ -84,7 +84,7 @@ host: hostname (default should work on most machines)
 
     def __del__(self):
         self.cursor.close()
-
+        
         return
 
 

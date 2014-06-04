@@ -113,6 +113,7 @@ pl.ylabel(ylabs[options['ychoice']].replace('{band}', options['band']), fontsize
 oplot.bin_it(bins[options['key_x']], bin_lims[options['key_x']][options['key_y']][0],
             bin_lims[options['key_x']][options['key_y']][1])
 oplot.add_bars('r')
+pl.plot(pl.xlim(), [0,0], 'k-')
 pl.title(options['title'], fontsize=8)
 oplot.savefig('%s_%s_%s_%s_%s_%s%s.eps' %(options['band'], options['table1'],options['table2'], options['model2'], options['xchoice'], options['ychoice'], options['postfix']))
 

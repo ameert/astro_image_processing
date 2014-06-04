@@ -31,7 +31,7 @@ import datetime
 import sys
 from table_defs import *
 
-def get_table(ext_dict, suffix,mysqltable, Table_name, model='none'):
+def get_table(cursor, ext_dict, suffix,mysqltable, Table_name, model='none'):
     print ext_dict
     print suffix
     print mysqltable
@@ -43,7 +43,7 @@ def get_table(ext_dict, suffix,mysqltable, Table_name, model='none'):
         cmd = 'Select '
         addstr= ''
         cmd += column[3].format(band=suffix)
-        for pref in ['c','d', 'f']:
+        for pref in ['c','d', 'f', 'u', 'm']:
             if '%s.' %pref in column[3]:
                 tmp_table = mysqltable[pref]
                 break
@@ -91,17 +91,17 @@ if __name__=="__main__":
 
     band = 'r'
 
-    tablename = 'ModTab'
-    table = {'blank':'r_band_fit', 'c':'CAST as c ','d':'DERT as d ',
+    tablename = 'UPenn_PhotDec_nonParam'
+    table = {'blank':'%s_band_fit' %band, 'c':'CAST as c ','d':'DERT as d ',
              'f':'Flags_optimize as f '}
     data_dict = meert[0]
-    ext_names ='ModTab Table'
+    ext_names ='nonParam Table'
 
     # Now generate the fits image
-    fits_file = save_loc + tablename+'.fits'
-    if 0:
+    fits_file = save_loc + tablename+'_'+band+'band.fits'
+    if 1:
         tabs = []
-        tabs.append(get_table(data_dict, band, table, ext_names))
+        tabs.append(get_table(cursor,data_dict, band, table, ext_names))
 
         hdu = pyfits.PrimaryHDU(np.array([0]))
         hdu.header.add_blank(' ')
@@ -116,22 +116,20 @@ if __name__=="__main__":
         thdulist = pyfits.HDUList([hdu]+tabs)
         thdulist.writeto(fits_file, clobber =1)
 
-    band = 'r'
-
-    tablename = 'ModTabModels'
+    tablename = 'UPenn_PhotDec_Models'
     data_dict = meert_models[0]
-    ext_names ='ModTab Table'
+    ext_names ='Models Table'
 
     # Now generate the fits image
-    fits_file = save_loc + tablename+'.fits'
-
+    fits_file = save_loc + tablename+'_'+band+'band.fits'
+    
     tabs = []
-    for model in ['dev','ser','devexp','serexp']:
-        table = {'blank':'r_band_%s' %model, 'c':'CAST as c ','d':'DERT as d ',
-                 'f':'Flags_optimize as f '}
-        ext_names ='ModTab %s Table' %model
+    for model in ['best','dev','ser','devexp','serexp']:
+        table = {'blank':'%s_band_%s' %(band,model), 'c':'CAST as c ',
+                 'd':'DERT as d ','f':'Flags_optimize as f '}
+        ext_names ='Model %s Table' %model
 
-        tabs.append(get_table(data_dict, band, table, ext_names, model=model))
+        tabs.append(get_table(cursor, data_dict, band, table, ext_names, model=model))
     
     hdu = pyfits.PrimaryHDU(np.array([0]))
     hdu.header.add_blank(' ')

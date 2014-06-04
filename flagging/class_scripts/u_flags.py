@@ -1,4 +1,4 @@
-from mysql_class import *
+from mysql.mysql_class import *
 from flag_configuration import autoflag_dict, uflag_dict
 from flag_analysis import flag_set, get_percent
 
