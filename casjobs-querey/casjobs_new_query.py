@@ -53,78 +53,72 @@ def get_filename(casjobs_out):
     filename = casjobs_out.split()[0]
     return filename
 
-def casjobs(gal_cat, data_dir, username, wsid, password, search_82 = 0):
-
-    os.system('rm %s'%(data_dir + gal_cat['filename']))
-
-    lastnum = '-99'
-    chunk = 10000
+def casjobs(gal_cat, casjobs_info):
+    os.system('rm {data_dir}{filename}'.format(**gal_cat))
 
     thisdir = os.getcwd()
-    # Uses the version of casjobs installed with galmorph for now.
-    cas_path = '/home/ameert/galmorph/matlab/casjobs'
-    casjobs='java -jar %s/casjobs.jar ' %cas_path
+    casjobs='java -jar %s ' %casjobs_info['cas_jar_path']
 
     # write config file used by casjobs
-    config_file = open('CasJobs.config','w')
+    config_str = """wsid= {wsid}
+password= {password} 
+default_target= {search_target}
+default_queue=1
+default_days=1
+verbose=true
+debug=false
+jobs_location=http://skyserver.sdss3.org/casjobs/services/jobs.asmx
+""".format(**casjobs_info)
     
-    if search_82:
-        config_file.write('wsid=' + wsid + '\n' +
-                          'password=' + password + '\n' +
-                          'default_target=Stripe82\n' +
-                          'default_queue=1\n' +
-                          'default_days=1\n' +
-                          'verbose=true\n' +
-                          'debug=false\n' +
-                          'jobs_location=http://casjobs.sdss.org/'+
-                          'casjobs/services/jobs.asmx\n')
-    else:    
-        config_file.write('wsid=' + wsid + '\n' +
-                          'password=' + password + '\n' +
-                          'default_target=DR7\n' +
-                          'default_queue=1\n' +
-                          'default_days=1\n' +
-                          'verbose=true\n' +
-                          'debug=false\n' +
-                          'jobs_location=http://casjobs.sdss.org/'+
-                          'casjobs/services/jobs.asmx\n')
-
+    config_file = open('CasJobs.config','w')
+    config_file.write(config_str)
     config_file.close()
-    # name that will appear in the users casjobs query list. This is the current date
-    jn = datetime.date.today()
+
+    full_jobname = "%s_%s" %(casjobs_info['jobname'],str(datetime.date.today()))
     table_count = 1
-    while 1:
-        jn_tmp = str(jn) + '_' + str(table_count)
+    job_info = {'full_jobname':full_jobname,
+                'casjobs':casjobs,
+                'table_count':0,
+                'lastnum':'-99',
+                'chunk':100#10000
+                }
+    
+    while True:
+        job_info['table_count']+=1
+        job_info['jobname']='{full_jobname}_{table_count}'.format(**job_info)
+        job_info['query_name']='query_{jobname}.txt'.format(**job_info)
+        job_info['tablename'] = job_info['jobname']
+        
         print 'CUT PIPE: Preparing mydb input/output tables'
-        exec_cmd(casjobs + 'execute -t "mydb" -n "drop output table" "drop table cl_out"')
-        print 'It is ok if it said error just then. -AMM'
-
-        fid = open('query%d.txt' %table_count, 'w')
-        fid.write(make_query(stripe_82 = search_82, start_objid = lastnum,
-                             chunk_size=chunk))
+        exec_cmd('{casjobs} execute -t "mydb" -n "drop output table" "drop table {tablename}"'.format(**job_info))
+        print 'NOTICE:It is OK if it said error just then.'
+        raw_input()
+        fid = open(job_info['query_name'],'w')
+        fid.write(catalog_query(job_info))
         fid.close()
-
+        raw_input()
         print 'CUT PIPE: Running Query'
-        cmd = 'run -n "%s" -f query%d.txt' %(jn_tmp, table_count)
-        print casjobs + cmd
-        exec_cmd(casjobs + cmd)
+        job_info['cmd']='{casjobs} run -n "{jobname}" -f {query_name}'.format(**job_info)
+        print job_info['cmd']
+        exec_cmd(job_info['cmd'])
+        raw_input()
         print 'GALMORPH: Downloading Results'
-        cmd = 'extract -force -type "csv" -download %s -table cl_out' %(jn_tmp)
-        print casjobs + cmd 
-        casjobs_out = exec_cmd(casjobs + cmd)
+        job_info['cmd']='{casjobs} extract -force -type "csv" -download {jobname} -table {tablename}'.format(**job_info)
+        print job_info['cmd']
+        casjobs_out = exec_cmd(job_info['cmd'])
+        print casjobs_out
+        raw_input()
         down_file = get_filename(casjobs_out)
-        cmd = 'cat %s >> %s' %(down_file, data_dir + gal_cat['filename'])
+        cmd = 'cat %s >> %s' %(down_file, 
+                               gal_cat['data_dir']+gal_cat['filename'])
         os.system(cmd)
         num_out, lastline = get_file_info(down_file)
-        lastnum = lastline.split(',')[0]
-        #os.system(cmd)
-        # os.system('rm CasJobs.config')
-        # os.system('rm query.txt')
-        if float(num_out)/chunk < .95:
-#        if table_count > 1:
+        job_info['lastnum'] = lastline.split(',')[0]
+        os.system('rm %s' %down_file)
+        if num_out<chunk:
+            break #because we must be at the end of the list
+        if job_info['table_count']>1:
             break
-        table_count+=1
-
     return 0
     
 def get_file_info(filename):
