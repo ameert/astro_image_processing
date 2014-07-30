@@ -325,7 +325,7 @@ class bin_stats:
             str_dat += '\n'
             ofile.write(str_dat)
 
-
+        ofile.close()
         return
 
     
