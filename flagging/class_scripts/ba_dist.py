@@ -7,7 +7,7 @@ from MatplotRc import *
 
 data = np.load('ba_data_serexp.npz')
 fig = pl.figure(figsize = (6,4))
-fig.subplots_adjust(left = 0.14, right = 0.9, top = 0.9, bottom = 0.1, 
+fig.subplots_adjust(left = 0.14, right = 0.9, top = 0.9, bottom = 0.12, 
                     wspace = 0.75, hspace = 0.75)
 for count, gal_opt in enumerate(['Ell','S0','Sab','Scd']):
     print count
@@ -41,7 +41,7 @@ for count, gal_opt in enumerate(['Ell','S0','Sab','Scd']):
     print 'Type ', gal_opt
     print np.extract(ba_bulge<0.1, data['galcount'])
     pl.subplot(2,2,count+1)
-    pl.hist(ba_bulge, range=(0,1), bins = 50, log = True)
+    pl.hist(ba_bulge, range=(0,1), bins = 50, log = True, histtype='step', color = 'k')
     pl.ylabel('counts')
     pl.xlabel('b/a bulge')
     pl.title( gal_opt)

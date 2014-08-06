@@ -1,8 +1,8 @@
-from mysql_class import *
+from mysql.mysql_class import *
 import numpy as np
 from plot_sample_data import *
 import scipy.stats as stats
-from ks_test import *
+#from ks_test import *
 
 dba = 'catalog'
 usr = 'pymorph'
@@ -22,9 +22,9 @@ ucorr_mag1 = np.array(ucorr_mag)
 
 surf_bright1 = -2.5*np.log10(10**(-0.4*ucorr_mag1)/(2*np.pi*halflight_rad1**2.0))
 
-cmd = 'select b.redshift, b.Vmax, b.petromag_r - b.extinction_r - b.kcorr_r - b.dismod, b.petromag_r - b.extinction_r, b.petroR50_r, b.petromag_r  from intermediate_tables.CAST_raw as b where b.Vmax > 0 and b.redshift >0.005 and b.disqual_flag <=3;'#(b.disqual_flag & 0) = 0 and (b.disqual_flag & 16) = 0 and (b.disqual_flag & 8) = 0 ;'
+cmd = 'select b.redshift, b.Vmax, b.petromag_r - b.extinction_r - b.kcorr_r - b.dismod, b.petromag_r - b.extinction_r, b.petroR50_r, b.petromag_r  from catalog.CAST_raw as b where b.Vmax > 0 and b.redshift >0.005 and b.disqual_flag <=3;'#(b.disqual_flag & 0) = 0 and (b.disqual_flag & 16) = 0 and (b.disqual_flag & 8) = 0 ;'
 
-z, V_max, absmag, petromag_r, halflight_rad,ucorr_mag = cursor.get_data(cmd)
+#z, V_max, absmag, petromag_r, halflight_rad,ucorr_mag = cursor.get_data(cmd)
 
 z2 = np.array(z)
 V_max2 = np.array(V_max)
@@ -45,14 +45,14 @@ V_max = [V_max2]#, V_max1]
 plot_sample(z, absmag, petromag_r, halflight_rad, surf_bright, V_max, plot_stem = './data_cmp', colors = ['k','r'])
 
 print 'raw absmag'
-print stats.ks_2samp(absmag1, absmag2)
+#print stats.ks_2samp(absmag1, absmag2)
 print 'Vmax absmag'
-ks_weighted(absmag1, V_max1,absmag2, V_max2)
+#ks_weighted(absmag1, V_max1,absmag2, V_max2)
 print 'appmag'
-print stats.ks_2samp(petromag_r1, petromag_r2)
+#print stats.ks_2samp(petromag_r1, petromag_r2)
 print 'rad'
-print stats.ks_2samp(halflight_rad1, halflight_rad2)
+#print stats.ks_2samp(halflight_rad1, halflight_rad2)
 print 'mu'
-print stats.ks_2samp(surf_bright1, surf_bright2)
+#print stats.ks_2samp(surf_bright1, surf_bright2)
 print 'z'
-print stats.ks_2samp(z1, z2)
+#print stats.ks_2samp(z1, z2)

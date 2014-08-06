@@ -210,27 +210,27 @@ print "For the test sample"
 #anal_table(flags, BT, 'Test_catalog.table')
 #print_flag_table(uflag_vals,flags, 'Test_catalog.table')
 
-cmd = """select a.galcount, a.flag, z.BT from Flags_optimize as a, M2010 as b, r_band_serexp as z where a.flag >=0 and a.band = 'r' and a.model = 'serexp' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;"""
+cmd = """select a.galcount, a.flag, z.BT from Flags_highn as a, M2010 as b, r_highn_serexp as z where a.flag >=0 and a.band = 'r' and a.model = 'serexp' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;"""
 galcount, flags, BT = cursor.get_data(cmd)
 
 galcount = np.array(galcount, dtype = int)
 flags = np.array(flags, dtype = int)
 BT = np.array(BT, dtype =float)
 
-#print "\n\nFor the SerExp Catalog"
-#print_flag_table(uflag_vals,flags, 'SerExp_catalog.table')
+print "\n\nFor the SerExp Catalog"
+print_flag_table(uflag_vals,flags, 'SerExp_catalog.table')
 
-cmd = """select a.galcount, a.flag, z.BT from Flags_optimize as a, M2010 as b, r_band_devexp as z where a.flag >=0 and a.band = 'r' and a.model = 'devexp' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;"""
-galcount, flags, BT = cursor.get_data(cmd)
+cmd = """select a.galcount, a.flag, z.BT from Flags_highn as a, M2010 as b, r_highn_devexp as z where a.flag >=0 and a.band = 'r' and a.model = 'devexp' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;"""
+#galcount, flags, BT = cursor.get_data(cmd)
 
-galcount = np.array(galcount, dtype = int)
-flags = np.array(flags, dtype = int)
-BT = np.array(BT, dtype =float)
+#galcount = np.array(galcount, dtype = int)
+#flags = np.array(flags, dtype = int)
+#BT = np.array(BT, dtype =float)
 
 #print "\n\nFor the DevExp Catalog"
 #print_flag_table(uflag_vals,flags, 'DevExp_catalog.table')
 
-cmd = """select a.galcount, a.flag, z.BT from Flags_optimize as a, M2010 as b, r_band_ser as z where a.flag >=0 and a.band = 'r' and a.model = 'ser' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;"""
+cmd = """select a.galcount, a.flag, z.BT from Flags_highn as a, M2010 as b, r_highn_ser as z where a.flag >=0 and a.band = 'r' and a.model = 'ser' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;"""
 galcount, flags, BT = cursor.get_data(cmd)
 
 galcount = np.array(galcount, dtype = int)
@@ -240,12 +240,12 @@ BT = np.array(BT, dtype =float)
 print "\n\nFor the Ser Catalog"
 print_flag_table(uflag_vals,flags, 'Ser_catalog.table')
 
-cmd = """select a.galcount, a.flag, z.BT from Flags_optimize as a, M2010 as b, r_band_dev as z where a.flag >=0 and a.band = 'r' and a.model = 'dev' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;"""
-galcount, flags, BT = cursor.get_data(cmd)
+cmd = """select a.galcount, a.flag, z.BT from Flags_highn as a, M2010 as b, r_highn_dev as z where a.flag >=0 and a.band = 'r' and a.model = 'dev' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;"""
+#galcount, flags, BT = cursor.get_data(cmd)
 
-galcount = np.array(galcount, dtype = int)
-flags = np.array(flags, dtype = int)
-BT = np.array(BT, dtype =float)
+#galcount = np.array(galcount, dtype = int)
+#flags = np.array(flags, dtype = int)
+#BT = np.array(BT, dtype =float)
 
-print "\n\nFor the Dev Catalog"
-print_flag_table(uflag_vals,flags, 'Dev_catalog.table')
+#print "\n\nFor the Dev Catalog"
+#print_flag_table(uflag_vals,flags, 'Dev_catalog.table')

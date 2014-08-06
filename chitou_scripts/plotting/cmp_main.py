@@ -114,7 +114,13 @@ oplot.bin_it(bins[options['key_x']], bin_lims[options['key_x']][options['key_y']
             bin_lims[options['key_x']][options['key_y']][1])
 oplot.add_bars('r')
 pl.plot(pl.xlim(), [0,0], 'k-')
+
+if ">=" in options['title']:
+    options['title'] = options['title'].replace(">=","$\\geq$")
+
 pl.title(options['title'], fontsize=8)
+print '%s_%s_%s_%s_%s_%s%s.eps' %(options['band'], options['table1'],options['table2'], options['model2'], options['xchoice'], options['ychoice'], options['postfix'])
+#pl.show()
 oplot.savefig('%s_%s_%s_%s_%s_%s%s.eps' %(options['band'], options['table1'],options['table2'], options['model2'], options['xchoice'], options['ychoice'], options['postfix']))
 
 

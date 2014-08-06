@@ -42,8 +42,9 @@ def get_flag_props(flags_to_use, autoflag, binval, bins):
 def get_vals(binval): 
 #    cmd = """select a.galcount, a.flag, %s from Flags_optimize as a, M2010 as b, CAST as c, DERT as d, r_band_serexp as f, SSDR6 as z   where a.flag >=0 and a.band = 'r' and a.model = 'serexp' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = c.galcount and a.galcount = d.galcount and a.galcount = f.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;""" %binval
 
-    cmd = """select a.galcount, IF(a.flag&pow(2,10)>0, IF(f.n_bulge>7.95, a.flag^(pow(2,10)+pow(2,27)),a.flag),a.flag) , %s from Flags_optimize as a, M2010 as b, CAST as c, DERT as d, r_band_serexp as f where a.flag >=0 and a.band = 'r' and a.model = 'serexp' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = c.galcount and a.galcount = d.galcount and a.galcount = f.galcount order by a.galcount limit 1000000;""" %binval
+    cmd = """select a.galcount, IF(a.flag&pow(2,10)>0, IF(f.n_bulge>7.95, a.flag^(pow(2,10)+pow(2,27)),a.flag),a.flag) as flag , %s from Flags_catalog as a, M2010 as b, CAST as c, DERT as d, i_band_serexp as f where a.flag >=0 and a.band = 'i' and a.model = 'serexp' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = c.galcount and a.galcount = d.galcount and a.galcount = f.galcount order by a.galcount limit 1000000;""" %binval
 
+    print cmd
     galcount, flags, binvals = cursor.get_data(cmd)
     galcount = np.array(galcount, dtype=int)
     autoflag = np.array(flags, dtype=int)
@@ -102,17 +103,17 @@ def plot_props(xlab, props, magbins, delta, flags_to_use,plot_info):
 
 cursor = mysql_connect('catalog','pymorph','pymorph','')
 
-band = 'r'
+band = 'i'
 model = 'serexp'
 
-flags_to_use = [1,4,10,27,14,19]
+flags_to_use = [1,4,10,27,14,20]
 
 plot_info = {1:{'color':'r', 'label':'bulges', 'ms':3, 'marker':'o', 'ls':'-'},
              4:{'color':'b', 'label':'disks', 'ms':3, 'marker':'s', 'ls':'-'},
              10:{'color':'g', 'label':'2com', 'ms':3, 'marker':'d', 'ls':'-'},
              14:{'color':'y', 'label':'bad 2com', 'ms':3, 'marker':'o', 'ls':'--'},
              27:{'color':'c', 'label':'n8', 'ms':3, 'marker':'s', 'ls':'--'},
-             19:{'color':'k', 'label':'bad', 'ms':3, 'marker':'d', 'ls':'--'},
+             20:{'color':'k', 'label':'bad', 'ms':3, 'marker':'d', 'ls':'--'},
              'total': {'color':"#D0D0D0",'label':'total'}
              }
 
@@ -126,9 +127,9 @@ pl.subplot(3,2,1)
 delta = 0.25
 magbins = np.arange(13.25, 18.76, delta)
 #galcount, autoflag, mag = get_vals('c.petromag_r-c.extinction_r')
-galcount, autoflag, mag = get_vals('f.m_tot-c.extinction_r')
+galcount, autoflag, mag = get_vals('f.m_tot-c.extinction_i')
 props = get_flag_props(flags_to_use, autoflag, mag, magbins)
-plot_props('m$_r$', props, magbins, delta, flags_to_use,plot_info)
+plot_props('m$_i$', props, magbins, delta, flags_to_use,plot_info)
 
 
 print "apprad" 
@@ -157,9 +158,9 @@ pl.subplot(3,2,2)
 delta = 0.5
 magbins = np.arange(-25.0, -17.0, delta)
 #galcount, autoflag, mag = get_vals("c.petromag_r-d.dismod-d.kcorr_r-c.extinction_r")
-galcount, autoflag, mag = get_vals("f.m_tot-d.dismod-d.kcorr_r-c.extinction_r")
+galcount, autoflag, mag = get_vals("f.m_tot-d.dismod-d.kcorr_i-c.extinction_i")
 props = get_flag_props(flags_to_use, autoflag, mag, magbins)
-plot_props('M$_r$', props, magbins, delta, flags_to_use,plot_info)
+plot_props('M$_i$', props, magbins, delta, flags_to_use,plot_info)
 
 
 print "ABSrad" 
@@ -179,9 +180,9 @@ if 0:
     delta = 0.5
     magbins = np.arange(-25.0, -17.0, delta)
     #galcount, autoflag, mag = get_vals("c.petromag_r-d.dismod-d.kcorr_r-c.extinction_r")
-    galcount, autoflag, mag = get_vals("f.m_tot-d.dismod-d.kcorr_r-c.extinction_r")
+    galcount, autoflag, mag = get_vals("f.m_tot-d.dismod-d.kcorr_i-c.extinction_i")
     props = get_flag_props(flags_to_use, autoflag, mag, magbins)
-    plot_inflag_prop('M$_r$', props, magbins, delta, flags_to_use,plot_info)
+    plot_inflag_prop('M$_i$', props, magbins, delta, flags_to_use,plot_info)
 
     pl.subplot(3,2,6)
 

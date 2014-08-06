@@ -149,7 +149,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     fig = start_fig(fig_size)            
 
     plot_set = pub_plots(xmaj = 1, xmin = 0.5, xstr = '%d', 
-                         ymaj = 0.2, ymin = 0.1, ystr =  '% 02.1f')
+                         ymaj = 0.05, ymin = 0.01, ystr =  '% 03.2f')
     
     for curr_appmag, curr_weight, curr_color, cls, label in zip(appMag, weights, colors, lsl, ['g-band','r-band', 'i-band']): 
         n, bins, patches = pl.hist(curr_appmag, weights = curr_weight, bins = 10*8, 
@@ -161,13 +161,13 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
         for a,b in zip(binctr, n):
             fout.write('%f %f\n' %(a,b))
 
-    pl.xlim((14.0,19.5))
-    pl.ylim((0,0.201))
     pl.xlabel('m$_{petro}$')
     pl.ylabel('n(m$_{petro}$)')
     
     ax = pl.gca()
     plot_set.set_plot(ax)
+    pl.ylim((0,0.16))
+    pl.xlim((14.0,17.9))
     pl.savefig(plot_stem+'appmag_dist.eps')#, bbox_inches = 'tight')
     pl.close(fig)
 
@@ -175,7 +175,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
 
     fig = start_fig(fig_size)            
     plot_set = pub_plots(xmaj = 2, xmin = 0.5, xstr = '%d', 
-                         ymaj = 0.2, ymin = 0.05, ystr =  '% 02.1f')
+                         ymaj = 0.1, ymin = 0.05, ystr =  '% 02.1f')
     
 
     for curr_rhl, curr_weight, curr_color, cls in zip(rhl_arcsec, weights, colors, lsl): 
@@ -183,7 +183,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
                                    range=(0,10), histtype = 'step', color = curr_color, lw = cls)
 
     pl.xlim((0,8.5))
-    pl.ylim((0,.301))
+    pl.ylim((0,.29))
     pl.xlabel('r$_{hl}$ [arcsec]')
     pl.ylabel('n(r$_{hl}$)')
     
@@ -196,14 +196,14 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
 
     fig = start_fig(fig_size)            
     plot_set = pub_plots(xmaj = 2, xmin = 0.5, xstr = '%d', 
-                         ymaj = 0.2, ymin = 0.05, ystr =  '% 02.1f')
+                         ymaj = 0.1, ymin = 0.05, ystr =  '% 02.1f')
     
     for curr_sb, curr_weight, curr_color, cls in zip(surf_bright, weights, colors,lsl): 
         n, bins, patches = pl.hist(curr_sb, weights = curr_weight,bins = 12, 
                                    range=(18,24), histtype = 'step', color = curr_color, lw = cls)
 
     pl.xlim((18,24.5))
-    pl.ylim((0,0.301))
+    pl.ylim((0,0.29))
     pl.xlabel('$\mu_{hl}$')
     pl.ylabel('n($\mu_{hl}$)')
     

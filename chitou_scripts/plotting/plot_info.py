@@ -99,7 +99,7 @@ xlabs = {'petromag':'m$_{\mathrm{petro,\ {band}}}$',
          'BT':'B/T$_{\mathrm{{band},\ pm}}$', 
          'rbulgerdisk': '(r$_{\mathrm{bulge,\ {band}}}\ $/$\ $r$_{\mathrm{disk,\ {band}}}$)$_{\mathrm{pm}}$',
          'cutsize': 'size', 
-         'sky':'$\Delta$sky$_{\mathrm{{band}}}$ (%)'}
+         'sky':r'$\Delta$sky$_{\mathrm{{band}}}$ (\%)'}
 
 xlims = {'mtot':(14.0, 17.8),
          'mtot_app':(14.0, 17.8),
@@ -142,7 +142,7 @@ ylabs = {'mtot':'$\Delta$m$_{\mathrm{tot,\ {band}}}$',
          'n':'$\Delta$n', 'BT':'$\Delta$B/T', 
          'nbulge':'$\Delta$n$_{bulge}$', 'BT':'$\Delta$B/T', 
          'rbulgerdisk': '$\Delta$(r$_{\mathrm{bulge,\ {band}}}\ $/$\ $r$_{\mathrm{disk,\ {band}}}$)',
-         'sky':'$\Delta$sky$\ $ (%)',
+         'sky':r'$\Delta$sky$_{\mathrm{{band}}}$ (\%)',
          'radfull':'r$_{\mathrm{hl,\ {band}}}$ [arcsec]'}
 
 ylims = {'mtot':(-0.5, 0.5), 

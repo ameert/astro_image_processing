@@ -19,8 +19,8 @@ cmd = """select x.galcount, z.Hrad_corr,z.BT,
 z.m_tot, -x.aa_{band} - x.kk_{band}*x.airmass_{band},
 y.SexHrad, x.petroR50_{band}
 from 
-{band}_band_{model} as z,
-{band}_band_fit as y,
+{band}_highn_{model} as z,
+{band}_highn_fit as y,
 CAST as x, DERT as s
 where 
 x.galcount = s.galcount and y.galcount = x.galcount and
@@ -41,6 +41,6 @@ new_data['r_sex']=data[pos_dict['hrad_sex']]
 new_data['r_petro']=data[pos_dict['petrorad']]
 new_data['BT']=data[pos_dict['BT']]
 
-outfile = open('full_catalog_info_%s_%s.pickle' %(band,model), 'w')
+outfile = open('full_highn_info_%s_%s.pickle' %(band,model), 'w')
 pickle.dump(new_data, outfile)
 outfile.close()

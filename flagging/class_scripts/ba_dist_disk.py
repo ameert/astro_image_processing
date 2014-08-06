@@ -40,7 +40,7 @@ for count, gal_opt in enumerate(['Ell','S0','Sab','Scd']):
 
 
     pl.subplot(2,2,count+1)
-    pl.hist(ba_disk, range=(0,1), bins = 50, log = True)
+    pl.hist(ba_disk, range=(0,1), bins = 50, log = True, color='k', histtype='step')
     pl.ylabel('counts')
     pl.xlabel('b/a disk')
     pl.title( gal_opt)

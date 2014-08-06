@@ -39,14 +39,15 @@ usr = 'pymorph'
 
 cursor = mysql_connect(dba, usr, pwd)
 
-bands = 'i'
-models = ['dev','ser', 'devexp','serexp'] 
-#models = ['ser'] 
+bands = 'r'
+#models = ['ser', 'serexp'] 
+models = ['ser'] 
 #models = ['exp','dev', 'ser', 'devexp', 'serexp', 'cmodel']
 
 def build_tables(bands, models, new_tablestem = 'band'):
     for band in bands:
-        cmd = """create table {band}_{new_tablestem}_fit (galcount int primary key, 
+        cmd = """create table {band}_{new_tablestem}_fit 
+    (galcount int primary key, 
     SexMag float default -999,  SexMag_err float default -999, 
     SexHrad float default -999,  SexSky  float default -999, 
     num_targets int default -999, 
@@ -63,7 +64,8 @@ def build_tables(bands, models, new_tablestem = 'band'):
         cursor.execute(cmd)
 
         for model in models:
-            cmd = """create table {band}_{new_tablestem}_{model} (galcount int primary key, 
+            cmd = """create table {band}_{new_tablestem}_{model} 
+    (galcount int primary key, 
     m_tot float default -999, BT float default -999, 
     Hrad_corr float default -999, ba_tot_corr float default -999,
     xctr_bulge float default -999, xctr_bulge_err float default -999,  
@@ -276,9 +278,9 @@ def load_model_calc(bands, models, old_tablestem='raw_catalog_fits.full_dr7', ne
             
     return
 
-#build_tables(bands, models, new_tablestem='deep')
-#load_fit_uncalc(bands, models[:],old_tablestem='deep_rerun',new_tablestem='deep')
-#separate_CASGM(bands, ['dev'],old_tablestem='deep_rerun',new_tablestem='deep')
-#load_fit_calc(bands, models[:],old_tablestem='deep_rerun',new_tablestem='deep')
-load_model_uncalc(bands, models,old_tablestem='deep_rerun',new_tablestem='deep')
-load_model_calc(bands, models,old_tablestem='deep_rerun',new_tablestem='deep')
+#build_tables(bands, models, new_tablestem='claudia')
+#load_fit_uncalc(bands, models[:],old_tablestem='claudiaraw',new_tablestem='claudia')
+#separate_CASGM(bands, ['ser'],old_tablestem='claudiaraw',new_tablestem='claudia')
+#load_fit_calc(bands, models[:],old_tablestem='claudiaraw',new_tablestem='claudia')
+load_model_uncalc(bands, models,old_tablestem='claudiaraw',new_tablestem='claudia')
+load_model_calc(bands, models,old_tablestem='claudiaraw',new_tablestem='claudia')

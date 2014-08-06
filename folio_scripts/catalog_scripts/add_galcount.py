@@ -1,7 +1,7 @@
 #!/data2/home/ameert/python/bin/python2.5
 
 import numpy as np
-from mysql_class import *
+from mysql.mysql_class import *
 import sys
 
 table_name = sys.argv[1]
@@ -18,10 +18,10 @@ except:
     
 dba = 'pymorph'
 usr = 'pymorph'
-pwd = 'pymorph9455'
+pwd = 'pymorph'
 host = 'shredder'
 
-conn = mysql_connect(dba, usr, pwd, host)
+conn = mysql_connect(dba, usr, pwd)#, host)
 
 conn.execute('alter table '+table_name+' add column galcount int first;')
 
