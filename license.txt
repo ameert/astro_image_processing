@@ -1,4 +1,4 @@
-    "alans-image-processing-pipeline" A package containing some of the tools
+    "astro_image_processing" A package containing some of the tools
     used in data download and analysis on python for SDSS data.
     Copyright (C) 2011  Alan Meert
 
