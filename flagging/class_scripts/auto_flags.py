@@ -231,7 +231,7 @@ def load_autoflag(folder_num, info_dict, print_info = False):
     infile.close()
 
     for galcount,flagval in zip(data['galcount'], data['autoflags']):
-        cmd = """update {table} set flag = {finalval} where galcount = {galcount} and band = '{band}' and model = '{model}' and ftype = '{autoflag_ftype}';""".format(table = 'Flags_catalog', finalval = flagval, band=info_dict['band'], model=info_dict['model'], galcount = galcount, autoflag_ftype=info_dict['autoflag_ftype'])
+        cmd = """update {table} set flag = {finalval} where galcount = {galcount} and band = '{band}' and model = '{model}' and ftype = '{autoflag_ftype}';""".format(table = info_dict['table'], finalval = flagval, band=info_dict['band'], model=info_dict['model'], galcount = galcount, autoflag_ftype=info_dict['autoflag_ftype'])
         if print_info:
             print cmd
         cursor.execute(cmd)

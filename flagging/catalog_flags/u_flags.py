@@ -1,12 +1,11 @@
-from mysql_class import *
+from mysql.mysql_class import *
 from flag_configuration import autoflag_dict, uflag_dict
 from flag_analysis import flag_set, get_percent
 
 def run_uflags(folder_num, info_dict, print_flags = False):
     cursor = info_dict['cursor']
 
-    cmd = """select a.galcount, a.flag, z.BT from {table} as a, M2010 as b, r_band_{model} as z where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = '{autoflag_ftype}' and a.galcount = b.galcount and a.galcount = z.galcount and (a.galcount between {low_gal} and {high_gal}) order by a.galcount;""".format(table = 'Flags_optimize', band=info_dict['band'], model=info_dict['model'], autoflag_ftype=info_dict['autoflag_ftype'], low_gal = 250*(folder_num-1)+1, high_gal = 250*folder_num)
-#    cmd = """select a.galcount, a.flag, z.BT from {table} as a, M2010 as b, r_sims_{model} as z where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = '{autoflag_ftype}' and a.galcount = b.galcount and a.galcount = z.galcount and (a.galcount =27957 or a.galcount = 27575 or a.galcount=23665);""".format(table = 'Flags_optimize', band=info_dict['band'], model=info_dict['model'], autoflag_ftype=info_dict['autoflag_ftype'])
+    cmd = """select a.galcount, a.flag, z.BT from {table} as a, M2010 as b, r_band_{model} as z where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = '{autoflag_ftype}' and a.galcount = b.galcount and a.galcount = z.galcount and (a.galcount between {low_gal} and {high_gal}) order by a.galcount;""".format(table = info_dict['table'], band=info_dict['band'], model=info_dict['model'], autoflag_ftype=info_dict['autoflag_ftype'], low_gal = 250*(folder_num-1)+1, high_gal = 250*folder_num)
     
     galcount, flags, BT = cursor.get_data(cmd)
     galcount = np.array(galcount, dtype = int)
@@ -25,6 +24,8 @@ def run_uflags(folder_num, info_dict, print_flags = False):
               np.where(flags&2**autoflag_dict['disk contaminated']>0,1,0)
               | np.where(flags&2**autoflag_dict['disk is sky']>0,1,0))
 
+    poll_frac = flag_set(np.where(flags&2**autoflag_dict['polluted']>0,1,0)|np.where(flags&2**autoflag_dict['fractured']>0,1,0))
+
 
     disk_inner = flag_set(np.where(flags&2**autoflag_dict['disk fitting inner']>0,1,0))
     bulge_outer = flag_set(np.where(flags&2**autoflag_dict['bulge fitting outer']>0,1,0))
@@ -40,9 +41,9 @@ def run_uflags(folder_num, info_dict, print_flags = False):
     other_bad_fits = flag_set(np.where(no_bulge.vals+no_disk.vals+
                      disk_dominates_always.vals+
                      bulge_dominates_always.vals > 1, 1,0)|(bulge_dominates.vals*(no_bulge.vals|disk_dominates_always.vals))|(bulge_dominates.invert()*(no_disk.vals|bulge_dominates_always.vals)))
-             # these are fits that have incorrect measurements ...    
+             # these are fits that have incorrect measurements ...
   
-    bad_gals = flag_set( galfit_failure.vals|center_probs.vals |bulge_contam_or_sky.vals |disk_contam_or_sky.vals| other_bad_fits.vals)
+    bad_gals = flag_set( galfit_failure.vals|center_probs.vals |bulge_contam_or_sky.vals |disk_contam_or_sky.vals| other_bad_fits.vals | poll_frac.vals)
 
     #now update the 1com gals to remove bad ones
     no_bulge.vals = no_bulge.vals*bad_gals.invert()
@@ -82,6 +83,10 @@ def run_uflags(folder_num, info_dict, print_flags = False):
     bad_disk_shapes = flag_set(prob_2com_gals.vals*bulge_dominates.invert()*bulge_shape.vals*bulge_truly_outer.invert()*disk_truly_inner.invert())
 
     problem_2com_fits =flag_set(prob_2com_gals.vals*( bulge_truly_outer.vals|disk_truly_inner.vals | bad_bulge_shapes.vals | bad_disk_shapes.vals))
+    
+    tiny_bulge = flag_set(np.where(flags&2**autoflag_dict['tinybulge']>0,1,0)*prob_2com_gals.vals* problem_2com_fits.invert())
+                       
+    problem_2com_fits =flag_set(problem_2com_fits.vals|tiny_bulge.vals)
 
     good_flip_2com =  flag_set( prob_2com_gals.vals*problem_2com_fits.invert()* no_flags.invert()*(np.where(bulge_is_disk.vals+bulge_outer.vals+disk_inner.vals >1, 1,0)| disk_inner.vals*low_n_bulge.vals | bulge_is_disk.vals))
     good_good_2com =  flag_set(prob_2com_gals.vals* problem_2com_fits.invert()*no_flags.invert()*good_flip_2com.invert())
@@ -108,6 +113,7 @@ def run_uflags(folder_num, info_dict, print_flags = False):
                     ("\t\tExp Inner Only", disk_truly_inner.vals),
                     ("\t\tGood Ser, Bad Exp, B/T$>=$0.5", bad_bulge_shapes.vals),
                     ("\t\tBad Ser, Good Exp, B/T$<$0.5", bad_disk_shapes.vals),
+                    ("\t\tTiny Bulge, otherwise good", tiny_bulge.vals),
 
                     ("Bad Total Magnitudes and Sizes", bad_gals.vals),
                     ("\tCentering Problems", center_probs.vals),  
@@ -115,6 +121,7 @@ def run_uflags(folder_num, info_dict, print_flags = False):
                     ("\tExp Component Contamination by Neighbors or Sky", disk_contam_or_sky.vals),
                     ("\tBad Ser and Bad Exp Components", other_bad_fits.vals),    
                     ("\tGalfit Failure", galfit_failure.vals),   
+                    ("\tPolluted or Fractured", poll_frac.vals)
                     ]
     
     uflags = np.zeros_like(flags)
@@ -137,7 +144,7 @@ def load_uflags(galcount, uflags, info_dict, print_info = False):
     cursor = info_dict['cursor']
 
     for gal, flagval in zip(galcount, uflags):
-        cmd = """update {table} set flag = {finalval} where galcount = {galcount} and band = '{band}' and model = '{model}' and ftype = '{uflag_ftype}';""".format(table = 'Flags_optimize', finalval = flagval, band=info_dict['band'], model=info_dict['model'], galcount = gal, uflag_ftype=info_dict['uflag_ftype'])
+        cmd = """update {table} set flag = {finalval} where galcount = {galcount} and band = '{band}' and model = '{model}' and ftype = '{uflag_ftype}';""".format(table = info_dict['table'], finalval = flagval, band=info_dict['band'], model=info_dict['model'], galcount = gal, uflag_ftype=info_dict['uflag_ftype'])
         if print_info:
             print cmd
         cursor.execute(cmd)
@@ -146,18 +153,16 @@ def load_uflags(galcount, uflags, info_dict, print_info = False):
 
 if __name__ == "__main__":
     
-    info_dict = {'dba':'simulations',
-                 'usr':'pymorph', 'pwd':'pymorph', 'host':'',
-                 'band':'r', 'model':'serexp','autoflag_ftype':'x',
-                 'uflag_ftype':'z',}
+    info_dict = {'dba':'catalog', 'usr':'pymorph', 'pwd':'pymorph', 'host':'',
+                 'band':'r', 'model':'serexp','autoflag_ftype':'r',
+                 'uflag_ftype':'u','table':'Flags_catalog'}
     info_dict['cursor']=mysql_connect(info_dict['dba'],info_dict['usr'],info_dict['pwd'],info_dict['host'])
     
+    folder_num = int(sys.argv[1])
     print "\n\nFor the %s band %s Catalog" %(info_dict['band'],info_dict['model'])
-    for folder_num in range(1,2):#121):
-        galcount, uflags_out = run_uflags(folder_num, info_dict,print_flags = False)
-        load_uflags(galcount, uflags_out, info_dict, print_info = False)
+    galcount, uflags_out = run_uflags(folder_num, info_dict,print_flags = False)
+    load_uflags(galcount, uflags_out, info_dict, print_info = False)
     
-#select a.galcount, a.flag, b.flag, a.flag-b.flag from Flags_optimize as a, Flags_optimize as b where a.galcount=b.galcount and a.band='r' and b.band='r' and a.model='serexp' and b.model='serexp' and a.ftype = 'u' and b.ftype = 'z' and abs(a.flag-b.flag)>0;
 
 
 

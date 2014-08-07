@@ -43,7 +43,7 @@ if __name__ == "__main__":
     for bandval in 'r':
         info_dict = {'dba':'catalog', 'usr':'pymorph', 'pwd':'pymorph', 'host':'',
                      'band':bandval, 'model':model,'autoflag_ftype':'r',
-                     'uflag_ftype':'u',
+                     'uflag_ftype':'u', 'table':'Flags_catalog'
                      }
         info_dict['cursor']=mysql_connect(info_dict['dba'],info_dict['usr'],info_dict['pwd'],info_dict['host'])
 

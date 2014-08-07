@@ -5,7 +5,7 @@ from flag_analysis import flag_set, get_percent
 def run_uflags(folder_num, info_dict, print_flags = False):
     cursor = info_dict['cursor']
 
-    cmd = """select a.galcount, a.flag, z.BT from {table} as a, M2010 as b, r_band_{model} as z where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = '{autoflag_ftype}' and a.galcount = b.galcount and a.galcount = z.galcount and (a.galcount between {low_gal} and {high_gal}) order by a.galcount;""".format(table = 'Flags_catalog', band=info_dict['band'], model=info_dict['model'], autoflag_ftype=info_dict['autoflag_ftype'], low_gal = 250*(folder_num-1)+1, high_gal = 250*folder_num)
+    cmd = """select a.galcount, a.flag, z.BT from {table} as a, M2010 as b, r_band_{model} as z where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = '{autoflag_ftype}' and a.galcount = b.galcount and a.galcount = z.galcount and (a.galcount between {low_gal} and {high_gal}) order by a.galcount;""".format(table = info_dict['table'], band=info_dict['band'], model=info_dict['model'], autoflag_ftype=info_dict['autoflag_ftype'], low_gal = 250*(folder_num-1)+1, high_gal = 250*folder_num)
     
     galcount, flags, BT = cursor.get_data(cmd)
     galcount = np.array(galcount, dtype = int)
@@ -144,7 +144,7 @@ def load_uflags(galcount, uflags, info_dict, print_info = False):
     cursor = info_dict['cursor']
 
     for gal, flagval in zip(galcount, uflags):
-        cmd = """update {table} set flag = {finalval} where galcount = {galcount} and band = '{band}' and model = '{model}' and ftype = '{uflag_ftype}';""".format(table = 'Flags_catalog', finalval = flagval, band=info_dict['band'], model=info_dict['model'], galcount = gal, uflag_ftype=info_dict['uflag_ftype'])
+        cmd = """update {table} set flag = {finalval} where galcount = {galcount} and band = '{band}' and model = '{model}' and ftype = '{uflag_ftype}';""".format(table = info_dict['table'], finalval = flagval, band=info_dict['band'], model=info_dict['model'], galcount = gal, uflag_ftype=info_dict['uflag_ftype'])
         if print_info:
             print cmd
         cursor.execute(cmd)
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     
     info_dict = {'dba':'catalog', 'usr':'pymorph', 'pwd':'pymorph', 'host':'',
                  'band':'r', 'model':'serexp','autoflag_ftype':'r',
-                 'uflag_ftype':'u',}
+                 'uflag_ftype':'u','table':'Flags_catalog'}
     info_dict['cursor']=mysql_connect(info_dict['dba'],info_dict['usr'],info_dict['pwd'],info_dict['host'])
     
     folder_num = int(sys.argv[1])
