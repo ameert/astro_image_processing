@@ -1,13 +1,18 @@
 #!/bin/bash
 
-gitdir=$(git rev-parse --show-toplevel) ;
+gitdir=$(git rev-parse --show-toplevel);
+cd ${gitdir};
+cd ..;
+topdir=$(pwd);
+cd ${gitdir};
 
 #sed_str="s|{gitdir}|${gitdir}|"
 #sed $sed_str <$gitdir/src/mysql/load_CAMEO.raw >$gitdir/src/mysql/load_CAMEO.mysql
 
 pathfile=${gitdir}'/user_settings.py';
 
-echo "Please enter the MySQL host for your machine (if you don't know better, enter 'localhost' without quotes):";
+echo "Please enter the MySQL host for your machine (if you don't know better, 
+enter 'localhost' without quotes):";
 read mysql_host;
 echo "Please enter the MySQL user name for your machine:";
 read mysql_user;
@@ -47,9 +52,13 @@ mysql_params={
 echo "##### PATHS  #####">>$pathfile;
 echo "project_path='$gitdir'">>$pathfile;
 
-if [[ ":$PYTHONPATH:" == *":$gitdir:"* ]]; then
+if [[ ":$PYTHONPATH:" == *":${topdir}:"* ]]; then
   echo "Your path is correctly set";
 else
-  echo "Your PYTHONPATH is missing $gitdir, add it now!!!";
-  echo "Add $gitdir to your PYTHONPATH in .bashrc for the future!";
+  echo "Your PYTHONPATH is missing ${topdir}, add it now!!!";
+  echo "Add ${topdir} to your PYTHONPATH in .bashrc for the future!";
+  echo "If ${topdir} is not added, this module may not be found!";
 fi
+
+exit 0;
+
