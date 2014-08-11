@@ -6,3 +6,4 @@
 *.sql
 *.pickle
 *.npz
+user_settings.py
