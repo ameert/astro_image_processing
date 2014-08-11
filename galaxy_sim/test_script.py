@@ -2,28 +2,9 @@
 
 import simulate_galaxy
 import pyfits as p
-from mysql_connect import *
+from mysql.mysql_connect import *
 import numpy as n
 import sys
-
-def mag_sum(mag1, mag2):
-    print mag1, mag2
-    mag1 = 10.0**( -.4*mag1)
-    mag2 = 10.0**(-.4*mag2)
-
-    mag_tot = mag1 + mag2
-    bt = mag1/(mag1+mag2)
-    mag_tot = -2.5 * n.log10(mag_tot)
-
-    return mag_tot, bt
-
-def mag_to_counts( mag, aa, kk = 0 , airmass = 0):
-    exptime = 53.907456 #in seconds, taken from SDSS website www.sdss.org/dr3/algorithms/fluxcal.html
-    return exptime * (10**(-.4*mag)) / (10**(0.4*(aa + kk*airmass)))
-
-def counts_to_mag( counts, aa, kk = 0 , airmass = 0):
-    exptime = 53.907456 #in seconds, taken from SDSS website www.sdss.org/dr3/algorithms/fluxcal.html
-    return -2.5 * n.log10(counts/exptime) + aa
 
 num_gal = 5000
 num_good = 2500
@@ -127,7 +108,7 @@ for model in ['devexp']:#['serexp','ser']:#, 'dev', 'serexp', 'devexp']:
         if 1:
         #try:
             print name, Ie_model, Id_model
-            print mag_sum(Ie_model, Id_model), BT_model
+            print magsum(Ie_model, Id_model), BT_model
             print counts_to_mag(Ie_count + Id_count, zeropoint_sdss_r)
             gal = simulate_galaxy.galaxy('/home/ameert/Desktop/final_sim/20/',name,psf_image, Ie_count+Id_count, BT_model, rd_model, inc, dpa_model, re_model, eb_model, bpa_model, n_model, bulge_mag = Ie_model, disk_mag = Id_model, kk = kk_r, zp = zeropoint_sdss_r, airmass = airmass_r, half_light = half_rad)
             gal.make_profile()

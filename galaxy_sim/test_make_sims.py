@@ -2,32 +2,13 @@
 
 #import simulate_galaxy
 import pyfits as p
-from mysql_class import *
+from mysql.mysql_class import *
 import numpy as np
 import sys
-from sersic_classes import *
+from galaxy_sim.sersic_classes import *
 model_list = [sys.argv[1]]
 start = int(sys.argv[2])
 stop = int(sys.argv[3])
-
-def mag_sum(mag1, mag2):
-    print mag1, mag2
-    mag1 = 10.0**( -.4*mag1)
-    mag2 = 10.0**(-.4*mag2)
-
-    mag_tot = mag1 + mag2
-    bt = mag1/(mag1+mag2)
-    mag_tot = -2.5 * np.log10(mag_tot)
-
-    return mag_tot, bt
-
-def mag_to_counts( mag, aa, kk = 0 , airmass = 0):
-    exptime = 53.907456 #in seconds, taken from SDSS website www.sdss.org/dr3/algorithms/fluxcal.html
-    return exptime * (10**(-.4*mag)) / (10**(0.4*(aa + kk*airmass)))
-
-def counts_to_mag( counts, aa, kk = 0 , airmass = 0):
-    exptime = 53.907456 #in seconds, taken from SDSS website www.sdss.org/dr3/algorithms/fluxcal.html
-    return -2.5 * np.log10(counts/exptime) + aa
 
 cursor = mysql_connect('catalog','ameert','al130568')
 

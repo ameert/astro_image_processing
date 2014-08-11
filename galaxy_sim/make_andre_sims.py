@@ -1,5 +1,6 @@
 import pyfits as p
-from mysql_class import *
+from astro_utils.magnitudes import magsum, counts_to_mag, mag_to_counts
+from mysql.mysql_class import *
 import numpy as np
 import sys
 import pylab as pl
@@ -8,26 +9,6 @@ from cosmolopy import distance
 from cosmolopy import magnitudes
 
 cosmo = {'omega_M_0':0.3, 'omega_lambda_0':0.7, 'omega_k_0':0.0, 'h':0.7}
-
-def mag_sum(mag1, mag2):
-    print mag1, mag2
-    mag1 = 10.0**( -.4*mag1)
-    mag2 = 10.0**(-.4*mag2)
-
-    mag_tot = mag1 + mag2
-    bt = mag1/(mag1+mag2)
-    mag_tot = -2.5 * np.log10(mag_tot)
-
-    return mag_tot, bt
-
-def mag_to_counts( mag, aa, kk = 0 , airmass = 0):
-    exptime = 53.907456 #in seconds, taken from SDSS website www.sdss.org/dr3/algorithms/fluxcal.html
-    return exptime * (10**(-.4*mag)) / (10**(0.4*(aa + kk*airmass)))
-
-def counts_to_mag( counts, aa, kk = 0 , airmass = 0):
-    exptime = 53.907456 #in seconds, taken from SDSS website www.sdss.org/dr3/algorithms/fluxcal.html
-    return -2.5 * np.log10(counts/exptime) + aa
-
 model_list = ['ser']#,'devexp','serexp']
 cursor = mysql_connect('andre_BCG','ameert','al130568')
 
