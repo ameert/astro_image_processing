@@ -9,8 +9,6 @@ import scipy.signal as signal
 import numpy.random as rand
 #rand.seed(130941324)
 
-#import pylab as pl 
-
 class im_obj:
     """This class holds basic image properites like size, convolution, and saving"""
     def __init__(self, image = np.zeros(1)):
@@ -97,12 +95,6 @@ for I_tot and Re"""
 
         self.pos_ang = rand.rand(num)*2.0*np.pi
         self.photons = splev(photons, self.tck)
-
-        #pl.hist(self.pos_ang, bins = 200)
-        #pl.savefig('/home/ameert/Desktop/posang.eps')
-        #pl.hist(self.photons, bins = 200)
-        #pl.savefig('/home/ameert/Desktop/photons.eps')
-
         return
 
 

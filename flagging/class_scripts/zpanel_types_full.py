@@ -61,7 +61,7 @@ def get_vals():
 
         cmd += """, catalog.Nair as n where c.galcount = n.galcount and """
     
-    cmd += """c.galcount = a.galcount and c.galcount = m.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount;""".format(model = 'serexp', band = 'r')
+    cmd += """c.galcount = a.galcount and c.galcount = m.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount;""".format(model = model, band = band)
 
     galcount, flags, flag2, nbulge = cursor.get_data(cmd)
     galcount = np.array(galcount, dtype=int)
@@ -165,9 +165,9 @@ l = ax2.legend(loc='center', bbox_to_anchor=(-1.5, 0.5))
 
 #pl.show()
 if choice =='nair_marc':
-    pl.savefig('./types_dist_nair_marc.eps')
+    pl.savefig('./types_dist_nair_marc_{band}_{model}.eps'.format(band=band, model=model))
 elif choice =='nair':
-    pl.savefig('./types_dist_nair.eps')
+    pl.savefig('./types_dist_nair_{band}_{model}.eps'.format(band=band, model=model))
 elif choice =='full':
-    pl.savefig('./types_dist_full.eps')
+    pl.savefig('./types_dist_full_{band}_{model}.eps'.format(band=band, model=model))
 
