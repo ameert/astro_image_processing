@@ -23,7 +23,6 @@ if __name__=="__main__":
 		stop = int(raw_input("Enter the stopping index:"))	
 
 
-
 	cursor = mysql_connect(user_settings.mysql_params['dba'],
 			       user_settings.mysql_params['user'],
 			       user_settings.mysql_params['pwd'],
@@ -70,8 +69,10 @@ if __name__=="__main__":
 		inc = np.arccos(ed)
 
 		name = '%08d' %(simcount)
-		psf_image = '/media/SDSS2/fit_catalog/data/r/%04d/%08d_r_psf.fits' %((galcount-1)/250 +1, galcount)
-		background = '/media/BACKUP/sdss_sample/data/r/fpC-%06d-r%d-%04d.fit.gz' %(run, camcol, field)
+		psf_image = None
+#		psf_image = '/media/SDSS2/fit_catalog/data/r/%04d/%08d_r_psf.fits' %((galcount-1)/250 +1, galcount)
+		background = None
+#		background = '/media/BACKUP/sdss_sample/data/r/fpC-%06d-r%d-%04d.fit.gz' %(run, camcol, field)
 		#try:
 
 		gal = galaxy('/home/ameert/test_sims/',name,Ie_count,Id_count, 
