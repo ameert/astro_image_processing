@@ -1,7 +1,11 @@
 import numpy as np
 import pylab as pl
 from scipy.misc import comb
-import scikits.bootstrap as bootstrap  
+try:
+    import scikits.bootstrap as bootstrap  
+    bootstrap_good = True
+except ImportError:
+    bootstrap_good = False
 
 class bin_stats:
     """class used to find mean, median, and 1-sigma of binned data"""
@@ -140,7 +144,10 @@ class bin_stats:
         return ci_indexes
 
     def get_median_ci(self, data, ci):
-        ci_vals = bootstrap.ci(data=data, statfunction=get_val, n_samples = self.nsamples)
+        if bootstrap_good:
+            ci_vals = bootstrap.ci(data=data, statfunction=get_val, n_samples = self.nsamples)
+        else:
+            ci_vals = np.array((-999.0, 999.0))
         return ci_vals
     
     def getmed95ci(self, curr_data, curr_weight):

@@ -256,6 +256,7 @@ class galaxy:
             if self.x_size < 200:
                 self.x_size = 200
 
+            self.x_size= int(np.ceil(self.x_size))
             self.y_size = self.x_size
             self.x_ctr = self.x_size/2.0
             self.y_ctr = self.y_size/2.0
