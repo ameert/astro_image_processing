@@ -16,6 +16,6 @@
 #
 #-----------------------------------
 
-from astro_utils.sizes.convert import * # the magnitude and count conversions
+from astro_image_processing.astro_utils.sizes.convert import * # the magnitude and count conversions
 
     

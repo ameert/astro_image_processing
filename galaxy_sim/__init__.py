@@ -19,8 +19,8 @@
 #
 #-----------------------------------
 
-from astro_image_processing.galaxy_sim.sersic_classes import *
-from astro_image_processing.galaxy_sim.chip_class import *
+from sersic_classes import *
+from chip_class import *
 
 
 

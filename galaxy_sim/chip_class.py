@@ -7,7 +7,7 @@ import os
 import sys
 from numpy.random import shuffle
 import random as ran
-from mysql_class import *
+from astro_image_processing.mysql.mysql_class import *
 import time
 import pylab as pl
 import scipy.signal as signal

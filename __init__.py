@@ -19,8 +19,8 @@
 #
 #-----------------------------------
 
-import astro_image_processing.astro_utils as astro_utils
-import astro_image_processing.galaxy_sim as galaxy_sim
-import astro_image_processing.statistics as statistics
+import astro_utils 
+import galaxy_sim 
+import statistics 
 
 

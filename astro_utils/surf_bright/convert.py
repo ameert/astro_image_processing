@@ -1,6 +1,6 @@
-from astro_utils.user_params import *
-from astro_utils.sizes import *
-from astro_utils.magnitudes import *
+from astro_image_processing.astro_utils.user_params import *
+from astro_image_processing.astro_utils.sizes import *
+from astro_image_processing.astro_utils.magnitudes import *
 
 
 def co_pix_to_mag_arc(surf_bright, sberr, zeropoint, kk = defaults['kk'] , 

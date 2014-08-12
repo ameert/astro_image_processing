@@ -17,11 +17,11 @@
 #
 #-----------------------------------
 
-from astro_utils.user_params import * #defaults
-import astro_utils.magnitudes as magnitudes# the magnitude conversions
-import astro_utils.sizes as sizes# the size conversions
-import astro_utils.profiles as profiles# the 1d profile conversions
-import astro_utils.surf_bright as surf_bright# surface brightness conversions
-import astro_utils.image_analysis as image_analysis# surface brightness conversions
+from user_params import * #defaults
+import magnitudes # the magnitude conversions
+import sizes  # the size conversions
+import profiles # the 1d profile conversions
+import surf_bright # surface bbightness conversions
+import image_analysis # surface brightness conversions
 
 

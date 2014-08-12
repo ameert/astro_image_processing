@@ -16,5 +16,5 @@
 #
 #-----------------------------------
 
-from astro_utils.image_analysis.image_info import * 
+from astro_image_processing.astro_utils.image_analysis.image_info import * 
     

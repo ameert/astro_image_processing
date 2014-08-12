@@ -1,4 +1,4 @@
-from astro_utils.user_params import *
+from astro_image_processing.astro_utils.user_params import *
 import numpy as np
 
 def mag_to_counts( mag, magerr, zeropoint, kk = defaults['kk'] , 

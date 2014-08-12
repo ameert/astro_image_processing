@@ -1,4 +1,4 @@
-from astro_utils.user_params import *
+from astro_image_processing.astro_utils.user_params import *
 
 def pixels_to_size(pixels, pixsz = defaults['pixsz']):
     """#++++++++++++++++++++++++++

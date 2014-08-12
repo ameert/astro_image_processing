@@ -17,7 +17,7 @@
 #
 #-----------------------------------
 
-import statistics.bin_stats as bin_stats# the magnitude conversions
-import statistics.convex_hull as convex_hull# the size conversions
+import bin_stats# the magnitude conversions
+import convex_hull# the size conversions
 
 

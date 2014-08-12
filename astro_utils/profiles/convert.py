@@ -1,6 +1,6 @@
-from astro_utils.user_params import *
-from astro_utils.sizes import *
-from astro_utils.surf_bright import *
+from astro_image_processing.astro_utils.user_params import *
+from astro_image_processing.astro_utils.sizes import *
+from astro_image_processing.astro_utils.surf_bright import *
 
 import numpy as np
 
