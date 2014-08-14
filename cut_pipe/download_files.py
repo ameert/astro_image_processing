@@ -72,16 +72,6 @@ def download_files(gal, data_stem, bands = 'r'):
             # str1 = 'http://das.sdss.org/imaging/%d/%d/objcs/%d/%s' %(run_tmp, rerun_tmp, camCol_tmp, nm)
             # get_file(nm, str1, data_dir)
             
-            # # see if tsObj file exists, if not, then get it from SDSS
-            # nm  = 'tsObj-%06d-%d-%d-%04d.fit' %(run_tmp, camCol_tmp, rerun_tmp,field_tmp)
-            # str1 = 'http://das.sdss.org/imaging/%d/%d/calibChunks/%d/%s' %(run_tmp, rerun_tmp, camCol_tmp, nm)
-            # get_file(nm, str1, data_dir)
-
-            # # see if tsField file exists, if not, then get it from SDSS
-            # nm  = 'tsField-%06d-%d-%d-%04d.fit' %(run_tmp, camCol_tmp, rerun_tmp,field_tmp)
-            # str1 = 'http://das.sdss.org/imaging/%d/%d/calibChunks/%d/%s' %(run_tmp, rerun_tmp, camCol_tmp, nm)
-            # get_file(nm, str1, data_dir)
-            
     return
 
 #++++++++++++++++++++++++++

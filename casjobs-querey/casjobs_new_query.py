@@ -60,9 +60,9 @@ def casjobs(gal_cat, casjobs_info):
     casjobs='java -jar %s ' %casjobs_info['cas_jar_path']
 
     # write config file used by casjobs
-    config_str = """wsid= {wsid}
-password= {password} 
-default_target= {search_target}
+    config_str = """wsid={wsid}
+password={password} 
+default_target={search_target}
 default_queue=1
 default_days=1
 verbose=true

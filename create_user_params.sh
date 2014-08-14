@@ -11,6 +11,9 @@ cd ${gitdir};
 
 pathfile=${gitdir}'/user_settings.py';
 
+
+############## SQL SETTINGS ###############################
+
 echo "Please enter the MySQL host for your machine (if you don't know better, 
 enter 'localhost' without quotes):";
 read mysql_host;
@@ -49,6 +52,42 @@ mysql_params={
 
 ">$pathfile;
 
+############## CASJOBS INFO ###############################
+
+echo "Please enter the CasJobs username (not required):";
+read casjobs_username;
+echo "Please enter the CasJobs wsid (not required):";
+read casjobs_wsid;
+echo "Please enter the CasJobs password (not required):";
+read casjobs_password;
+
+echo "You have entered
+casjobs user:${casjobs_username}
+casjobs wsid:${casjobs_wsid}
+casjobs password:${casjobs_password}";
+
+echo "
+Continue with these settings? Enter 'yes' to continue:";
+
+read casjobs_good
+if [ $casjobs_good == yes ]; then
+echo "Continuing with user entered settings";
+else
+echo "You dont want to continue.;
+Terminating";
+exit 1;
+fi
+
+echo "##### CASJOBS INFO ######
+casjobs_info={
+'username':'${casjobs_username}',
+'password':'${casjobs_password}',
+'wsid':'${casjobs_wsid}'
+}
+
+">>$pathfile;
+
+############ PATHS ##########################
 echo "##### PATHS  #####">>$pathfile;
 echo "project_path='$gitdir'">>$pathfile;
 
