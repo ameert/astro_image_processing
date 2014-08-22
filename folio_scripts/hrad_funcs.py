@@ -1,6 +1,6 @@
-from image_info import *
+from astro_image_processing.astro_utils.image_analysis import *
 import numpy as np
-from mysql_class import *
+from astro_image_processing.mysql.mysql_class import *
 import pyfits as pf
 from util_funcs import *
 

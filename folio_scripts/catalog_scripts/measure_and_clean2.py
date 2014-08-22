@@ -1,9 +1,9 @@
 #!/data2/home/ameert/python/bin/python2.5
 
-from image_info import *
+from astro_image_processing.astro_utils.image_analysis import *
 import os
 import os.path
-from mysql_class import *
+from astro_image_processing.mysql.mysql_class import *
 import sys
 from hrad_funcs import *
 
@@ -14,7 +14,8 @@ def move_masks(model):
     if not os.path.isdir(targetdir):
         os.system('mkdir '+targetdir)
 
-    os.system('mv %s/*.fits %s/' %(thisdir, targetdir))
+    os.system('mv %s/M_*.fits %s/' %(thisdir, targetdir))
+    os.system('mv %s/EM_*.fits %s/' %(thisdir, targetdir))
     
     return
 
@@ -26,6 +27,9 @@ cursor = mysql_connect(dba, usr, pwd, 'shredder')
 
 table_name = sys.argv[1]
 model = table_name.split('_')[-1]
+dirnum = int(sys.argv[2])
+
+os.chdir('%04d' %dirnum)
 
 cmd = 'Alter ignore table %s add column (hrad_pix_psf float default -999);' %table_name
 try:
@@ -59,8 +63,8 @@ infile.close()
 os.system('rm %s' %list_fn)
     
 # now clean the directory
-#os.system('/data2/home/ameert/grid_scripts/clean_dir.py')
+#os.system('/data2/home/ameert/git_projects/astro_image_processing/folio_scripts/grid_scripts/clean_dir.py')
 # and move the masks
-#move_masks(model)
+move_masks(model)
 
 

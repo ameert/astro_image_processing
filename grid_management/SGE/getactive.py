@@ -2,24 +2,15 @@
 
 import os
 import sys
-import subprocess as sub
 import time
 
-def IsInt(s):
-    try: 
-        int(s)
-        return True
-    except ValueError:
-        return False
+from grid_management.utilities import exec_cmd, IsInt
 
 def getactive(username='*'):
+    """This function will get all submitted jobs for the user """
     qstatin="""qstat -u '%s'""" %(username)
 
-    p1=sub.Popen(qstatin, shell=True, stdout = sub.PIPE)
-    (stdout, stderr) = p1.communicate()
-
-    stdout = stdout.strip()
-    stdout = stdout.split('\n') 
+    stdout = exec_cmd(qstatin).split('\n') 
 
     active_jobs = {}
     
@@ -33,11 +24,6 @@ def getactive(username='*'):
                 state = line[4]
                 jobname = line[2]
             
-                # if 'r' in state:
-                #    active_jobs.append(jobid)
-                # elif 'qw' == state:
-                #    active_jobs.append(jobid)
-
                 active_jobs[jobname] = jobid
         except:
             pass
@@ -46,5 +32,13 @@ def getactive(username='*'):
     return active_jobs 
 
 
-#print getactive('ameert')
+if __name__ == '__main__':
+    try:
+        username = sys.argv[1]
+    except:
+        print "To run getactive as a standalone program,\nausername must be supplied as the first argument!!!!!"
+        sys.exit()
+
+    getactive(username)
+    
 

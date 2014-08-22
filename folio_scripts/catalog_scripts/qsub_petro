@@ -1,14 +1,15 @@
 #!/bin/bash
-#$ -t 1-2683
+#$ -t 1-1076
 #$ -S /bin/bash
 #$ -V
 #$ -l h_vmem=2G
-#$ -wd /data2/home/ameert/catalog/r/fits/
-#$ -o /data2/home/ameert/catalog/r/job_output/
-#$ -e /data2/home/ameert/catalog/r/job_output/
-#$ -N ps
+#$ -wd /data2/scratch/ameert/CMASS/i/fits/ser/
+#$ -o /data2/scratch/ameert/CMASS/i/job_output/
+#$ -e /data2/scratch/ameert/CMASS/i/job_output/
+#$ -N hrad
 #$ -tc 40
 
-/data2/home/ameert/catalog/scripts/measure_data_in.py $SGE_TASK_ID ser
+
+/data2/home/ameert/catalog/scripts/measure_and_clean2.py CMASS_i_ser $SGE_TASK_ID 
 
 

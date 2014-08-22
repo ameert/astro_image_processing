@@ -7,9 +7,6 @@ from grid_management.job_manager.is_complete import *
 def sub_job(jobs, running_jobs):
     key_to_pop = sorted(jobs.keys(), key=lambda job_key: int(job_key[-4:]))[0]
     job_to_pop = jobs[key_to_pop]
-    # tranfser the data 
-    #os.system('rsync -u ameert@chitou.physics.upenn.edu:/media/SDSS2/fit_catalog/data/%s/%04d/* %s' %(job_to_pop['band'], job_to_pop['count'], job_to_pop['data_loc']))
-    #os.system('rsync -u ameert@chitou.physics.upenn.edu:/home/ameert/bcgfukugita/%04d/* %s' %(job_to_pop['count'], job_to_pop['data_loc']))
     # now submit the job
     os.system(job_to_pop['qsub'])
     # and move the job to the running list
@@ -44,7 +41,5 @@ def test_complete(closed_jobs, running_jobs):
 def post_process(comp_job):
     #this measures halflight radii and cleans
     os.system(comp_job['hrad_qsub'])
-    # now transfer the fit data back to chitou 
-    #os.system('rsync -ur %s ameert@chitou.physics.upenn.edu:/media/ACTIVE/fit_catalog/fits/%s/ ' %(comp_job['outdir'], comp_job['model']))
     
     return
