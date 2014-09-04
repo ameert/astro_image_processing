@@ -2,8 +2,8 @@ import pyfits as pf
 import pylab as pl
 import numpy as np
 from pylab import cm
-from MatplotRc import *
-from mysql_class import *
+from astro_image_processing.MatplotRc import *
+from astro_image_processing.mysql import *
 from pylab import rcParams
 from matplotlib import rc
 
@@ -123,7 +123,7 @@ gals = [
 ]
 
 
-for gal in gals[:]:
+for gal in gals[7:8]:
 
     fig_size = (6.0,6.0)
     fig = pl.figure(figsize = fig_size)
