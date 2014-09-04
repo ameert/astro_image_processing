@@ -2,16 +2,14 @@ import pyfits as pf
 import pylab as pl
 import numpy as np
 from pylab import cm
-from MatplotRc import *
-from mysql_class import *
+from astro_image_processing.MatplotRc import *
+from astro_image_processing.mysql import *
 from pylab import rcParams
 from matplotlib import rc
 
 rc('text', usetex=True)
 
 cursor = mysql_connect('catalog','pymorph','pymorph','')
-
-
 
 def resize_image(image, rad_pix):
     center = np.array(image.shape, dtype = int)/2
@@ -86,74 +84,73 @@ for gal in gals:
     mask_data = load_image('./data/EM_%08d_r_stamp_plotting.fits' %gal[0], frame_num = 0)
     mask_data = resize_image(mask_data, hrad)
     
-    pl.subplot(4,1,3)
-    pticks = pub_plots(xmaj = 10, xmin = 5, xstr = '%d', ymaj = 10, ymin = 5, ystr = '%d')
-    MatPlotParams = {'xtick.major.pad' :10, 'ytick.major.pad' :10,'xtick.minor.pad' :10, 'ytick.minor.pad' :10, 'axes.labelsize': 8, 'xtick.labelsize': 8, 'ytick.labelsize': 8}
-    rcParams.update(MatPlotParams)
-    data = load_image('./data/O_r_%08d_r_stamp_serexp.fits' %gal[0], frame_num = 2)
-    data = resize_image(data, hrad)
-    data = np.log10(data)
-    zmin, zmax = make_panel(data, color = cm.gray_r)
-    pl.title('model',fontsize=12)
-    ax = pl.gca()
-    pl.text(0.05, 0.9, 'm$_{tot}$=%3.1f' %mag_tot, fontsize=12, 
-            horizontalalignment='left', verticalalignment='center',
-            transform=ax.transAxes)
-    pl.text(0.95, 0.9, 'r$_{hl}$=%4.2f"' %(hrad*0.396), fontsize=12, 
-            horizontalalignment='right', verticalalignment='center',
-            transform=ax.transAxes)
-    pl.text(0.05, 0.1, 'B/T=%03.2f' %BT, fontsize=12, 
-            horizontalalignment='left', verticalalignment='center',
-            transform=ax.transAxes)
+    if 1:
+        fig.add_subplot(4,1,3)
+        pticks = pub_plots(xmaj = 10, xmin = 5, xstr = '%d', ymaj = 10, ymin = 5, ystr = '%d')
+        MatPlotParams = {'xtick.major.pad' :10, 'ytick.major.pad' :10,'xtick.minor.pad' :10, 'ytick.minor.pad' :10, 'axes.labelsize': 8, 'xtick.labelsize': 8, 'ytick.labelsize': 8}
+        rcParams.update(MatPlotParams)
+        data = load_image('./data/O_r_%08d_r_stamp_serexp.fits' %gal[0], frame_num = 2)
+        data = resize_image(data, hrad)
+        data = np.log10(data)
+        zmin, zmax = make_panel(data, color = cm.gray_r)
+        pl.title('model',fontsize=12)
+        ax = pl.gca()
+        pl.text(0.05, 0.9, 'm$_{tot}$=%3.1f' %mag_tot, fontsize=12, 
+                horizontalalignment='left', verticalalignment='center',
+                transform=ax.transAxes)
+        pl.text(0.95, 0.9, 'r$_{hl}$=%4.2f"' %(hrad*0.396), fontsize=12, 
+                horizontalalignment='right', verticalalignment='center',
+                transform=ax.transAxes)
+        pl.text(0.05, 0.1, 'B/T=%03.2f' %BT, fontsize=12, 
+                horizontalalignment='left', verticalalignment='center',
+                transform=ax.transAxes)
+    if 1:
 
-    pl.subplot(4,1,2)
-    pticks = pub_plots(xmaj = 10, xmin = 5, xstr = '%d', ymaj = 10, ymin = 5, ystr = '%d')
-    MatPlotParams = {'xtick.major.pad' :10, 'ytick.major.pad' :10,'xtick.minor.pad' :10, 'ytick.minor.pad' :10, 'axes.labelsize': 8, 'xtick.labelsize': 8, 'ytick.labelsize': 8}
-    rcParams.update(MatPlotParams)
-    make_panel(mask_data, color = cm.gray_r, zmin=0, zmax=1)
-    pl.title('mask',fontsize=12)
+        fig.add_subplot(4,1,2)
+        pticks = pub_plots(xmaj = 10, xmin = 5, xstr = '%d', ymaj = 10, ymin = 5, ystr = '%d')
+        MatPlotParams = {'xtick.major.pad' :10, 'ytick.major.pad' :10,'xtick.minor.pad' :10, 'ytick.minor.pad' :10, 'axes.labelsize': 8, 'xtick.labelsize': 8, 'ytick.labelsize': 8}
+        rcParams.update(MatPlotParams)
+        make_panel(mask_data, color = cm.gray_r, zmin=0, zmax=1)
+        pl.title('mask',fontsize=12)
 
+    if 1:
+        fig.add_subplot(4,1,1)
+        pticks = pub_plots(xmaj = 10, xmin = 5, xstr = '%d', ymaj = 10, ymin = 5, ystr = '%d')
+        MatPlotParams = {'xtick.major.pad' :10, 'ytick.major.pad' :10,'xtick.minor.pad' :10, 'ytick.minor.pad' :10, 'axes.labelsize': 8, 'xtick.labelsize': 8, 'ytick.labelsize': 8}
+        rcParams.update(MatPlotParams)
+        data = load_image('./data/O_r_%08d_r_stamp_serexp.fits' %gal[0], frame_num = 1)
+        data = resize_image(data, hrad)
+        data = np.log10(data)
+        make_panel(data, color = cm.gray_r, zmin = zmin, zmax =zmax )
+        pl.title('data', fontsize=12)
+        ax = pl.gca()
+        pl.text(0.05, 0.9, 'm$_{petro}$=%3.1f' %petromag, fontsize=12, 
+                horizontalalignment='left', verticalalignment='center',
+                transform=ax.transAxes)
+        pl.text(0.95, 0.9, 'r$_{petro}$=%4.2f"' %petrorad, fontsize=12, 
+                horizontalalignment='right', verticalalignment='center',
+                transform=ax.transAxes)
+        pl.text(0.05, 0.1, 'galnum=%s' %gal[0], fontsize=12, 
+                horizontalalignment='left', verticalalignment='center',
+                transform=ax.transAxes)
 
-    pl.subplot(4,1,1)
-    pticks = pub_plots(xmaj = 10, xmin = 5, xstr = '%d', ymaj = 10, ymin = 5, ystr = '%d')
-    MatPlotParams = {'xtick.major.pad' :10, 'ytick.major.pad' :10,'xtick.minor.pad' :10, 'ytick.minor.pad' :10, 'axes.labelsize': 8, 'xtick.labelsize': 8, 'ytick.labelsize': 8}
-    rcParams.update(MatPlotParams)
-    data = load_image('./data/O_r_%08d_r_stamp_serexp.fits' %gal[0], frame_num = 1)
-    data = resize_image(data, hrad)
-    data = np.log10(data)
-    make_panel(data, color = cm.gray_r, zmin = zmin, zmax =zmax )
-    pl.title('data', fontsize=12)
-    ax = pl.gca()
-    pl.text(0.05, 0.9, 'm$_{petro}$=%3.1f' %petromag, fontsize=12, 
-            horizontalalignment='left', verticalalignment='center',
-            transform=ax.transAxes)
-    pl.text(0.95, 0.9, 'r$_{petro}$=%4.2f"' %petrorad, fontsize=12, 
-            horizontalalignment='right', verticalalignment='center',
-            transform=ax.transAxes)
-    pl.text(0.05, 0.1, 'galnum=%s' %gal[0], fontsize=12, 
-            horizontalalignment='left', verticalalignment='center',
-            transform=ax.transAxes)
-
-
-
-    pl.subplot(2,2,4)
-    pticks = pub_plots(xmaj = 10, xmin = 5, xstr = '%d', ymaj = 10, ymin = 5, ystr = '%d')
-    MatPlotParams = {'xtick.major.pad' :10, 'ytick.major.pad' :10,'xtick.minor.pad' :10, 'ytick.minor.pad' :10, 'axes.labelsize': 8, 'xtick.labelsize': 8, 'ytick.labelsize': 8}
-    rcParams.update(MatPlotParams)
-    data = load_image('./data/O_r_%08d_r_stamp_serexp.fits' %gal[0], frame_num = 3)+5
-    data = resize_image(data, hrad)
-    data = np.log10(data)
-    data = np.where(mask_data<0.5, np.nan, data)
-    make_panel(data, color = cm.gray_r)
-    pl.title('masked residual',fontsize=12)
-
-
+    if 1:
+        fig.add_subplot(4,1,4)
+        pticks = pub_plots(xmaj = 10, xmin = 5, xstr = '%d', ymaj = 10, ymin = 5, ystr = '%d')
+        MatPlotParams = {'xtick.major.pad' :10, 'ytick.major.pad' :10,'xtick.minor.pad' :10, 'ytick.minor.pad' :10, 'axes.labelsize': 8, 'xtick.labelsize': 8, 'ytick.labelsize': 8}
+        rcParams.update(MatPlotParams)
+        data = load_image('./data/O_r_%08d_r_stamp_serexp.fits' %gal[0], frame_num = 3)+5
+        data = resize_image(data, hrad)
+        data = np.log10(data)
+        data = np.where(mask_data<0.5, np.nan, data)
+        make_panel(data, color = cm.gray_r)
+        pl.title('masked residual',fontsize=12)
+        equal_margins()
+        #ax = pl.gca()
+        #ax.set_aspect((pl.xlim()[0]-pl.xlim()[1])/(pl.ylim()[1]-pl.ylim()[0]))
     #pl.suptitle( gal[1], fontsize=12)
-    equal_margins()
-    ax.set_aspect((pl.xlim()[0]-pl.xlim()[1])/(pl.ylim()[1]-pl.ylim()[0]))
-
+        
     #pl.show()
 
     pl.savefig('./%08d_strip_example.eps' %gal[0])#, bbox_inches = 'tight')
     pl.close('all')
-    
