@@ -1,4 +1,4 @@
-from mysql.mysql_class import *
+from astro_image_processing.mysql.mysql_class import *
 from flag_defs import *
 import pylab as pl
 import matplotlib.ticker as mticker
@@ -52,19 +52,19 @@ def get_flag_props(flags_to_use, autoflag, binval, bins):
 def get_vals(binval):
  
     if binval == 'lackner':
-        cmd = """select d.galcount,IF(d.model='dvc',7,0)+ IF(d.model='ser' and z.n_bulge>=2.0, 12,0)+IF(d.model='exp',8,0)+ IF(d.model='ser' and z.n_bulge<2.0, 11,0)+IF(d.model='nb1',9,0)+IF(d.model = 'nb4', 10,0),m.BT from catalog.r_band_serexp as m, catalog.r_lackner_fit as d, catalog.r_lackner_ser as z where m.galcount=d.galcount and d.galcount = z.galcount order by d.galcount  limit 1000000;"""
+        cmd = """select d.galcount,IF(d.model='dvc',7,0)+ IF(d.model='ser' and z.n_bulge>=2.0, 12,0)+IF(d.model='exp',8,0)+ IF(d.model='ser' and z.n_bulge<2.0, 11,0)+IF(d.model='nb1',9,0)+IF(d.model = 'nb4', 10,0),m.BT from catalog.{band}_band_serexp as m, catalog.{band}_lackner_fit as d, catalog.{band}_lackner_ser as z where m.galcount=d.galcount and d.galcount = z.galcount order by d.galcount  limit 1000000;""".format(model = model, band = band)
     elif binval == 'simard':
-        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  m.BT from catalog.r_band_serexp  as m,  catalog.r_lackner_fit as c, catalog.r_simard_fit as d, catalog.r_simard_ser as z where m.galcount = c.galcount and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 1000000;"""
+        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  m.BT from catalog.{band}_band_serexp  as m,  catalog.{band}_lackner_fit as c, catalog.{band}_simard_fit as d, catalog.{band}_simard_ser as z where m.galcount = c.galcount and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 1000000;""".format(model = model, band = band)
     elif binval == 'mendel':
-        cmd = """select d.galcount, IF(d.Proftype=1, 15,0)+IF(d.Proftype=2, 16,0)+IF(d.Proftype=3, 17,0)+IF(d.Proftype=4 or d.Proftype<0,18,0),  m.BT from catalog.r_band_serexp  as m,  catalog.r_lackner_fit as c, catalog.r_simard_fit as d, catalog.r_simard_ser as z where m.galcount = c.galcount and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 1000000;"""
+        cmd = """select d.galcount, IF(d.Proftype=1, 15,0)+IF(d.Proftype=2, 16,0)+IF(d.Proftype=3, 17,0)+IF(d.Proftype=4 or d.Proftype<0,18,0),  m.BT from catalog.{band}_band_serexp  as m,  catalog.{band}_lackner_fit as c, catalog.{band}_simard_fit as d, catalog.{band}_simard_ser as z where m.galcount = c.galcount and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 1000000;""".format(model = model, band = band)
     elif binval == 'meert':
-        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,19)>0,5,0)  ,m.BT from catalog.r_band_serexp  as m, catalog.Flags_optimize as c, catalog.r_lackner_fit as z, catalog.r_band_serexp as d  where m.galcount = c.galcount and d.galcount = c.galcount and c.galcount = z.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit 1000000;""".format(model = 'serexp', band = 'r')
+        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,19)>0,5,0)  ,m.BT from catalog.{band}_band_serexp  as m, catalog.Flags_catalog as c, catalog.{band}_lackner_fit as z, catalog.{band}_band_serexp as d  where m.galcount = c.galcount and d.galcount = c.galcount and c.galcount = z.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit 1000000;""".format(model = model, band = band)
     elif binval == 'nair_lackner':
-        cmd = """select d.galcount,IF(d.model='dvc',7,0)+ IF(d.model='ser' and z.n_bulge>=2.0, 12,0)+IF(d.model='exp',8,0)+ IF(d.model='ser' and z.n_bulge<2.0, 11,0)+IF(d.model='nb1',9,0)+IF(d.model = 'nb4', 10,0),n.ttype from catalog.M2010 as m, catalog.r_lackner_fit as d, catalog.r_lackner_ser as z, catalog.Nair as n where m.galcount=d.galcount and n.galcount = d.galcount and d.galcount = z.galcount order by d.galcount  limit 10000000;"""
+        cmd = """select d.galcount,IF(d.model='dvc',7,0)+ IF(d.model='ser' and z.n_bulge>=2.0, 12,0)+IF(d.model='exp',8,0)+ IF(d.model='ser' and z.n_bulge<2.0, 11,0)+IF(d.model='nb1',9,0)+IF(d.model = 'nb4', 10,0),n.ttype from catalog.M2010 as m, catalog.{band}_lackner_fit as d, catalog.{band}_lackner_ser as z, catalog.Nair as n where m.galcount=d.galcount and n.galcount = d.galcount and d.galcount = z.galcount order by d.galcount  limit 10000000;""".format(model = model, band = band)
     elif binval == 'nair_simard':
-        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  n.ttype from catalog.M2010 as m,  catalog.r_lackner_fit as c, catalog.r_simard_fit as d, catalog.r_simard_ser as z, catalog.Nair as n where m.galcount = c.galcount and n.galcount = c.galcount  and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 10000000;"""
+        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  n.ttype from catalog.M2010 as m,  catalog.{band}_lackner_fit as c, catalog.{band}_simard_fit as d, catalog.{band}_simard_ser as z, catalog.Nair as n where m.galcount = c.galcount and n.galcount = c.galcount  and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 10000000;""".format(model = model, band = band)
     elif binval == 'nair_meert':
-        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,19)>0,5,0)  ,n.ttype  from catalog.M2010 as m, catalog.Flags_optimize as c, catalog.r_lackner_fit as z, catalog.r_band_serexp as d, catalog.Nair as n  where m.galcount = c.galcount and n.galcount = c.galcount and d.galcount = c.galcount and c.galcount = z.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit 10000000;""".format(model = 'serexp', band = 'r')
+        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,19)>0,5,0)  ,n.ttype  from catalog.M2010 as m, catalog.Flags_catalog as c, catalog.{band}_lackner_fit as z, catalog.{band}_band_serexp as d, catalog.Nair as n  where m.galcount = c.galcount and n.galcount = c.galcount and d.galcount = c.galcount and c.galcount = z.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit 10000000;""".format(model = model, band = band)
     galcount, flags, flag2 = cursor.get_data(cmd)
     galcount = np.array(galcount, dtype=int)
     autoflag = np.array(flags, dtype=int)
@@ -124,7 +124,7 @@ def plot_props(xlab, props, magbins, flags_to_use,plot_info):
 
 cursor = mysql_connect('catalog','pymorph','pymorph','')
 
-band = 'r'
+band = 'g'
 model = 'serexp'
 
 
@@ -172,18 +172,32 @@ pl.title('Meert', fontsize=8)
 l = ax2.legend(loc=3, bbox_to_anchor=(1.0, 0.6), prop={'size':6})
 pl.xlim(0.0,1.0)
 
-print "simard" 
-pl.subplot(2,2,2)
-flags_to_use = np.array([11,12,13,14])
-galcount, autoflag, stype = get_vals('simard')
-props = get_flag_props(flags_to_use, autoflag, stype,typebins)
-props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-ax2=plot_props('BT', props, typebins, flags_to_use,plot_info)
-#pl.xticks(typebins+0.5, x_names, fontsize = 8)
-pl.title('S11', fontsize=8)
-l = ax2.legend(loc=3, bbox_to_anchor=(0.05, 0.7), prop={'size':6})
-#pl.xticks(rotation=90)
-pl.xlim(0.0,1.0)
+if band in 'gr':
+    print "simard" 
+    pl.subplot(2,2,2)
+    flags_to_use = np.array([11,12,13,14])
+    galcount, autoflag, stype = get_vals('simard')
+    props = get_flag_props(flags_to_use, autoflag, stype,typebins)
+    props['datamask'] = np.where(np.array(props['total'])>0,True,False)
+    ax2=plot_props('BT', props, typebins, flags_to_use,plot_info)
+    #pl.xticks(typebins+0.5, x_names, fontsize = 8)
+    pl.title('S11', fontsize=8)
+    l = ax2.legend(loc=3, bbox_to_anchor=(0.05, 0.7), prop={'size':6})
+    #pl.xticks(rotation=90)
+    pl.xlim(0.0,1.0)
+
+    print "mendel" 
+    pl.subplot(2,2,4)
+    flags_to_use = np.array([15,16,17,18])
+    galcount, autoflag, stype = get_vals('mendel')
+    props = get_flag_props(flags_to_use, autoflag, stype,typebins)
+    props['datamask'] = np.where(np.array(props['total'])>0,True,False)
+    ax2=plot_props('BT', props, typebins, flags_to_use,plot_info)
+    #pl.xticks(typebins+0.5, x_names, fontsize = 8)
+    pl.title('Mendel', fontsize=8)
+    l = ax2.legend(loc=3, bbox_to_anchor=(0.7, 0.7), prop={'size':6})
+    #pl.xticks(rotation=90)
+    pl.xlim(0.0,1.0)
 
 print "lackner" 
 pl.subplot(2,2,3)
@@ -203,18 +217,6 @@ print props[12]
 print props[10]
 print np.array(props[12])/np.array(props[10])
 
-print "mendel" 
-pl.subplot(2,2,4)
-flags_to_use = np.array([15,16,17,18])
-galcount, autoflag, stype = get_vals('mendel')
-props = get_flag_props(flags_to_use, autoflag, stype,typebins)
-props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-ax2=plot_props('BT', props, typebins, flags_to_use,plot_info)
-#pl.xticks(typebins+0.5, x_names, fontsize = 8)
-pl.title('Mendel', fontsize=8)
-l = ax2.legend(loc=3, bbox_to_anchor=(0.7, 0.7), prop={'size':6})
-#pl.xticks(rotation=90)
-pl.xlim(0.0,1.0)
 
 
 if 0:
@@ -257,7 +259,7 @@ if 0:
 
 
 #pl.show()
-pl.savefig('./types_dist_BT.eps', bbox_inches = 'tight')
+pl.savefig('./types_dist_BT_{band}_{model}.eps'.format(band=band, model=model), bbox_inches = 'tight')
 #pl.savefig('./dist_obs_petro.eps')
 #pl.savefig('./dist_obs_small_petro.eps')
 

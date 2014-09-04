@@ -1,4 +1,4 @@
-from mysql.mysql_class import *
+from astro_image_processing.mysql.mysql_class import *
 from flag_defs import *
 import pylab as pl
 import matplotlib.ticker as mticker

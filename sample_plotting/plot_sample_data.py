@@ -29,7 +29,7 @@
 #-----------------------------------
 import numpy as np
 import pylab as  pl
-from MatplotRc import *
+from astro_image_processing.MatplotRc import *
 import time
 #from plotting_funcs import *
 def start_fig(sizech = (13,13)):
@@ -175,15 +175,15 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
 
     fig = start_fig(fig_size)            
     plot_set = pub_plots(xmaj = 2, xmin = 0.5, xstr = '%d', 
-                         ymaj = 0.1, ymin = 0.05, ystr =  '% 02.1f')
+                         ymaj = 0.1, ymin = 0.01, ystr =  '% 02.1f')
     
 
     for curr_rhl, curr_weight, curr_color, cls in zip(rhl_arcsec, weights, colors, lsl): 
-        n, bins, patches = pl.hist(curr_rhl, weights = curr_weight,bins = 20, 
+        n, bins, patches = pl.hist(curr_rhl, weights = curr_weight,bins = 40, 
                                    range=(0,10), histtype = 'step', color = curr_color, lw = cls)
 
     pl.xlim((0,8.5))
-    pl.ylim((0,.29))
+    pl.ylim((0,.15))
     pl.xlabel('r$_{hl}$ [arcsec]')
     pl.ylabel('n(r$_{hl}$)')
     
@@ -196,14 +196,14 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
 
     fig = start_fig(fig_size)            
     plot_set = pub_plots(xmaj = 2, xmin = 0.5, xstr = '%d', 
-                         ymaj = 0.1, ymin = 0.05, ystr =  '% 02.1f')
+                         ymaj = 0.02, ymin = 0.005, ystr =  '% 03.2f')
     
     for curr_sb, curr_weight, curr_color, cls in zip(surf_bright, weights, colors,lsl): 
-        n, bins, patches = pl.hist(curr_sb, weights = curr_weight,bins = 12, 
+        n, bins, patches = pl.hist(curr_sb, weights = curr_weight,bins = 48, 
                                    range=(18,24), histtype = 'step', color = curr_color, lw = cls)
 
     pl.xlim((18,24.5))
-    pl.ylim((0,0.29))
+    pl.ylim((0,0.1))
     pl.xlabel('$\mu_{hl}$')
     pl.ylabel('n($\mu_{hl}$)')
     

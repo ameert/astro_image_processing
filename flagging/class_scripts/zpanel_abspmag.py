@@ -1,4 +1,4 @@
-from mysql.mysql_class import *
+from astro_image_processing.mysql.mysql_class import *
 from flag_defs import *
 import pylab as pl
 import matplotlib.ticker as mticker
@@ -52,29 +52,29 @@ def get_flag_props(flags_to_use, autoflag, binval, bins):
 def get_vals(binval):
     # , catalog.gz2_flags as z where z.galcount = m.galcount and  
     if binval == 'lackner':
-        cmd = """select d.galcount,IF(d.model='dvc',7,0)+ IF(d.model='ser' and z.n_bulge>=2.0, 12,0)+IF(d.model='exp',8,0)+ IF(d.model='ser' and z.n_bulge<2.0, 11,0)+IF(d.model='nb1',9,0)+IF(d.model = 'nb4', 10,0),m.petromag_r-m.extinction_r-x.dismod-x.kcorr_r from catalog.CAST as m,catalog.DERT as x, catalog.r_lackner_fit as d, catalog.r_lackner_ser as z where m.galcount = x.galcount and m.galcount=d.galcount and d.galcount = z.galcount order by d.galcount  limit 1000000;"""
+        cmd = """select d.galcount,IF(d.model='dvc',7,0)+ IF(d.model='ser' and z.n_bulge>=2.0, 12,0)+IF(d.model='exp',8,0)+ IF(d.model='ser' and z.n_bulge<2.0, 11,0)+IF(d.model='nb1',9,0)+IF(d.model = 'nb4', 10,0),m.petromag_{band}-m.extinction_{band}-x.dismod-x.kcorr_{band} from catalog.CAST as m,catalog.DERT as x, catalog.{band}_lackner_fit as d, catalog.{band}_lackner_ser as z where m.galcount = x.galcount and m.galcount=d.galcount and d.galcount = z.galcount order by d.galcount  limit 1000000;""".format(band=band, model=model)
     elif binval == 'simard':
-        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  m.petromag_r-m.extinction_r-x.dismod-x.kcorr_r from catalog.CAST as m,catalog.DERT as x, catalog.r_simard_fit as d, catalog.r_simard_ser as z where  m.galcount = x.galcount and m.galcount= d.galcount and m.galcount = z.galcount order by d.galcount  limit 1000000;"""
+        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  m.petromag_{band}-m.extinction_{band}-x.dismod-x.kcorr_{band} from catalog.CAST as m,catalog.DERT as x, catalog.{band}_simard_fit as d, catalog.{band}_simard_ser as z where  m.galcount = x.galcount and m.galcount= d.galcount and m.galcount = z.galcount order by d.galcount  limit 1000000;""".format(band=band, model=model)
     elif binval == 'mendel':
-        cmd = """select d.galcount, IF(d.Proftype=1, 15,0)+IF(d.Proftype=2, 16,0)+IF(d.Proftype=3, 17,0)+IF(d.Proftype=4 or d.Proftype<0,18,0),  m.petromag_r-m.extinction_r-x.dismod-x.kcorr_r from catalog.CAST as m,catalog.DERT as x,  catalog.r_simard_fit as d, catalog.r_simard_ser as z where  m.galcount = x.galcount and m.galcount = d.galcount and m.galcount = z.galcount order by d.galcount  limit 1000000;"""
+        cmd = """select d.galcount, IF(d.Proftype=1, 15,0)+IF(d.Proftype=2, 16,0)+IF(d.Proftype=3, 17,0)+IF(d.Proftype=4 or d.Proftype<0,18,0),  m.petromag_{band}-m.extinction_{band}-x.dismod-x.kcorr_{band} from catalog.CAST as m,catalog.DERT as x,  catalog.{band}_simard_fit as d, catalog.{band}_simard_ser as z where  m.galcount = x.galcount and m.galcount = d.galcount and m.galcount = z.galcount order by d.galcount  limit 1000000;""".format(band=band, model=model)
     elif binval == 'meert':
-        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,19)>0,5,0)  ,m.petromag_r-m.extinction_r-x.dismod-x.kcorr_r from catalog.CAST as m,catalog.DERT as x, catalog.Flags_optimize as c, catalog.r_band_serexp as d where m.galcount = x.galcount and m.galcount = c.galcount and d.galcount = c.galcount  and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit 1000000;""".format(model = 'serexp', band = 'r')#and  t01_smooth*19+ (t09_no_bulge+t05_no_bulge)*20+t05_just_noticeable*21+(t05_obvious+t09_bulge_rounded+t09_bulge_boxy)*IF((t08_ring+t08_disturbed+t08_irregular+t08_merger+t08_dust_lane)>0,0,1)*22+t05_dominant*23>0
+        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,20)>0,5,0)  ,m.petromag_{band}-m.extinction_{band}-x.dismod-x.kcorr_{band} from catalog.CAST as m,catalog.DERT as x, catalog.Flags_catalog as c, catalog.{band}_band_serexp as d where m.galcount = x.galcount and m.galcount = c.galcount and d.galcount = c.galcount  and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit 1000000;""".format(band=band, model=model)#and  t01_smooth*19+ (t09_no_bulge+t05_no_bulge)*20+t05_just_noticeable*21+(t05_obvious+t09_bulge_rounded+t09_bulge_boxy)*IF((t08_ring+t08_disturbed+t08_irregular+t08_merger+t08_dust_lane)>0,0,1)*22+t05_dominant*23>0
     elif binval == 'galzoo':
-        cmd = """select c.galcount, t01_smooth*19+ (t09_no_bulge+t05_no_bulge)*20+t05_just_noticeable*21+(t05_obvious+t09_bulge_rounded+t09_bulge_boxy)*IF((t08_ring+t08_disturbed+t08_irregular+t08_merger+t08_dust_lane)>0,0,1)*22+t05_dominant*23, m.petromag_r-m.extinction_r-x.dismod-x.kcorr_r from catalog.CAST as m,catalog.DERT as x, catalog.gz2_flags as c, catalog.r_band_serexp as d  where  m.galcount = x.galcount and m.galcount = c.galcount and d.galcount = c.galcount and  t01_smooth*19+ (t09_no_bulge+t05_no_bulge)*20+t05_just_noticeable*21+(t05_obvious+t09_bulge_rounded+t09_bulge_boxy)*IF((t08_ring+t08_disturbed+t08_irregular+t08_merger+t08_dust_lane)>0,0,1)*22+t05_dominant*23>0  order by c.galcount  limit 1000000;""".format(model = 'serexp', band = 'r')
+        cmd = """select c.galcount, t01_smooth*19+ (t09_no_bulge+t05_no_bulge)*20+t05_just_noticeable*21+(t05_obvious+t09_bulge_rounded+t09_bulge_boxy)*IF((t08_ring+t08_disturbed+t08_irregular+t08_merger+t08_dust_lane)>0,0,1)*22+t05_dominant*23, m.petromag_{band}-m.extinction_{band}-x.dismod-x.kcorr_{band} from catalog.CAST as m,catalog.DERT as x, catalog.gz2_flags as c, catalog.{band}_band_serexp as d  where  m.galcount = x.galcount and m.galcount = c.galcount and d.galcount = c.galcount and  t01_smooth*19+ (t09_no_bulge+t05_no_bulge)*20+t05_just_noticeable*21+(t05_obvious+t09_bulge_rounded+t09_bulge_boxy)*IF((t08_ring+t08_disturbed+t08_irregular+t08_merger+t08_dust_lane)>0,0,1)*22+t05_dominant*23>0  order by c.galcount  limit 1000000;""".format(band=band, model=model)
     elif binval == 'galzoo_lackner':
-        cmd = """select  c.galcount,t01_smooth*19+ (t09_no_bulge+t05_no_bulge)*20+t05_just_noticeable*21+(t05_obvious+t09_bulge_rounded+t09_bulge_boxy)*IF((t08_ring+t08_disturbed+t08_irregular+t08_merger+t08_dust_lane)>0,0,1)*22+t05_dominant*23, m.petromag_r-m.extinction_r-x.dismod-x.kcorr_r from catalog.CAST as m,catalog.DERT as x, catalog.gz2_flags as c, catalog.r_band_serexp as d,catalog.r_lackner_fit as z  where  m.galcount = x.galcount and  m.galcount = z.galcount and m.galcount = c.galcount and d.galcount = c.galcount  and  t01_smooth*19+ (t09_no_bulge+t05_no_bulge)*20+t05_just_noticeable*21+(t05_obvious+t09_bulge_rounded+t09_bulge_boxy)*IF((t08_ring+t08_disturbed+t08_irregular+t08_merger+t08_dust_lane)>0,0,1)*22+t05_dominant*23>0 order by c.galcount  limit 1000000;""".format(model = 'serexp', band = 'r')
+        cmd = """select  c.galcount,t01_smooth*19+ (t09_no_bulge+t05_no_bulge)*20+t05_just_noticeable*21+(t05_obvious+t09_bulge_rounded+t09_bulge_boxy)*IF((t08_ring+t08_disturbed+t08_irregular+t08_merger+t08_dust_lane)>0,0,1)*22+t05_dominant*23, m.petromag_{band}-m.extinction_{band}-x.dismod-x.kcorr_{band} from catalog.CAST as m,catalog.DERT as x, catalog.gz2_flags as c, catalog.{band}_band_serexp as d,catalog.{band}_lackner_fit as z  where  m.galcount = x.galcount and  m.galcount = z.galcount and m.galcount = c.galcount and d.galcount = c.galcount  and  t01_smooth*19+ (t09_no_bulge+t05_no_bulge)*20+t05_just_noticeable*21+(t05_obvious+t09_bulge_rounded+t09_bulge_boxy)*IF((t08_ring+t08_disturbed+t08_irregular+t08_merger+t08_dust_lane)>0,0,1)*22+t05_dominant*23>0 order by c.galcount  limit 1000000;""".format(band=band, model=model)
     elif binval == 'simard_lackner':
-        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  m.petromag_r-m.extinction_r-x.dismod-x.kcorr_r from catalog.CAST as m,catalog.DERT as x,  catalog.r_lackner_fit as c, catalog.r_simard_fit as d, catalog.r_simard_ser as z where  m.galcount = x.galcount and m.galcount = c.galcount and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 1000000;"""
+        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  m.petromag_{band}-m.extinction_{band}-x.dismod-x.kcorr_{band} from catalog.CAST as m,catalog.DERT as x,  catalog.{band}_lackner_fit as c, catalog.{band}_simard_fit as d, catalog.{band}_simard_ser as z where  m.galcount = x.galcount and m.galcount = c.galcount and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 1000000;""".format(band=band, model=model)
     elif binval == 'mendel_lackner':
-        cmd = """select d.galcount, IF(d.Proftype=1, 15,0)+IF(d.Proftype=2, 16,0)+IF(d.Proftype=3, 17,0)+IF(d.Proftype=4 or d.Proftype<0,18,0),  m.petromag_r-m.extinction_r-x.dismod-x.kcorr_r from catalog.CAST as m,catalog.DERT as x,  catalog.r_lackner_fit as c, catalog.r_simard_fit as d, catalog.r_simard_ser as z where  m.galcount = x.galcount and m.galcount = c.galcount and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 1000000;"""
+        cmd = """select d.galcount, IF(d.Proftype=1, 15,0)+IF(d.Proftype=2, 16,0)+IF(d.Proftype=3, 17,0)+IF(d.Proftype=4 or d.Proftype<0,18,0),  m.petromag_{band}-m.extinction_{band}-x.dismod-x.kcorr_{band} from catalog.CAST as m,catalog.DERT as x,  catalog.{band}_lackner_fit as c, catalog.{band}_simard_fit as d, catalog.{band}_simard_ser as z where  m.galcount = x.galcount and m.galcount = c.galcount and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 1000000;""".format(band=band, model=model)
     elif binval == 'meert_lackner':
-        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,19)>0,5,0)  ,m.petromag_r-m.extinction_r-x.dismod-x.kcorr_r from catalog.CAST as m,catalog.DERT as x, catalog.Flags_optimize as c, catalog.r_lackner_fit as z, catalog.r_band_serexp as d where  m.galcount = x.galcount and m.galcount = c.galcount and d.galcount = c.galcount and c.galcount = z.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit 1000000;""".format(model = 'serexp', band = 'r')#  and  t01_smooth*19+ (t09_no_bulge+t05_no_bulge)*20+t05_just_noticeable*21+(t05_obvious+t09_bulge_rounded+t09_bulge_boxy)*IF((t08_ring+t08_disturbed+t08_irregular+t08_merger+t08_dust_lane)>0,0,1)*22+t05_dominant*23>0
+        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,20)>0,5,0)  ,m.petromag_{band}-m.extinction_{band}-x.dismod-x.kcorr_{band} from catalog.CAST as m,catalog.DERT as x, catalog.Flags_catalog as c, catalog.{band}_lackner_fit as z, catalog.{band}_band_serexp as d where  m.galcount = x.galcount and m.galcount = c.galcount and d.galcount = c.galcount and c.galcount = z.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit 1000000;""".format(band=band, model=model)#  and  t01_smooth*19+ (t09_no_bulge+t05_no_bulge)*20+t05_just_noticeable*21+(t05_obvious+t09_bulge_rounded+t09_bulge_boxy)*IF((t08_ring+t08_disturbed+t08_irregular+t08_merger+t08_dust_lane)>0,0,1)*22+t05_dominant*23>0
     elif binval == 'nair_lackner':
-        cmd = """select d.galcount,IF(d.model='dvc',7,0)+ IF(d.model='ser' and z.n_bulge>=2.0, 12,0)+IF(d.model='exp',8,0)+ IF(d.model='ser' and z.n_bulge<2.0, 11,0)+IF(d.model='nb1',9,0)+IF(d.model = 'nb4', 10,0),n.ttype from catalog.M2010 as m, catalog.r_lackner_fit as d, catalog.r_lackner_ser as z, catalog.Nair as n where m.galcount=d.galcount and n.galcount = d.galcount and d.galcount = z.galcount order by d.galcount  limit 1000000;"""
+        cmd = """select d.galcount,IF(d.model='dvc',7,0)+ IF(d.model='ser' and z.n_bulge>=2.0, 12,0)+IF(d.model='exp',8,0)+ IF(d.model='ser' and z.n_bulge<2.0, 11,0)+IF(d.model='nb1',9,0)+IF(d.model = 'nb4', 10,0),n.ttype from catalog.M2010 as m, catalog.{band}_lackner_fit as d, catalog.{band}_lackner_ser as z, catalog.Nair as n where m.galcount=d.galcount and n.galcount = d.galcount and d.galcount = z.galcount order by d.galcount  limit 1000000;""".format(band=band, model=model)
     elif binval == 'nair_simard':
-        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  n.ttype from catalog.M2010 as m,  catalog.r_lackner_fit as c, catalog.r_simard_fit as d, catalog.r_simard_ser as z, catalog.Nair as n where m.galcount = c.galcount and n.galcount = c.galcount  and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 1000000;"""
+        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  n.ttype from catalog.M2010 as m,  catalog.{band}_lackner_fit as c, catalog.{band}_simard_fit as d, catalog.{band}_simard_ser as z, catalog.Nair as n where m.galcount = c.galcount and n.galcount = c.galcount  and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 1000000;""".format(band=band, model=model)
     elif binval == 'nair_meert':
-        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,19)>0,5,0)  ,n.ttype  from catalog.M2010 as m, catalog.Flags_optimize as c, catalog.r_lackner_fit as z, catalog.r_band_serexp as d, catalog.Nair as n  where m.galcount = c.galcount and n.galcount = c.galcount and d.galcount = c.galcount and c.galcount = z.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit 1000000;""".format(model = 'serexp', band = 'r')
+        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,20)>0,5,0)  ,n.ttype  from catalog.M2010 as m, catalog.Flags_catalog as c, catalog.{band}_lackner_fit as z, catalog.{band}_band_serexp as d, catalog.Nair as n  where m.galcount = c.galcount and n.galcount = c.galcount and d.galcount = c.galcount and c.galcount = z.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit 1000000;""".format(band=band, model=model)
     galcount, flags, flag2 = cursor.get_data(cmd)
     galcount = np.array(galcount, dtype=int)
     autoflag = np.array(flags, dtype=int)
@@ -133,7 +133,7 @@ def plot_props(xlab, props, magbins, delta, flags_to_use,plot_info):
 
 cursor = mysql_connect('catalog','pymorph','pymorph','')
 
-band = 'r'
+band = 'g'
 model = 'serexp'
 
 
@@ -189,30 +189,30 @@ pl.xticks(fontsize=8)
 l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
 pl.xlim(-16.5,-24.0)
 
+if band in 'gr':
+    print "simard" 
+    pl.subplot(5,2,4)
+    flags_to_use = np.array([11,12,13,14])
+    galcount, autoflag, stype = get_vals('simard')
+    props = get_flag_props(flags_to_use, autoflag, stype,typebins)
+    ax1,ax2=plot_props('M$_{petro}$', props, typebins, delta, flags_to_use,plot_info)
+    #pl.xticks(typebins+0.5, x_names, fontsize = 8)
+    pl.title('S11 (full sample)', fontsize=8)
+    l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
+    pl.xticks(fontsize=8)
+    pl.xlim(-16.5,-24.0)
 
-print "simard" 
-pl.subplot(5,2,4)
-flags_to_use = np.array([11,12,13,14])
-galcount, autoflag, stype = get_vals('simard')
-props = get_flag_props(flags_to_use, autoflag, stype,typebins)
-ax1,ax2=plot_props('M$_{petro}$', props, typebins, delta, flags_to_use,plot_info)
-#pl.xticks(typebins+0.5, x_names, fontsize = 8)
-pl.title('S11 (full sample)', fontsize=8)
-l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
-pl.xticks(fontsize=8)
-pl.xlim(-16.5,-24.0)
-
-print "mendel" 
-pl.subplot(5,2,6)
-flags_to_use = np.array([15,16,17,18])
-galcount, autoflag, stype = get_vals('mendel')
-props = get_flag_props(flags_to_use, autoflag, stype,typebins)
-ax1,ax2=plot_props('M$_{petro}$', props, typebins, delta, flags_to_use,plot_info)
-#pl.xticks(typebins+0.5, x_names, fontsize = 8)
-pl.title('Men14 (full sample)', fontsize=8)
-l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
-pl.xticks(fontsize=8)
-pl.xlim(-16.5,-24.0)
+    print "mendel" 
+    pl.subplot(5,2,6)
+    flags_to_use = np.array([15,16,17,18])
+    galcount, autoflag, stype = get_vals('mendel')
+    props = get_flag_props(flags_to_use, autoflag, stype,typebins)
+    ax1,ax2=plot_props('M$_{petro}$', props, typebins, delta, flags_to_use,plot_info)
+    #pl.xticks(typebins+0.5, x_names, fontsize = 8)
+    pl.title('Men14 (full sample)', fontsize=8)
+    l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
+    pl.xticks(fontsize=8)
+    pl.xlim(-16.5,-24.0)
 
 print "meert" 
 pl.subplot(5,2,1)
@@ -227,31 +227,32 @@ pl.xticks(fontsize=8)
 l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
 pl.xlim(-16.5,-23.0)
 
-print "simard" 
-pl.subplot(5,2,3)
-flags_to_use = np.array([11,12,13,14])
-galcount, autoflag, stype = get_vals('simard_lackner')
-props = get_flag_props(flags_to_use, autoflag, stype,typebins)
-props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-ax1,ax2=plot_props('M$_{petro}$', props, typebins, delta, flags_to_use,plot_info)
-#pl.xticks(typebins+0.5, x_names, fontsize = 8)
-pl.title('S11 (LG12 sample)', fontsize=8)
-l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
-pl.xticks(fontsize=8)
-pl.xlim(-16.5,-23.0)
+if band in 'gr':
+    print "simard" 
+    pl.subplot(5,2,3)
+    flags_to_use = np.array([11,12,13,14])
+    galcount, autoflag, stype = get_vals('simard_lackner')
+    props = get_flag_props(flags_to_use, autoflag, stype,typebins)
+    props['datamask'] = np.where(np.array(props['total'])>0,True,False)
+    ax1,ax2=plot_props('M$_{petro}$', props, typebins, delta, flags_to_use,plot_info)
+    #pl.xticks(typebins+0.5, x_names, fontsize = 8)
+    pl.title('S11 (LG12 sample)', fontsize=8)
+    l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
+    pl.xticks(fontsize=8)
+    pl.xlim(-16.5,-23.0)
 
-print "mendel" 
-pl.subplot(5,2,5)
-flags_to_use = np.array([15,16,17,18])
-galcount, autoflag, stype = get_vals('mendel_lackner')
-props = get_flag_props(flags_to_use, autoflag, stype,typebins)
-props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-ax1,ax2=plot_props('M$_{petro}$', props, typebins, delta, flags_to_use,plot_info)
-#pl.xticks(typebins+0.5, x_names, fontsize = 8)
-pl.title('Men14 (LG12 sample)', fontsize=8)
-l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
-pl.xticks(fontsize=8)
-pl.xlim(-16.5,-23.0)
+    print "mendel" 
+    pl.subplot(5,2,5)
+    flags_to_use = np.array([15,16,17,18])
+    galcount, autoflag, stype = get_vals('mendel_lackner')
+    props = get_flag_props(flags_to_use, autoflag, stype,typebins)
+    props['datamask'] = np.where(np.array(props['total'])>0,True,False)
+    ax1,ax2=plot_props('M$_{petro}$', props, typebins, delta, flags_to_use,plot_info)
+    #pl.xticks(typebins+0.5, x_names, fontsize = 8)
+    pl.title('Men14 (LG12 sample)', fontsize=8)
+    l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
+    pl.xticks(fontsize=8)
+    pl.xlim(-16.5,-23.0)
 
 if 0:
     print 'galzoo lackner'
@@ -295,5 +296,5 @@ pl.xticks(fontsize=8)
 pl.xlim(-16.5,-23.0)
 
 
-pl.savefig('./types_dist_abspmag.eps', bbox_inches = 'tight')
+pl.savefig('./types_dist_abspmag_{band}_{model}.eps'.format(band=band, model=model), bbox_inches = 'tight')
 #pl.show()
