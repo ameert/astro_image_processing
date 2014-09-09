@@ -123,7 +123,7 @@ gals = [
 ]
 
 
-for gal in gals[7:8]:
+for gal in gals[-4:-3]:
 
     fig_size = (6.0,6.0)
     fig = pl.figure(figsize = fig_size)
@@ -131,7 +131,7 @@ for gal in gals[7:8]:
     rcParams.update(MatPlotParams)
     equal_margins()
 
-    cmd = 'select a.objid, a.petroR50_r, a.petromag_r, b.Hrad_corr/0.396, b.BT, b.m_tot from r_band_serexp as b, CAST as a where a.galcount = b.galcount and a.galcount = %d;' %gal[0]
+    cmd = 'select a.objid, a.petroR50_r, a.petromag_r-a.extinction_r, b.Hrad_corr/0.396, b.BT, b.m_tot-a.extinction_r from r_band_serexp as b, CAST as a where a.galcount = b.galcount and a.galcount = %d;' %gal[0]
     objid, petrorad, petromag, hrad,BT, mag_tot = cursor.get_data(cmd)
     objid = objid[0]
     petromag = petromag[0]
@@ -140,7 +140,7 @@ for gal in gals[7:8]:
     BT = BT[0]
     mag_tot = mag_tot[0]
 
-    mask_data = load_image('./data/EM_%08d_r_stamp_plotting.fits' %gal[0], frame_num = 0)
+    mask_data = load_image('./data/M_r_%08d_r_stamp.fits' %gal[0], frame_num = 0)
     mask_data = resize_image(mask_data, hrad)
     
     pl.subplot(2,2,1)
@@ -150,7 +150,7 @@ for gal in gals[7:8]:
     data = load_image('./data/O_r_%08d_r_stamp_serexp.fits' %gal[0], frame_num = 2)
     data = resize_image(data, hrad)
     data = np.log10(data)
-    zmin, zmax = make_panel(data, color = cm.gray_r)
+    zmin, zmax = make_panel(data, color = cm.gray_r,zmin=2.0*np.nanmin(data)-np.percentile(np.extract(np.isnan(data)==0,data), 95.0))
     pl.title('model',fontsize=12)
     ax = pl.gca()
     pl.text(0.05, 0.9, 'm$_{tot}$=%3.1f' %mag_tot, fontsize=12, 
@@ -163,6 +163,8 @@ for gal in gals[7:8]:
             horizontalalignment='left', verticalalignment='center',
             transform=ax.transAxes)
 
+    outfile = pf.PrimaryHDU(data)
+    outfile.writeto('test_dat.fits', clobber=1)
 
     pl.subplot(2,2,2)
     pticks = pub_plots(xmaj = 10, xmin = 5, xstr = '%d', ymaj = 10, ymin = 5, ystr = '%d')
@@ -184,6 +186,8 @@ for gal in gals[7:8]:
             horizontalalignment='left', verticalalignment='center',
             transform=ax.transAxes)
 
+    outfile = pf.PrimaryHDU(data)
+    outfile.writeto('test_dat2.fits', clobber=1)
 
 
     pl.subplot(2,2,4)
@@ -193,9 +197,13 @@ for gal in gals[7:8]:
     data = load_image('./data/O_r_%08d_r_stamp_serexp.fits' %gal[0], frame_num = 3)+5
     data = resize_image(data, hrad)
     data = np.log10(data)
-    data = np.where(mask_data<0.5, np.nan, data)
+    data = np.where(mask_data>0.5, np.nan, data)
     make_panel(data, color = cm.gray_r)
     pl.title('masked residual',fontsize=12)
+
+    outfile = pf.PrimaryHDU(data)
+    outfile.writeto('test_resid.fits',clobber=1)
+
 
     ax = pl.subplot(2,2,3)#, aspect = 5.0/8.0)
     MatPlotParams = {'xtick.major.pad' :10, 'ytick.major.pad' :10,'xtick.minor.pad' :10, 'ytick.minor.pad' :10, 'axes.labelsize': 8, 'xtick.labelsize': 8, 'ytick.labelsize': 8}
@@ -224,4 +232,4 @@ for gal in gals[7:8]:
     ax.set_aspect((pl.xlim()[0]-pl.xlim()[1])/(pl.ylim()[1]-pl.ylim()[0]))
     pl.savefig('./%08d_strip.eps' %gal[0])#, bbox_inches = 'tight')
     pl.close('all')
-    
+    pl.show()    

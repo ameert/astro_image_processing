@@ -1,4 +1,4 @@
-from mysql.mysql_class import *
+from astro_image_processing.mysql import *
 
 def get_data(cursor, table1, table2, add_tables = '', conditions = '', flags=False, flagmodel = 'serexp'):
     cmd = """select a.galcount, 

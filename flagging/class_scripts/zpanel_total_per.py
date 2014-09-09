@@ -1,4 +1,4 @@
-from mysql.mysql_class import *
+from astro_image_processing.mysql.mysql_class import *
 from flag_defs import *
 import pylab as pl
 import matplotlib.ticker as mticker
@@ -118,29 +118,32 @@ plot_info = {1:{'color':'r', 'label':'bulges', 'ms':3, 'marker':'o', 'ls':'-'},
              }
 
 fig = pl.figure(figsize=(8,6))
-pl.subplots_adjust(right = 0.85, left =0.1, hspace = 0.5, wspace = 0.75)
+pl.subplots_adjust(right = 0.9, left =0.09, top=0.97, 
+                   hspace = 0.5, wspace = 0.55, bottom=0.08)
 
 
 print "appmag" 
 pl.subplot(3,2,1)
 
 delta = 0.25
-magbins = np.arange(13.25, 18.76, delta)
+magbins = np.arange(13.25, 18.01, delta)
 #galcount, autoflag, mag = get_vals('c.petromag_r-c.extinction_r')
 galcount, autoflag, mag = get_vals('f.m_tot-c.extinction_{band}'.format(band=band))
 props = get_flag_props(flags_to_use, autoflag, mag, magbins)
-plot_props('m$_{band}$'.format(band=band), props, magbins, delta, flags_to_use,plot_info)
+plot_props('m$_{{ {band}, tot}}$'.format(band=band), props, 
+           magbins, delta, flags_to_use,plot_info)
 
 
 print "apprad" 
 pl.subplot(3,2,3)
 
-delta = 0.5
-radbins = np.arange(0.0, 8.0, delta)
+delta = 0.1
+radbins = np.arange(-0.2, 1.51, delta)
 #galcount, autoflag, rad = get_vals('c.petror50_r')
 galcount, autoflag, rad = get_vals("f.Hrad_corr")
+rad = np.log10(rad)
 props = get_flag_props(flags_to_use, autoflag, rad, radbins)
-plot_props('r$_{hl, arcsec}$', props, radbins, delta, flags_to_use,plot_info)
+plot_props('log$_{10}$r$_{hl, tot, arcsec}$', props, radbins, delta, flags_to_use,plot_info)
 
 print "ba" 
 pl.subplot(3,2,5)
@@ -160,18 +163,19 @@ magbins = np.arange(-25.0, -17.0, delta)
 #galcount, autoflag, mag = get_vals("c.petromag_r-d.dismod-d.kcorr_r-c.extinction_r")
 galcount, autoflag, mag = get_vals("f.m_tot-d.dismod-d.kcorr_{band}-c.extinction_{band}".format(band=band))
 props = get_flag_props(flags_to_use, autoflag, mag, magbins)
-plot_props('M$_{band}$'.format(band=band), props, magbins, delta, flags_to_use,plot_info)
+plot_props('M$_{{ {band}, tot}}$'.format(band=band), props, magbins, delta, flags_to_use,plot_info)
 
 
 print "ABSrad" 
 pl.subplot(3,2,4)
 
-delta = 2.5
-radbins = np.arange(0.0, 20.01, delta)
+delta = 0.1
+radbins = np.arange(-0.2, 1.51, delta)
 #galcount, autoflag, rad = get_vals("c.petror50_r*d.kpc_per_arcsec")
 galcount, autoflag, rad = get_vals("f.Hrad_corr*d.kpc_per_arcsec")
+rad = np.log10(rad)
 props = get_flag_props(flags_to_use, autoflag, rad, radbins)
-ax1, ax2 = plot_props('R$_{hl, kpc}$', props, radbins, delta, flags_to_use,plot_info)
+ax1, ax2 = plot_props('log$_{10}$R$_{hl, tot, kpc}$', props, radbins, delta, flags_to_use,plot_info)
 print "ABSrad" 
 
 if 0:

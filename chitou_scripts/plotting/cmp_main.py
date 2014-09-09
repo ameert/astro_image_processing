@@ -11,9 +11,9 @@ import os
 from matplotlib.backends.backend_pdf import PdfPages
 
 # my personal code imports 
-from mysql.mysql_class import *
+from astro_image_processing.mysql import *
 from cmp_functions import *
-from MatplotRc import *
+from astro_image_processing.MatplotRc import *
 from plot_info import *
 from get_data import *
 
@@ -34,7 +34,7 @@ print data[options['xchoice']+'_1'],data[options['ychoice']+'_1'],data[options['
 # this sets up the calculation so that the plotting below works
 for name in ['hrad', 'rbulge', 'rdisk', 'petrorad']:
     data[name+'_2'] =  (data[name+'_2']/data[name+'_1'])-1.0 +data[name+'_1']
-#    data[name+'_2'] =  -(data[name+'_1']/data[name+'_2']) +data[name+'_1']
+#    data[name+'_2'] =  1.0-(data[name+'_1']/data[name+'_2'])+data[name+'_1'] 
 
 for posnum in ['1','2']:
     if options['model%s' %posnum] == 'dev':

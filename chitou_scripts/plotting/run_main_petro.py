@@ -347,7 +347,7 @@ y.model = 'ser' and ( y.flag&pow(2,0)>0) " --add_tables ",Flags_optimize as y "
  --yl "-3,3"
 
 python cmp_main.py -1 band -2 band -m serexp -n ser -b r -x BT -y rbulge -f -z serexp  --title "PyMorph Serexp-Ser"  --conditions "  and a.n_bulge < 7.95 and ( x.flag&pow(2,11)>0 or x.flag&pow(2,12)>0 or x.flag&pow(2,1)>0) and a.galcount = y.galcount  and y.band = 'r' and y.ftype = 'u' and 
-y.model = 'ser' and ( y.flag&pow(2,0)>0) " --add_tables ",Flags_optimize as y " --yl "0.0,1.2" --ytM .2 --ytm 0.05  --ylab 'r$_{\mathrm{Ser-Exp, bulge}}$/r$_{\mathrm{Ser, hl}}$'
+y.model = 'ser' and ( y.flag&pow(2,0)>0) " --add_tables ",Flags_optimize as y " --yl "-1.0,0.2" --ytM .2 --ytm 0.05  --ylab '1-(r$_{\mathrm{Ser-Exp, bulge}}$/r$_{\mathrm{Ser, hl}}$)'
 
 #mv r_band_band_*.eps r_band_band_*.tbl /home/ameert/git_projects/catalog2013/figures/cmp_plots/best_model/
 

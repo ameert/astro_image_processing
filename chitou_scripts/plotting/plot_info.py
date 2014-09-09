@@ -1,6 +1,6 @@
 import pylab as pl
 import numpy as np
-from MatplotRc import *
+from astro_image_processing.MatplotRc import *
 
 bins = {'mag':np.arange(14.0, 18.1, .5),
         'absmag':np.arange(-24.0, -15.99, .5), 'rad':np.arange(0.0, 12.1, 1.0),
