@@ -1,14 +1,14 @@
 import sys
 import os
 import numpy as np
-import statistics.bin_stats as bs
+import astro_image_processing.statistics.bin_stats as bs
 import pylab as pl
-from MatplotRc import *
+from astro_image_processing.MatplotRc import *
 
 data = np.load('ba_data_serexp.npz')
 fig = pl.figure(figsize = (6,4))
-fig.subplots_adjust(left = 0.14, right = 0.9, top = 0.9, bottom = 0.12, 
-                    wspace = 0.75, hspace = 0.75)
+fig.subplots_adjust(left = 0.1, right = 0.97, top = 0.93, bottom = 0.12, 
+                    wspace = 0.4, hspace = 0.7)
 for count, gal_opt in enumerate(['Ell','S0','Sab','Scd']):
     print count
     if gal_opt == 'All':

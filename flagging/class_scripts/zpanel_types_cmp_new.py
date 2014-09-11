@@ -1,4 +1,4 @@
-from mysql.mysql_class import *
+from astro_image_processing.mysql import *
 from flag_defs import *
 import pylab as pl
 import matplotlib.ticker as mticker
@@ -140,8 +140,8 @@ plot_info = {1:{'color':'r', 'label':'bulges', 'ms':3, 'marker':'o', 'ls':'-'},
              8:{'color':'b', 'label':'exp', 'ms':3, 'marker':'s', 'ls':'-'},
              9:{'color':'y', 'label':'nb1', 'ms':3, 'marker':'d', 'ls':':'},
              10:{'color':'g', 'label':'nb4', 'ms':3, 'marker':'d', 'ls':'-'},
-             11:{'color':'c', 'label':'ser, n<2', 'ms':3, 'marker':'s', 'ls':'-'},
-             12:{'color':'#FF6600', 'label':'ser, n>=2', 'ms':3, 'marker':'o', 'ls':'--'},
+             11:{'color':'c', 'label':'ser, n$<$2', 'ms':3, 'marker':'s', 'ls':'-'},
+             12:{'color':'#FF6600', 'label':'ser, n$\geq$2', 'ms':3, 'marker':'o', 'ls':'--'},
              13:{'color':'g', 'label':'devexp', 'ms':3, 'marker':'d', 'ls':'--'},
              14:{'color':'y', 'label':'serexp', 'ms':3, 'marker':'d', 'ls':'-'},
              15:{'color':'r', 'label':'dev', 'ms':3, 'marker':'o', 'ls':'-'},

@@ -133,7 +133,7 @@ def plot_props(xlab, props, magbins, delta, flags_to_use,plot_info):
 
 cursor = mysql_connect('catalog','pymorph','pymorph','')
 
-band = 'g'
+band = 'r'
 model = 'serexp'
 
 
@@ -148,8 +148,8 @@ plot_info = {1:{'color':'r', 'label':'bulges', 'ms':3, 'marker':'o', 'ls':'-'},
              8:{'color':'b', 'label':'exp', 'ms':3, 'marker':'s', 'ls':'-'},
              9:{'color':'y', 'label':'nb1', 'ms':3, 'marker':'d', 'ls':':'},
              10:{'color':'g', 'label':'nb4', 'ms':3, 'marker':'d', 'ls':'-'},
-             11:{'color':'c', 'label':'ser, n<2', 'ms':3, 'marker':'s', 'ls':'-'},
-             12:{'color':'#FF6600', 'label':'ser, n>=2', 'ms':3, 'marker':'o', 'ls':'--'},
+             11:{'color':'c', 'label':'ser, n$<$2', 'ms':3, 'marker':'s', 'ls':'-'},
+             12:{'color':'#FF6600', 'label':'ser, n$\geq$2', 'ms':3, 'marker':'o', 'ls':'--'},
              13:{'color':'g', 'label':'devexp', 'ms':3, 'marker':'d', 'ls':'--'},
              14:{'color':'y', 'label':'serexp', 'ms':3, 'marker':'d', 'ls':'-'},
              15:{'color':'r', 'label':'dev', 'ms':3, 'marker':'o', 'ls':'-'},
@@ -174,6 +174,7 @@ pl.subplots_adjust(right = 0.85, top = 0.85, left =0.1, bottom=0.3,
 
 delta = 0.5
 typebins = np.arange(-24.0, -16.49, delta)
+typebins_lg12 = np.arange(-23.0, -16.49, delta)
 #x_names= [str(int(a)) for a in typebins+0.5]
 #x_names = [ x_names[a] if (a+1)%4 ==0 else "" for a in range(len(x_names))] 
 
@@ -218,10 +219,10 @@ print "meert"
 pl.subplot(5,2,1)
 flags_to_use = np.array([1,2,3,4,5,6])
 galcount, autoflag, stype = get_vals('meert_lackner')
-props = get_flag_props(flags_to_use, autoflag, stype,typebins)
+props = get_flag_props(flags_to_use, autoflag, stype,typebins_lg12)
 props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-ax1, ax2 =plot_props('M$_{petro}$', props, typebins, delta, flags_to_use,plot_info)
-#pl.xticks(typebins+0.5, x_names, fontsize = 8)
+ax1, ax2 =plot_props('M$_{petro}$', props, typebins_lg12, delta, flags_to_use,plot_info)
+#pl.xticks(typebins_lg12+0.5, x_names, fontsize = 8)
 pl.title('This Work (LG12 sample)', fontsize=8)
 pl.xticks(fontsize=8)
 l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
@@ -232,10 +233,10 @@ if band in 'gr':
     pl.subplot(5,2,3)
     flags_to_use = np.array([11,12,13,14])
     galcount, autoflag, stype = get_vals('simard_lackner')
-    props = get_flag_props(flags_to_use, autoflag, stype,typebins)
+    props = get_flag_props(flags_to_use, autoflag, stype,typebins_lg12)
     props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-    ax1,ax2=plot_props('M$_{petro}$', props, typebins, delta, flags_to_use,plot_info)
-    #pl.xticks(typebins+0.5, x_names, fontsize = 8)
+    ax1,ax2=plot_props('M$_{petro}$', props, typebins_lg12, delta, flags_to_use,plot_info)
+    #pl.xticks(typebins_lg12+0.5, x_names, fontsize = 8)
     pl.title('S11 (LG12 sample)', fontsize=8)
     l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
     pl.xticks(fontsize=8)
@@ -245,10 +246,10 @@ if band in 'gr':
     pl.subplot(5,2,5)
     flags_to_use = np.array([15,16,17,18])
     galcount, autoflag, stype = get_vals('mendel_lackner')
-    props = get_flag_props(flags_to_use, autoflag, stype,typebins)
+    props = get_flag_props(flags_to_use, autoflag, stype,typebins_lg12)
     props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-    ax1,ax2=plot_props('M$_{petro}$', props, typebins, delta, flags_to_use,plot_info)
-    #pl.xticks(typebins+0.5, x_names, fontsize = 8)
+    ax1,ax2=plot_props('M$_{petro}$', props, typebins_lg12, delta, flags_to_use,plot_info)
+    #pl.xticks(typebins_lg12+0.5, x_names, fontsize = 8)
     pl.title('Men14 (LG12 sample)', fontsize=8)
     l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
     pl.xticks(fontsize=8)
@@ -259,10 +260,10 @@ if 0:
     pl.subplot(5,2,7)
     flags_to_use = np.array([19,20,21,22,23])
     galcount, autoflag, stype = get_vals('galzoo_lackner')
-    props = get_flag_props(flags_to_use, autoflag, stype,typebins)
+    props = get_flag_props(flags_to_use, autoflag, stype,typebins_lg12)
     props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-    ax1,ax2=plot_props('M$_{petro}$', props, typebins, delta, flags_to_use,plot_info)
-    #pl.xticks(typebins+0.5, x_names, fontsize = 8)
+    ax1,ax2=plot_props('M$_{petro}$', props, typebins_lg12, delta, flags_to_use,plot_info)
+    #pl.xticks(typebins_lg12+0.5, x_names, fontsize = 8)
     pl.title('Galaxy Zoo (LG12 sample)', fontsize=8)
     l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
     pl.xticks(fontsize=8)
@@ -286,10 +287,10 @@ print "lackner"
 pl.subplot(5,2,7)
 flags_to_use = np.array([7,8,9,10,11,12])
 galcount, autoflag, stype = get_vals('lackner')
-props = get_flag_props(flags_to_use, autoflag, stype,typebins)
+props = get_flag_props(flags_to_use, autoflag, stype,typebins_lg12)
 props['datamask'] = np.where(np.array(props['total'])>0,True,False)
-ax1,ax2=plot_props('M$_{petro}$', props, typebins, delta, flags_to_use,plot_info)
-#pl.xticks(typebins+0.5, x_names, fontsize = 8)
+ax1,ax2=plot_props('M$_{petro}$', props, typebins_lg12, delta, flags_to_use,plot_info)
+#pl.xticks(typebins_lg12+0.5, x_names, fontsize = 8)
 pl.title('LG12 (LG12 sample)', fontsize=8)
 l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
 pl.xticks(fontsize=8)

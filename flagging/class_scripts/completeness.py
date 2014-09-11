@@ -1,6 +1,6 @@
 import pylab as pl
 import numpy as np
-from MatplotRc import *
+from astro_image_processing.MatplotRc import *
 
 #start_mysql -e "select c.petromag_r-c.extinction_r, c.z, a.n_bulge, f.flag from CAST as c, Flags_optimize as f, r_band_serexp as a where a.galcount=c.galcount and c.galcount = f.galcount and f.band='r' and f.ftype='u' and f.model='serexp';" > final_tab.txt
 
@@ -32,15 +32,15 @@ fclean = np.extract(tmp_flag==0,flag)
 mclean = np.extract(tmp_flag==0,fin_mag)
  
 outvals,outbin = get_hist(fin_mag, flag, 2**1+2**4+2**10+2**14)
-pl.step(outbin, outvals/in_vals, color = 'r', ls=':', lw=2, 
+pl.step(outbin, outvals/in_vals, color = 'r', ls='-', lw=2, 
 label = 'full',where='post')
 
 outvals,outbin = get_hist(fin_mag, flag, 2**1+2**4+2**10)
-pl.step(outbin, outvals/in_vals, color = 'g', ls='-.', lw=2, 
+pl.step(outbin, outvals/in_vals, color = 'g', ls='-', lw=2, 
 label = 'intermediate',where='post')
 
 outvals,outbin = get_hist(mclean, fclean, 2**1+2**4+2**10)
-pl.step(outbin, outvals/in_vals, color = 'b', ls='--', lw=2, 
+pl.step(outbin, outvals/in_vals, color = 'b', ls='-', lw=2, 
 label = 'conservative',where='post')
 
 
