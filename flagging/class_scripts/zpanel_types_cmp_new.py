@@ -3,6 +3,7 @@ from flag_defs import *
 import pylab as pl
 import matplotlib.ticker as mticker
 import scikits.bootstrap as bootstrap  
+import matplotlib 
 
 def print_flags(autoflag, test_flag, print_gals = False):
     #if test_flag == 10:
@@ -47,27 +48,27 @@ def get_flag_props(flags_to_use, autoflag, binval, bins):
 
 
 def get_vals(binval,tname='m2010'):
- 
+    galnumlim = 1000000 
     if binval == 'lackner':
-        cmd = """select d.galcount,IF(d.model='dvc',7,0)+ IF(d.model='ser' and z.n_bulge>=2.0, 12,0)+IF(d.model='exp',8,0)+ IF(d.model='ser' and z.n_bulge<2.0, 11,0)+IF(d.model='nb1',9,0)+IF(d.model = 'nb4', 10,0),-4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd from catalog.M2010 as m, catalog.r_lackner_fit as d, catalog.r_lackner_ser as z where m.galcount=d.galcount and d.galcount = z.galcount order by d.galcount  limit 10000000;""".format(model = model, band = band)
+        cmd = """select d.galcount,IF(d.model='dvc',7,0)+ IF(d.model='ser' and z.n_bulge>=2.0, 12,0)+IF(d.model='exp',8,0)+ IF(d.model='ser' and z.n_bulge<2.0, 11,0)+IF(d.model='nb1',9,0)+IF(d.model = 'nb4', 10,0),-4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd from catalog.M2010 as m, catalog.r_lackner_fit as d, catalog.r_lackner_ser as z where m.galcount=d.galcount and d.galcount = z.galcount order by d.galcount limit {galnumlim};""".format(band=band, model=model, galnumlim=galnumlim)
     elif binval == 'simard_lackner':
-        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  -4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd  from catalog.M2010 as m,  catalog.r_lackner_fit as c, catalog.r_simard_fit as d, catalog.r_simard_ser as z where m.galcount = c.galcount and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 10000000;""".format(model = model, band = band)
+        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  -4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd  from catalog.M2010 as m,  catalog.r_lackner_fit as c, catalog.r_simard_fit as d, catalog.r_simard_ser as z where m.galcount = c.galcount and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit {galnumlim};""".format(galnumlim=galnumlim, model = model, band = band)
     elif binval == 'simard':
-        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  -4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd  from catalog.M2010 as m, catalog.r_simard_fit as d, catalog.r_simard_ser as z where m.galcount = d.galcount and d.galcount = z.galcount order by d.galcount  limit 10000000;""".format(model = model, band = band)
+        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  -4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd  from catalog.M2010 as m, catalog.r_simard_fit as d, catalog.r_simard_ser as z where m.galcount = d.galcount and d.galcount = z.galcount order by d.galcount  limit {galnumlim};""".format(galnumlim=galnumlim, model = model, band = band)
     elif binval == 'meert_lackner':
-        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,19)>0,5,0)  ,-4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd  from catalog.M2010 as m, catalog.Flags_optimize as c, catalog.r_lackner_fit as z, catalog.r_band_serexp as d  where m.galcount = c.galcount and d.galcount = c.galcount and c.galcount = z.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit 10000000;""".format(model = model, band = band)
+        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,20)>0,5,0)  ,-4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd  from catalog.M2010 as m, catalog.Flags_catalog as c, catalog.r_lackner_fit as z, catalog.r_band_serexp as d  where m.galcount = c.galcount and d.galcount = c.galcount and c.galcount = z.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit {galnumlim};""".format(galnumlim=galnumlim, model = model, band = band)
     elif binval == 'meert':
-        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,19)>0,5,0)  ,-4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd  from catalog.M2010 as m, catalog.Flags_optimize as c, catalog.r_band_serexp as d  where m.galcount = c.galcount and d.galcount = c.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit 10000000;""".format(model = model, band = band)
+        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,20)>0,5,0)  ,-4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd  from catalog.M2010 as m, catalog.Flags_catalog as c, catalog.r_band_serexp as d  where m.galcount = c.galcount and d.galcount = c.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit {galnumlim};""".format(galnumlim=galnumlim, model = model, band = band)
     elif binval == 'mendel_lackner':
-        cmd = """select d.galcount, IF(d.Proftype=1, 15,0)+IF(d.Proftype=2, 16,0)+IF(d.Proftype=3, 17,0)+IF(d.Proftype=4 or d.Proftype<0,18,0),  -4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd  from catalog.M2010 as m,  catalog.DERT as x,  catalog.r_lackner_fit as c, catalog.r_simard_fit as d, catalog.r_simard_ser as z where  m.galcount = x.galcount and m.galcount = c.galcount and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 1000000;"""
+        cmd = """select d.galcount, IF(d.Proftype=1, 15,0)+IF(d.Proftype=2, 16,0)+IF(d.Proftype=3, 17,0)+IF(d.Proftype=4 or d.Proftype<0,18,0),  -4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd  from catalog.M2010 as m,  catalog.DERT as x,  catalog.r_lackner_fit as c, catalog.r_simard_fit as d, catalog.r_simard_ser as z where  m.galcount = x.galcount and m.galcount = c.galcount and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount   limit {galnumlim};""".format(galnumlim=galnumlim, model = model, band = band)
     elif binval == 'mendel':
-        cmd = """select d.galcount, IF(d.Proftype=1, 15,0)+IF(d.Proftype=2, 16,0)+IF(d.Proftype=3, 17,0)+IF(d.Proftype=4 or d.Proftype<0,18,0),  -4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd  from catalog.M2010 as m,  catalog.DERT as x, catalog.r_simard_fit as d, catalog.r_simard_ser as z where  m.galcount = x.galcount and m.galcount = d.galcount and d.galcount = z.galcount order by d.galcount  limit 1000000;"""
+        cmd = """select d.galcount, IF(d.Proftype=1, 15,0)+IF(d.Proftype=2, 16,0)+IF(d.Proftype=3, 17,0)+IF(d.Proftype=4 or d.Proftype<0,18,0),  -4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd  from catalog.M2010 as m,  catalog.DERT as x, catalog.r_simard_fit as d, catalog.r_simard_ser as z where  m.galcount = x.galcount and m.galcount = d.galcount and d.galcount = z.galcount order by d.galcount   limit {galnumlim};""".format(galnumlim=galnumlim, model = model, band = band)
     elif binval == 'nair_lackner':
-        cmd = """select d.galcount,IF(d.model='dvc',7,0)+ IF(d.model='ser' and z.n_bulge>=2.0, 12,0)+IF(d.model='exp',8,0)+ IF(d.model='ser' and z.n_bulge<2.0, 11,0)+IF(d.model='nb1',9,0)+IF(d.model = 'nb4', 10,0),n.ttype from catalog.M2010 as m, catalog.r_lackner_fit as d, catalog.r_lackner_ser as z, catalog.Nair as n where m.galcount=d.galcount and n.galcount = d.galcount and d.galcount = z.galcount order by d.galcount  limit 10000000;"""
+        cmd = """select d.galcount,IF(d.model='dvc',7,0)+ IF(d.model='ser' and z.n_bulge>=2.0, 12,0)+IF(d.model='exp',8,0)+ IF(d.model='ser' and z.n_bulge<2.0, 11,0)+IF(d.model='nb1',9,0)+IF(d.model = 'nb4', 10,0),n.ttype from catalog.M2010 as m, catalog.r_lackner_fit as d, catalog.r_lackner_ser as z, catalog.Nair as n where m.galcount=d.galcount and n.galcount = d.galcount and d.galcount = z.galcount order by d.galcount  limit {galnumlim};""".format(galnumlim=galnumlim, model = model, band = band)
     elif binval == 'nair_simard':
-        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  n.ttype from catalog.M2010 as m,  catalog.r_lackner_fit as c, catalog.r_simard_fit as d, catalog.r_simard_ser as z, catalog.Nair as n where m.galcount = c.galcount and n.galcount = c.galcount  and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount  limit 10000000;"""
+        cmd = """select d.galcount, IF(d.Prob_pS>0.32 and z.n_bulge>=2.0, 12,0)+IF(d.Prob_pS>0.32 and z.n_bulge<2.0, 11,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4>0.32, 13,0)+IF(d.Prob_pS<=0.32 and d.Prob_n4<=0.32, 14,0),  n.ttype from catalog.M2010 as m,  catalog.r_lackner_fit as c, catalog.r_simard_fit as d, catalog.r_simard_ser as z, catalog.Nair as n where m.galcount = c.galcount and n.galcount = c.galcount  and c.galcount = d.galcount and c.galcount = z.galcount order by d.galcount   limit {galnumlim};""".format(galnumlim=galnumlim, model = model, band = band)
     elif binval == 'nair_meert':
-        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,19)>0,5,0)  ,n.ttype  from catalog.M2010 as m, catalog.Flags_optimize as c, catalog.r_lackner_fit as z, catalog.r_band_serexp as d, catalog.Nair as n  where m.galcount = c.galcount and n.galcount = c.galcount and d.galcount = c.galcount and c.galcount = z.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit 10000000;""".format(model = 'serexp', band = 'r')
+        cmd = """select c.galcount,IF(c.flag&pow(2,1)>0,1,0)+ IF(c.flag&pow(2,4)>0,2,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge<7.95,3,0)+ IF(c.flag&pow(2,14)>0,4,0)+ IF(c.flag&pow(2,10)>0 and d.n_bulge>=7.95,6,0)+IF(c.flag&pow(2,20)>0,5,0)  ,n.ttype  from catalog.M2010 as m, catalog.Flags_catalog as c, catalog.r_lackner_fit as z, catalog.r_band_serexp as d, catalog.Nair as n  where m.galcount = c.galcount and n.galcount = c.galcount and d.galcount = c.galcount and c.galcount = z.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by c.galcount  limit {galnumlim};""".format(galnumlim=galnumlim, model = 'serexp', band = 'r')
     galcount, flags, flag2 = cursor.get_data(cmd)
     galcount = np.array(galcount, dtype=int)
     autoflag = np.array(flags, dtype=int)
@@ -80,7 +81,7 @@ def plot_props(xlab, props, magbins, delta, flags_to_use,plot_info):
     magbinctr = (magbins[1:]+magbins[0:-1])/2
 
     ax1 = pl.gca()
-    pl.xlabel(xlab)
+    pl.xlabel(xlab, fontsize=8)
 
     ax2 = pl.twinx()
 
@@ -98,8 +99,8 @@ def plot_props(xlab, props, magbins, delta, flags_to_use,plot_info):
                  color = plot_info[flag]['color'], 
                  label = plot_info[flag]['label'])
 
-        ax2.set_ylabel('fraction of galaxies', fontsize=8)
-        ax1.set_ylabel('Total galaxies', fontsize=8)
+        ax2.set_ylabel('fraction of galaxies', fontsize=7)
+        ax1.set_ylabel('Total galaxies', fontsize=7)
 
         ax1.yaxis.tick_right()
         ax1.yaxis.set_label_position("right")
@@ -158,9 +159,10 @@ plot_info = {1:{'color':'r', 'label':'bulges', 'ms':3, 'marker':'o', 'ls':'-'},
              }
 
 names=[ plot_info[key]['label'] for key in plot_info.keys()] 
-fig = pl.figure(figsize=(6,10))
-pl.subplots_adjust(right = 0.85, top = 0.85, left =0.1, bottom=0.3,
-                   hspace = 1.2, wspace = 0.9)
+matplotlib.rc('xtick', labelsize=8)
+fig = pl.figure(figsize=(6,8))
+pl.subplots_adjust(right = 0.92, top = 0.97, left =0.1, bottom=0.1,
+                   hspace = 0.65, wspace = 0.95)
 
 delta = 1.0
 typebins = np.arange(-6.5, 12.51, delta)
@@ -169,7 +171,7 @@ x_names = [ x_names[a] if a%2 ==0 else "" for a in range(len(x_names))]
 
 
 print "meert" 
-pl.subplot(4,2,1)
+pl.subplot(5,2,1)
 flags_to_use = np.array([1,2,3,4,5,6])
 galcount, autoflag, stype = get_vals('meert_lackner')
 props = get_flag_props(flags_to_use, autoflag, stype,typebins)
@@ -178,11 +180,13 @@ ax1,ax2 =plot_props('T', props, typebins, delta, flags_to_use,plot_info)
 #pl.xticks(typebins+0.5, x_names, fontsize = 8)
 pl.title('This Work (LG12 sample)', fontsize=8)
 pl.xticks(rotation=90)
-l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
+l = ax2.legend(loc=10, bbox_to_anchor=(1.5, 0.5), prop={'size':6})
 pl.xlim(-6,7)
+ax1.yaxis.set_tick_params(labelsize=6)
+ax2.yaxis.set_tick_params(labelsize=6)
 
 print "simard" 
-pl.subplot(4,2,3)
+pl.subplot(5,2,3)
 flags_to_use = np.array([11,12,13,14])
 galcount, autoflag, stype = get_vals('simard_lackner')
 props = get_flag_props(flags_to_use, autoflag, stype,typebins)
@@ -190,12 +194,14 @@ props['datamask'] = np.where(np.array(props['total'])>0,True,False)
 ax1,ax2 =plot_props('T', props, typebins, delta, flags_to_use,plot_info)
 #pl.xticks(typebins+0.5, x_names, fontsize = 8)
 pl.title('S11 (LG12 sample)', fontsize=8)
-l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
+l = ax2.legend(loc=10, bbox_to_anchor=(1.5, 0.5), prop={'size':6})
 #pl.xticks(rotation=90)
 pl.xlim(-6,7)
+ax1.yaxis.set_tick_params(labelsize=6)
+ax2.yaxis.set_tick_params(labelsize=6)
 
 print "mendel" 
-pl.subplot(4,2,5)
+pl.subplot(5,2,5)
 flags_to_use = np.array([15,16,17,18])
 galcount, autoflag, stype = get_vals('mendel_lackner')
 props = get_flag_props(flags_to_use, autoflag, stype,typebins)
@@ -203,12 +209,14 @@ props['datamask'] = np.where(np.array(props['total'])>0,True,False)
 ax1,ax2 =plot_props('T', props, typebins, delta, flags_to_use,plot_info)
 #pl.xticks(typebins+0.5, x_names, fontsize = 8)
 pl.title('Men14 (LG12 sample)', fontsize=8)
-l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
+l = ax2.legend(loc=10, bbox_to_anchor=(1.5, 0.5), prop={'size':6})
 #pl.xticks(rotation=90)
 pl.xlim(-6,7)
+ax1.yaxis.set_tick_params(labelsize=6)
+ax2.yaxis.set_tick_params(labelsize=6)
 
 print "lackner" 
-pl.subplot(4,2,7)
+pl.subplot(5,2,7)
 flags_to_use = np.array([7,8,9,10,11,12])
 galcount, autoflag, stype = get_vals('lackner')
 props = get_flag_props(flags_to_use, autoflag, stype,typebins)
@@ -216,13 +224,15 @@ props['datamask'] = np.where(np.array(props['total'])>0,True,False)
 ax1,ax2 =plot_props('T', props, typebins, delta, flags_to_use,plot_info)
 #pl.xticks(typebins+0.5, x_names, fontsize = 8)
 pl.title('LG12 (LG12 sample)', fontsize=8)
-l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
+l = ax2.legend(loc=10, bbox_to_anchor=(1.5, 0.5), prop={'size':6})
 #pl.xticks(rotation=90)
 pl.xlim(-6,7)
+ax1.yaxis.set_tick_params(labelsize=6)
+ax2.yaxis.set_tick_params(labelsize=6)
 
 
 print "meert" 
-pl.subplot(4,2,2)
+pl.subplot(5,2,2)
 flags_to_use = np.array([1,2,3,4,5,6])
 galcount, autoflag, stype = get_vals('meert')
 props = get_flag_props(flags_to_use, autoflag, stype,typebins)
@@ -231,11 +241,13 @@ ax1,ax2 =plot_props('T', props, typebins, delta, flags_to_use,plot_info)
 #pl.xticks(typebins+0.5, x_names, fontsize = 8)
 pl.title('This Work (full sample)', fontsize=8)
 pl.xticks(rotation=90)
-l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
+#l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
 pl.xlim(-6,7)
+ax1.yaxis.set_tick_params(labelsize=6)
+ax2.yaxis.set_tick_params(labelsize=6)
 
 print "simard" 
-pl.subplot(4,2,4)
+pl.subplot(5,2,4)
 flags_to_use = np.array([11,12,13,14])
 galcount, autoflag, stype = get_vals('simard')
 props = get_flag_props(flags_to_use, autoflag, stype,typebins)
@@ -243,12 +255,14 @@ props['datamask'] = np.where(np.array(props['total'])>0,True,False)
 ax1,ax2 =plot_props('T', props, typebins, delta, flags_to_use,plot_info)
 #pl.xticks(typebins+0.5, x_names, fontsize = 8)
 pl.title('S11 (full sample)', fontsize=8)
-l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
+#l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
 #pl.xticks(rotation=90)
 pl.xlim(-6,7)
+ax1.yaxis.set_tick_params(labelsize=6)
+ax2.yaxis.set_tick_params(labelsize=6)
 
 print "mendel" 
-pl.subplot(4,2,6)
+pl.subplot(5,2,6)
 flags_to_use = np.array([15,16,17,18])
 galcount, autoflag, stype = get_vals('mendel')
 props = get_flag_props(flags_to_use, autoflag, stype,typebins)
@@ -256,9 +270,11 @@ props['datamask'] = np.where(np.array(props['total'])>0,True,False)
 ax1,ax2 =plot_props('T', props, typebins, delta, flags_to_use,plot_info)
 #pl.xticks(typebins+0.5, x_names, fontsize = 8)
 pl.title('Men14 (full sample)', fontsize=8)
-l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
+#l = ax2.legend(loc=2, bbox_to_anchor=(1.025, 0.00), prop={'size':6})
 #pl.xticks(rotation=90)
 pl.xlim(-6,7)
+ax1.yaxis.set_tick_params(labelsize=6)
+ax2.yaxis.set_tick_params(labelsize=6)
 
 
 #print props.keys()

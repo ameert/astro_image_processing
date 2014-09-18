@@ -32,8 +32,8 @@ for count, gal_opt in enumerate(['Ell','S0','Sab','Scd']):
     BT = np.where( ttype==1, data['BT'], np.nan)
     flag = data['flags']
 
-    bad_gal =  np.where(flag&2**4,1,0)|np.where(flag&2**13,1,0)|np.where(flag&2**14,1,0)|np.where(flag&2**19,1,0)
-#    bad_gal =  np.where(flag&2**4,1,0)|np.where(flag&2**19,1,0)
+    bad_gal =  np.where(flag&2**4,1,0)|np.where(flag&2**13,1,0)|np.where(flag&2**14,1,0)|np.where(flag&2**20,1,0)
+#    bad_gal =  np.where(flag&2**4,1,0)|np.where(flag&2**20,1,0)
     #bad_gal = bad_gal | np.where(data['r_bulge']<=0.1,1,0)|np.where(data['n_bulge']>=7.95,1,0)|
     ba_bulge = np.where( bad_gal==0, ba_bulge, np.nan)
     BT = np.where( bad_gal==0, BT, np.nan)

@@ -40,7 +40,7 @@ def get_flag_props(flags_to_use, autoflag, binval, bins):
     return props
 
 def get_vals(binval): 
-#    cmd = """select a.galcount, a.flag, {binval} from Flags_optimize as a, M2010 as b, CAST as c, DERT as d, {band}_band_{model} as f, SSDR6 as z   where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = c.galcount and a.galcount = d.galcount and a.galcount = f.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;""".format(band=band, model=model, binval=binval)
+#    cmd = """select a.galcount, a.flag, {binval} from Flags_catalog as a, M2010 as b, CAST as c, DERT as d, {band}_band_{model} as f, SSDR6 as z   where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = c.galcount and a.galcount = d.galcount and a.galcount = f.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;""".format(band=band, model=model, binval=binval)
 
     cmd = """select a.galcount, IF(a.flag&pow(2,10)>0, IF(f.n_bulge>7.95, a.flag^(pow(2,10)+pow(2,27)),a.flag),a.flag) , {binval} from Flags_catalog as a, M2010 as b, CAST as c, DERT as d, {band}_band_{model} as f where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = c.galcount and a.galcount = d.galcount and a.galcount = f.galcount order by a.galcount limit 1000000;""".format(band=band, model=model,binval=binval)
 
@@ -105,14 +105,14 @@ cursor = mysql_connect('catalog','pymorph','pymorph','')
 band = 'g'
 model = 'serexp'
 
-flags_to_use = [1,4,10,27,14,19]
+flags_to_use = [1,4,10,27,14,20]
 
 plot_info = {1:{'color':'r', 'label':'bulges', 'ms':3, 'marker':'o', 'ls':'-'},
              4:{'color':'b', 'label':'disks', 'ms':3, 'marker':'s', 'ls':'-'},
              10:{'color':'g', 'label':'2com', 'ms':3, 'marker':'d', 'ls':'-'},
              14:{'color':'y', 'label':'bad 2com', 'ms':3, 'marker':'o', 'ls':'--'},
              27:{'color':'c', 'label':'n8', 'ms':3, 'marker':'s', 'ls':'--'},
-             19:{'color':'k', 'label':'bad', 'ms':3, 'marker':'d', 'ls':'--'},
+             20:{'color':'k', 'label':'bad', 'ms':3, 'marker':'d', 'ls':'--'},
              'total': {'color':"#D0D0D0",'label':'total'}
              }
 

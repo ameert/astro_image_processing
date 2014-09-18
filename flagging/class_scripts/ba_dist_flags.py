@@ -12,7 +12,7 @@ fig.subplots_adjust(left = 0.14, right = 0.9, top = 0.9, bottom = 0.1,
 
 flags = np.where(data['flags']&(2**10)>0, np.where(data['n_bulge']>7.95, data['flags']^(2**10+2**27),data['flags']),data['flags'])
 
-flags = np.where(flags&(2**1)>0,1,0)+np.where(flags&(2**4)>0,2,0)+np.where(flags&(2**10),3,0)+np.where(flags&(2**14)>0,4,0)+np.where(flags&(2**27)>0,5,0)+np.where(flags&(2**19)>0,6,0)
+flags = np.where(flags&(2**1)>0,1,0)+np.where(flags&(2**4)>0,2,0)+np.where(flags&(2**10),3,0)+np.where(flags&(2**14)>0,4,0)+np.where(flags&(2**27)>0,5,0)+np.where(flags&(2**20)>0,6,0)
 
 
 for count, gal_opt in enumerate([('bulges',1),('2com',3),

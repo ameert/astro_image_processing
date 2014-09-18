@@ -54,7 +54,7 @@ def get_vals():
     else:
         cmd += """-4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd, """
         
-    cmd += """a.n_bulge from catalog.Flags_optimize as c, catalog.M2010 as m, r_band_serexp as a """
+    cmd += """a.n_bulge from catalog.Flags_catalog as c, catalog.M2010 as m, r_band_serexp as a """
     if choice == 'full':
         cmd += """ where """
     else:
@@ -67,7 +67,7 @@ def get_vals():
     galcount = np.array(galcount, dtype=int)
     autoflag = np.array(flags, dtype=int)
     nbulge= np.array(nbulge, dtype=float)
-    autoflag = np.where(autoflag&2**1>0,1,0)+np.where(autoflag&2**4>0,2,0)+np.where(autoflag&2**10>0,3,0)*np.where(nbulge<7.95,1,0)+np.where(autoflag&2**14>0,4,0)+np.where(autoflag&2**19>0,5,0)+np.where(autoflag&2**10>0,6,0)*np.where(nbulge>=7.95,1,0)
+    autoflag = np.where(autoflag&2**1>0,1,0)+np.where(autoflag&2**4>0,2,0)+np.where(autoflag&2**10>0,3,0)*np.where(nbulge<7.95,1,0)+np.where(autoflag&2**14>0,4,0)+np.where(autoflag&2**20>0,5,0)+np.where(autoflag&2**10>0,6,0)*np.where(nbulge>=7.95,1,0)
     autoflag = autoflag.astype(int)
 
     flag2 = np.array(flag2)

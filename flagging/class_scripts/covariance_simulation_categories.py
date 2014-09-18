@@ -47,7 +47,7 @@ pwd = 'pymorph'
 
 cursor = mysql_connect(dba, usr, pwd)
 
-cmd = """select d.galcount,c.flag, d.flag from catalog.Flags_optimize as c, simulations.Flags_optimize as d, simulations.CAST as x where x.galcount = d.galcount and x.true_galcount = c.galcount and x.galcount >20000 and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' and d.band='{band}' and d.model = '{model}' and d.ftype = 'u' order by d.galcount;""".format(model = model, band = 'r')
+cmd = """select d.galcount,c.flag, d.flag from catalog.Flags_catalog as c, simulations.Flags_catalog as d, simulations.CAST as x where x.galcount = d.galcount and x.true_galcount = c.galcount and x.galcount >20000 and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' and d.band='{band}' and d.model = '{model}' and d.ftype = 'u' order by d.galcount;""".format(model = model, band = 'r')
 
 data = cursor.get_data(cmd)
 

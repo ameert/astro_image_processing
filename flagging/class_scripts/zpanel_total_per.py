@@ -40,7 +40,7 @@ def get_flag_props(flags_to_use, autoflag, binval, bins):
     return props
 
 def get_vals(binval): 
-#    cmd = """select a.galcount, a.flag, %s from Flags_optimize as a, M2010 as b, CAST as c, DERT as d, r_band_serexp as f, SSDR6 as z   where a.flag >=0 and a.band = 'r' and a.model = 'serexp' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = c.galcount and a.galcount = d.galcount and a.galcount = f.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;""" %binval
+#    cmd = """select a.galcount, a.flag, %s from Flags_catalog as a, M2010 as b, CAST as c, DERT as d, r_band_serexp as f, SSDR6 as z   where a.flag >=0 and a.band = 'r' and a.model = 'serexp' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = c.galcount and a.galcount = d.galcount and a.galcount = f.galcount and a.galcount = z.galcount order by a.galcount limit 1000000;""" %binval
 
     cmd = """select a.galcount, IF(a.flag&pow(2,10)>0, IF(f.n_bulge>7.95, a.flag^(pow(2,10)+pow(2,27)),a.flag),a.flag) as flag , {binval} from Flags_catalog as a, M2010 as b, CAST as c, DERT as d, {band}_band_{model} as f where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = c.galcount and a.galcount = d.galcount and a.galcount = f.galcount order by a.galcount limit 1000000;""".format(binval=binval, model=model, band=band)
 
@@ -137,13 +137,17 @@ plot_props('m$_{{ {band}, tot}}$'.format(band=band), props,
 print "apprad" 
 pl.subplot(3,2,3)
 
-delta = 0.1
-radbins = np.arange(-0.2, 1.51, delta)
+#delta = 0.1
+delta = 0.5
+#radbins = np.arange(-0.2, 1.51, delta)
+radbins = np.arange(0.0, 10.0, delta)
 #galcount, autoflag, rad = get_vals('c.petror50_r')
 galcount, autoflag, rad = get_vals("f.Hrad_corr")
-rad = np.log10(rad)
+#rad = np.log10(rad)
 props = get_flag_props(flags_to_use, autoflag, rad, radbins)
-plot_props('log$_{10}$r$_{hl, tot, arcsec}$', props, radbins, delta, flags_to_use,plot_info)
+#plot_props('log$_{10}$r$_{hl, tot, arcsec}$', props, radbins, delta, flags_to_use,plot_info)
+plot_props('r$_{hl, tot, arcsec}$', props, radbins, delta, flags_to_use,plot_info)
+pl.xlim((0,8))
 
 print "ba" 
 pl.subplot(3,2,5)
@@ -169,13 +173,17 @@ plot_props('M$_{{ {band}, tot}}$'.format(band=band), props, magbins, delta, flag
 print "ABSrad" 
 pl.subplot(3,2,4)
 
-delta = 0.1
-radbins = np.arange(-0.2, 1.51, delta)
+#delta = 0.1
+#radbins = np.arange(-0.2, 1.51, delta)
+delta = 0.5
+radbins = np.arange(0, 15.1, delta)
 #galcount, autoflag, rad = get_vals("c.petror50_r*d.kpc_per_arcsec")
 galcount, autoflag, rad = get_vals("f.Hrad_corr*d.kpc_per_arcsec")
-rad = np.log10(rad)
+#rad = np.log10(rad)
 props = get_flag_props(flags_to_use, autoflag, rad, radbins)
-ax1, ax2 = plot_props('log$_{10}$R$_{hl, tot, kpc}$', props, radbins, delta, flags_to_use,plot_info)
+#ax1, ax2 = plot_props('log$_{10}$R$_{hl, tot, kpc}$', props, radbins, delta, flags_to_use,plot_info)
+ax1, ax2 = plot_props('R$_{hl, tot, kpc}$', props, radbins, delta, flags_to_use,plot_info)
+pl.xlim((0,12))
 print "ABSrad" 
 
 if 0:
