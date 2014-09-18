@@ -25,7 +25,7 @@ if options['model2']==None:
 
 cursor = mysql_connect('catalog','pymorph','pymorph','')
 
-data = get_data_des(cursor, '%s_%s_%s' %(options['table1'],options['band'],options['model1']), 'sim_input_des', flags = options['use_flags'], flagmodel = options['flagmodel'], add_tables = options['add_tables'], conditions = options['conditions'])
+data = get_data_CMASS(cursor, '%s_%s_%s' %(options['band'], options['table1'],options['model1']), '%s_%s_%s' %(options['band'], options['table2'],options['model2']), flags = options['use_flags'], flagmodel = options['flagmodel'], add_tables = options['add_tables'], conditions = options['conditions'])
 
 print 'num_objects: ', len(data['galcount'])
 print data[options['xchoice']+'_1'],data[options['ychoice']+'_1'],data[options['ychoice']+'_2']
@@ -33,9 +33,8 @@ print data[options['xchoice']+'_1'],data[options['ychoice']+'_1'],data[options['
 # we want radial differences in percents
 # this sets up the calculation so that the plotting below works
 for name in ['hrad', 'rbulge', 'rdisk', 'petrorad']:
-    data[name+'_2'] =  (data[name+'_1']/data[name+'_2'])-1.0 +data[name+'_2']
-#    data[name+'_2'] =  -(data[name+'_1']/data[name+'_2']) +data[name+'_1']
-#    data[name+'_1'] =  -(data['sexrad']/data[name+'_1'])+1.0 +data[name+'_2']
+    data[name+'_2'] =  (data[name+'_2']/data[name+'_1'])-1.0 +data[name+'_1']
+#    data[name+'_2'] =  1.0-(data[name+'_1']/data[name+'_2'])+data[name+'_1'] 
 
 for posnum in ['1','2']:
     if options['model%s' %posnum] == 'dev':
@@ -84,10 +83,8 @@ oplot.set_ticks(ticksx[options['key_x']][0], ticksx[options['key_x']][1], ticksx
                 ticksy[options['key_y']][0], ticksy[options['key_y']][1], ticksy[options['key_y']][2])
 #oplot.setdenselims(1,options['upper_dense'] )
 #oplot.setminval(0.01*options['upper_dense'])
-oplot.setdenselims(1.000025*len(data['galcount']),1.0025*len(data['galcount']))
-oplot.setminval(1*len(data['galcount']))
-#oplot.setdenselims(0.000025*len(data['galcount']),0.0025*len(data['galcount']))
-#oplot.setminval(0.00001*len(data['galcount']))
+oplot.setdenselims(0.000025*len(data['galcount']),0.0025*len(data['galcount']))
+oplot.setminval(0.00001*len(data['galcount']))
 #oplot.makeplot(data[options['xchoice']+'_1'],data[options['ychoice']+'_1']-data[options['ychoice']+'_2'], xlims[options['xchoice']],
 
 if options['xlims']!= None:
@@ -95,9 +92,8 @@ if options['xlims']!= None:
 if options['ylims']!= None:
     ylims[options['ychoice']]=options['ylims']
 
-oplot.makeplot(data[options['xchoice']+'_2'],data[options['ychoice']+'_2']-data[options['ychoice']+'_1'], xlims[options['xchoice']],
+oplot.makeplot(data[options['xchoice']+'_1'],data[options['ychoice']+'_1']-data[options['ychoice']+'_2'], xlims[options['xchoice']],
               ylims[options['ychoice']]) 
-pl.plot(pl.xlim(), [0,0], 'k-', lw =0.25)
 
 if options['model1'] == 'ser':
     if options['ychoice'] == 'nbulge':
@@ -110,14 +106,23 @@ if options['ylab']!= None:
 if options['bins']!= None:
     bins[options['key_x']]=options['bins']
 
+print "bins"
 print bins[options['key_x']]
+print options['bins']
 
 pl.xlabel(xlabs[options['xchoice']].replace('{band}', options['band']), fontsize=10)
 pl.ylabel(ylabs[options['ychoice']].replace('{band}', options['band']), fontsize=10)
 oplot.bin_it(bins[options['key_x']], bin_lims[options['key_x']][options['key_y']][0],
             bin_lims[options['key_x']][options['key_y']][1])
 oplot.add_bars('r')
+pl.plot(pl.xlim(), [0,0], 'k-')
+
+if ">=" in options['title']:
+    options['title'] = options['title'].replace(">=","$\\geq$")
+
 pl.title(options['title'], fontsize=8)
+print '%s_%s_%s_%s_%s_%s%s.eps' %(options['band'], options['table1'],options['table2'], options['model2'], options['xchoice'], options['ychoice'], options['postfix'])
+#pl.show()
 oplot.savefig('%s_%s_%s_%s_%s_%s%s.eps' %(options['band'], options['table1'],options['table2'], options['model2'], options['xchoice'], options['ychoice'], options['postfix']))
 
 
