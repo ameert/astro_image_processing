@@ -1,42 +1,3 @@
-from mysql_class import *
-from flag_defs import *
-import pylab as pl
-import matplotlib.ticker as mticker
-
-def print_flags(autoflag, test_flag, print_gals = False):
-    if test_flag == 10:
-        flag_vals = np.where(autoflag&2**test_flag>0, 1,0)*np.where(autoflag&2**14==0, 1,0)
-    else:
-        flag_vals = np.where(autoflag&2**test_flag>0, 1,0)
-    flag_num = np.sum(flag_vals)/float(len(flag_vals))
-    if np.isnan(flag_num):
-        flag_num = 0.0
-    #print "%d: %.4f" %(test_flag, flag_num)
-    #if print_gals:
-    #    print np.extract(flag_vals==1, galcount)
-    return flag_num
-
-class MyLocator(mticker.MaxNLocator):
-    def __init__(self, *args, **kwargs):
-        mticker.MaxNLocator.__init__(self, *args, **kwargs)
-
-    def __call__(self, *args, **kwargs):
-        return mticker.MaxNLocator.__call__(self, *args, **kwargs)
-
-def get_flag_props(flags_to_use, autoflag, binval, bins):
-    props = dict([(f, []) for f in flags_to_use])
-    props['total'] = []
-
-    binpos = np.digitize(binval, bins)
-    
-    for scanval in range(1, bins.size):
-        new_arr = np.extract(binpos == scanval, autoflag)
-        
-        
-        for flag in flags_to_use:
-            props[flag].append(print_flags(new_arr, flag))
-        props['total'].append(new_arr.size)
-    return props
 
 def get_vals(binval): 
     cmd = """select a.galcount, x.flag, a.flag, %s from Flags_catalog as a,catalog.Flags_catalog as x, M2010 as b, CAST as c, DERT as d, r_sims_serexp as f   where x.galcount = c.true_galcount and  x.band = 'r' and x.model = 'serexp' and x.ftype = 'u' and a.flag >=0 and a.band = 'r' and a.model = 'serexp' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = c.galcount and a.galcount = d.galcount and a.galcount = f.galcount and a.galcount > 20000 order by a.galcount limit 1000000;""" %binval
@@ -49,39 +10,6 @@ def get_vals(binval):
     
     return galcount, autoflag_before, binvals
 
-def plot_props(xlab, props, magbins, delta, flags_to_use,plot_info):
-    magbinctr = (magbins[1:]+magbins[0:-1])/2
-
-    ax1 = pl.gca()
-    pl.xlabel(xlab)
-
-    ax2 = pl.twinx()
-
-    for flag in flags_to_use:
-        ax2.plot(magbinctr, props[flag], marker = 'o', ms = plot_info[flag]['ms'], ls = '-', color = plot_info[flag]['color'], label = plot_info[flag]['label'])
-
-
-        ax2.set_ylabel('fraction of galaxies', fontsize=8)
-        ax1.set_ylabel('Total galaxies', fontsize=8)
-
-        ax1.yaxis.tick_right()
-        ax1.yaxis.set_label_position("right")
-        ax2.yaxis.tick_left()
-        ax2.yaxis.set_label_position("left")
-
-        ax2.set_ylim(0,1.0)
-
-    ax1.bar(magbins[:-1], props['total'], width = delta, color = plot_info['total']['color'], log = False, zorder = -100) 
-
-        
-    #for tick in ax1.yaxis.get_major_ticks():
-    #    tick.set_label('%2.1e' %float(tick.get_label())) 
-            
-        #ticklabs = ax1.get_yticklabels()
-        #print ticklabs
-        #print ['%2.1e' %float(x.get_text()) for x in ticklabs]
-        #ax1.set_yticklabels( ['%2.1e' %float(x) for x in ticklabs] )
-    return ax1, ax2
 
 cursor = mysql_connect('simulations','pymorph','pymorph','')
 
