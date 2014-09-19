@@ -1,4 +1,4 @@
-from mysql.mysql_class import *
+from astro_image_processing.mysql import *
 from flag_configuration import autoflag_dict, uflag_dict
 from flag_analysis import flag_set, get_percent
 
