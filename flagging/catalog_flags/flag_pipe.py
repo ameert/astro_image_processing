@@ -40,7 +40,8 @@ from u_flags import *
 
 if __name__ == "__main__":
     model = sys.argv[1]
-    for bandval in 'gi':
+    bands = sys.argv[2]
+    for bandval in bands:
         info_dict = {'dba':'catalog', 'usr':'pymorph', 'pwd':'pymorph', 'host':'',
                      'band':bandval, 'model':model,'autoflag_ftype':'r',
                      'uflag_ftype':'u', 'table':'Flags_catalog'
