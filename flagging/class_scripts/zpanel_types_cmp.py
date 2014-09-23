@@ -9,14 +9,14 @@ from zpanel_functions import *
 cursor = mysql_connect('catalog','pymorph','pymorph','')
 
 band = 'r'
-model = 'devexp'
+model = 'serexp'
 sql_values = {'band':band, 
               'model':model, 'galnumlim':10000000,
               'add_param':' -4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd',
               'normtype': 'xbin'}
     
 
-names=[ plot_info[key]['label'] for key in plot_info.keys()] 
+#names=[ plot_info[key]['label'] for key in plot_info.keys()] 
 matplotlib.rc('xtick', labelsize=8)
 fig = pl.figure(figsize=(6,8))
 pl.subplots_adjust(right = 0.92, top = 0.97, left =0.1, bottom=0.1,
@@ -25,7 +25,7 @@ pl.subplots_adjust(right = 0.92, top = 0.97, left =0.1, bottom=0.1,
 delta = 1.0
 typebins = np.arange(-6.5, 12.51, delta)
 x_names= [str(int(a)) for a in typebins+0.5]
-x_names = [ x_names[a] if a%2 ==0 else "" for a in range(len(x_names))] 
+#x_names = [ x_names[a] if a%2 ==0 else "" for a in range(len(x_names))] 
 
 
 print "meert" 
