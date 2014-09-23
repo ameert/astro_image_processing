@@ -9,7 +9,7 @@ from zpanel_functions import *
 cursor = mysql_connect('catalog','pymorph','pymorph','')
 
 band = 'r'
-model = 'devexp'
+model = 'serexp'
 sql_values = {'band':band, 
               'model':model, 'galnumlim':10000000,
               'add_param':'d.BT',
