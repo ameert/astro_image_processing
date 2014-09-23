@@ -31,26 +31,6 @@ band = 'g'
 model = 'serexp'
 
 
-plot_info = {1:{'color':'r', 'label':'bulges', 'ms':3},
-             2:{'color':'b', 'label':'disks', 'ms':3},
-             3:{'color':'g', 'label':'2com', 'ms':3},
-             4:{'color':'y', 'label':'bad 2com', 'ms':3},
-             5:{'color':'k', 'label':'bad', 'ms':3},
-             6:{'color':'c', 'label':'2nh', 'ms':3},
-             7:{'color':'r', 'label':'dvc', 'ms':3},
-             8:{'color':'b', 'label':'exp', 'ms':3},
-             9:{'color':'g', 'label':'nb1', 'ms':3},
-             10:{'color':'y', 'label':'nb4', 'ms':3},
-             11:{'color':'c', 'label':'ser, n<2', 'ms':3},
-             12:{'color':'k', 'label':'ser, n>=2', 'ms':3},
-             13:{'color':'g', 'label':'devexp', 'ms':3},
-             14:{'color':'y', 'label':'serexp', 'ms':3},
-             15:{'color':'r', 'label':'dev', 'ms':3},
-             16:{'color':'b', 'label':'exp', 'ms':3},
-             17:{'color':'g', 'label':'devexp', 'ms':3},
-             18:{'color':'k', 'label':'unknown', 'ms':3},
-             'total': {'color':"#D0D0D0",'label':'total'}
-             }
 
 names=[ plot_info[key]['label'] for key in plot_info.keys()] 
 fig = pl.figure(figsize=(8,6))
