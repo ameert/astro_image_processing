@@ -9,9 +9,9 @@ from zpanel_functions import *
 cursor = mysql_connect('catalog','pymorph','pymorph','')
 
 sql_values = {# Set these params
-              'band':'i', 
-              'model':'serexp', 
-              'normtype':'xbin',
+              'band':'g', 
+              'model':'devexp', 
+              'normtype':'flagclass',
               'galnumlim':10000000,
               #do not set this parameter! Set automatically!
               'add_param':'',
@@ -41,13 +41,16 @@ print "appmag"
 sql_values['add_param'] = ' b.m_tot-r.extinction_{band}'.format(**sql_values)
 pl.subplot(3,2,1)
 delta = 0.25
-magbins = np.arange(13.25, 18.01, delta)
+magbins = np.arange(13.25, 20.01, delta)
 galcount, autoflag, mag = get_vals('meert', sql_values, cursor)
 props = get_flag_props(flags_to_use, autoflag, mag, magbins)
 props['datamask'] = np.where(np.array(props['total'])>0,True,False)
 props = flag_norm(flags_to_use, props, sql_values['normtype'])
 ax1, ax2 = plot_props('m$_{{ {band}, tot}}$'.format(**sql_values), props, magbins, delta, flags_to_use,plot_info)
 ax2.set_ylim(plot_info.get('ylims',{}).get(sql_values['normtype'],{}).get('mtot',(0.0,1.0)))
+if sql_values['band']=='g':
+    ax2.set_xlim((14.25,20.0))
+    ax1.set_xlim((14.25,20.0))
 
 print "apprad" 
 sql_values['add_param'] = ' b.Hrad_corr'

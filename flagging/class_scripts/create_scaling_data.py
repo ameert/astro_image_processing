@@ -6,8 +6,7 @@ import pickle
 import os
 import sys 
 
-from flag_defs import *
-from mysql.mysql_class import *
+from astro_image_processing.mysql import *
 #from gal_panel import *
 
 model = 'serexp'

@@ -61,15 +61,15 @@ def kormendy(Rkpc, Lum, color='r'):
     ax = pl.gca()
     pl.plot(linex, liney, c = color, ls = '-')
     pl.title('Kormendy')
-    pl.ylabel('$log_{10}(\\bar{I_{e, R}}/(1.2*10^3\ L_{sun}\ pc^{-2}))$')
-    pl.xlabel('$log_{10}(R_e/(1000\ h_7^{-1}\ pc))$')
+    pl.ylabel(r'$log_{10}(\bar{I_{e, R}}/(1.2*10^3\ L_{sun}\ pc^{-2}))$')
+    pl.xlabel(r'$log_{10}(R_e/(1000\ h_7^{-1}\ pc))$')
     
     if color == 'r':
-        pl.text(0.1, 0.15, 'm_early = %3.2f' %regr.coef_[0],transform = ax.transAxes)
-        pl.text(0.1, 0.1, 'RMS_early = %3.2f' %rms,transform = ax.transAxes)
+        pl.text(0.1, 0.15, 'm$_{early}$ = %3.2f' %regr.coef_[0],transform = ax.transAxes)
+        pl.text(0.1, 0.1, 'RMS$_{early}$ = %3.2f' %rms,transform = ax.transAxes)
     elif color == 'g':
-        pl.text(0.7, 0.95, 'm_bulge = %3.2f' %regr.coef_[0],transform = ax.transAxes)
-        pl.text(0.7, 0.9, 'RMS_bulge = %3.2f' %rms,transform = ax.transAxes)
+        pl.text(0.7, 0.95, 'm$_{bulge}$ = %3.2f' %regr.coef_[0],transform = ax.transAxes)
+        pl.text(0.7, 0.9, 'RMS$_{bulge}$ = %3.2f' %rms,transform = ax.transAxes)
 
     return ax
     
@@ -85,8 +85,10 @@ rmag, rmag_err = absmag_to_LSun(rmag, 0.0*rmag, band = 'r')
 rad = np.array(gal['hrad_corr'], dtype=float)*gal['kpc_per_arcsec']
 flag = gal['flag']
 
-rmag_tmp = np.extract(flag&2**1>0, rmag)
-rad_tmp = np.extract(flag&2**1>0, rad)
+rad_good = np.logical_and(gal['hrad_corr']>2.0,gal['hrad_corr']<=100.0)
+
+rmag_tmp = np.extract(np.logical_and(flag&2**1>0, rad_good), rmag)
+rad_tmp = np.extract(np.logical_and(flag&2**1>0, rad_good), rad)
 
 kormendy(rad_tmp, rmag_tmp, color = 'r')
 
@@ -96,7 +98,7 @@ rmag, rmag_err = absmag_to_LSun(rmag, 0.0*rmag, band = 'r')
 rad = np.array(gal['r_bulge'], dtype=float)*gal['kpc_per_arcsec']
 flag = gal['flag']
 
-sel = (np.where(flag&2**11>0, 1,0)|np.where(flag&2**12>0, 1,0))
+sel = (np.where(flag&2**11>0, 1,0)|np.where(flag&2**12>0, 1,0))*rad_good.astype(int)
 #*np.where(gal['n_bulge']>2, 1,0)*np.where(gal['n_bulge']<7.95, 1,0)
 rmag_tmp = np.extract(sel==1, rmag)
 rad_tmp = np.extract(sel==1, rad)
@@ -107,4 +109,4 @@ pl.ylabel('$log_{10}(\\bar{I_{e, R}}/(1.2*10^3\ L_{sun}\ pc^{-2}))$')
 pl.xlabel('$log_{10}(R_e/(1000\ h_7^{-1}\ pc))$')
 pl.xlim(-1.0,1.5)
 pl.ylim(-1.5,1.2)
-pl.savefig('kormendy.eps')
+pl.savefig('kormendy_4.eps')

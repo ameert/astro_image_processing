@@ -1,1 +1,0 @@
-/home/ameert/git_projects/alans-image-processing-pipeline/chitou_scripts/plotting/cmp_main.py
