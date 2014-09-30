@@ -78,14 +78,14 @@ f.skySig_u, f.skySig_g, f.skySig_r, f.skySig_i, f.skySig_z,
 f.skyErr_u, f.skyErr_g, f.skyErr_r, f.skyErr_i, f.skyErr_z,
 f.psfWidth_u, f.psfWidth_g, f.psfWidth_r, f.psfWidth_i, f.psfWidth_z,
 p.rowc_u, p.rowc_g, p.rowc_r, p.rowc_i, p.rowc_z,
-p.colc_u, p.colc_g, p.colc_r, p.colc_i, p.colc_z
+p.colc_u, p.colc_g, p.colc_r, p.colc_i, p.colc_z,
 x.z as photoz, x.zErr as photoz_err,
 x.kcorr_u,x.kcorr_g,x.kcorr_r,x.kcorr_i,x.kcorr_z
 INTO
 mydb.{tablename}
 FROM
 (photoobj as p LEFT OUTER JOIN SpecObj as s on p.objID = s.BestObjID) 
-LEFT OUTER JOIN Photoz as x on x.objid =p.objid, chunk c
+LEFT OUTER JOIN Photoz as x on x.objid =p.objid, chunk c,  field f, segment g
 WHERE
 g.segmentID = f.segmentID and
 f.fieldID = p.fieldID and  c.chunkID=g.chunkID

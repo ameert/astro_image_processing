@@ -43,6 +43,7 @@ import subprocess as sub
 import sys
 
 def exec_cmd(job_str):
+    print job_str
     p1=sub.Popen(job_str, shell=True, stdout = sub.PIPE)
     output = p1.communicate()[0]
     output = output.strip()
@@ -67,14 +68,14 @@ default_queue=1
 default_days=1
 verbose=true
 debug=false
-jobs_location=http://skyserver.sdss3.org/casjobs/services/jobs.asmx
+jobs_location=http://skyservice.pha.jhu.edu/casjobs/services/jobs.asmx
 """.format(**casjobs_info)
     
     config_file = open('CasJobs.config','w')
     config_file.write(config_str)
     config_file.close()
 
-    full_jobname = "%s_%s" %(casjobs_info['jobname'],str(datetime.date.today()))
+    full_jobname = "%s_%s" %(casjobs_info['jobname'],str(datetime.date.today()).replace('-','_'))
     table_count = 1
     job_info = {'full_jobname':full_jobname,
                 'casjobs':casjobs,
