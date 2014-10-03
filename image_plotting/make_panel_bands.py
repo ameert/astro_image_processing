@@ -55,8 +55,8 @@ def make_panel(image, pticks, color=cm.gray, zmin = None, zmax = None, pix_sz = 
 
 
 def do_band(gal, band, pos):
-    cmd = 'select a.objid, a.petroR50_{band}, a.petromag_{band}-a.extinction_{band}, b.Hrad_corr/0.396, b.BT, b.m_tot-a.extinction_{band}, m.probaE from {band}_band_serexp as b, CAST as a, M2010 as m where a.galcount = m.galcount and a.galcount = b.galcount and a.galcount = {galcount};'.format(band=band, galcount=gal)
-    objid, petrorad, petromag, hrad,BT, mag_tot = cursor.get_data(cmd)
+    cmd = 'select a.objid, a.petroR50_{band}, a.petromag_{band}-a.extinction_{band}, a.petroR50_r/0.396, b.BT, b.m_tot-a.extinction_{band}, m.probaE,  from {band}_band_serexp as b, CAST as a, M2010 as m where a.galcount = m.galcount and a.galcount = b.galcount and a.galcount = {galcount};'.format(band=band, galcount=gal)
+    objid, petrorad, petromag, hrad,BT, mag_tot, probaE, imrad = cursor.get_data(cmd)
     objid = objid[0]
     petromag = petromag[0]
     petrorad = petrorad[0]
