@@ -6,9 +6,9 @@ import pylab as pl
 from astro_image_processing.MatplotRc import *
 
 data = np.load('ba_data_serexp.npz')
-fig = pl.figure(figsize = (6,4))
-fig.subplots_adjust(left = 0.1, right = 0.97, top = 0.93, bottom = 0.12, 
-                    wspace = 0.4, hspace = 0.7)
+fig = pl.figure(figsize = (4,3))
+fig.subplots_adjust(left = 0.12, right = 0.97, top = 0.93, bottom = 0.17, 
+                    wspace = 0.4, hspace = 0.9)
 for count, gal_opt in enumerate(['Ell','S0','Sab','Scd']):
     print count
     if gal_opt == 'All':
@@ -42,9 +42,10 @@ for count, gal_opt in enumerate(['Ell','S0','Sab','Scd']):
     print np.extract(ba_bulge<0.1, data['galcount'])
     pl.subplot(2,2,count+1)
     pl.hist(ba_bulge, range=(0,1), bins = 50, log = True, histtype='step', color = 'k')
-    pl.ylabel('counts')
-    pl.xlabel('b/a bulge')
-    pl.title( gal_opt)
+    pl.yscale('log', subsy=[5, ])
+    pl.ylabel('counts', fontsize=10)
+    pl.xlabel('b/a bulge', fontsize=10)
+    pl.title( gal_opt, fontsize=12)
     pl.ylim(1,10000)
 pl.savefig('ba_bulge_serexp.eps')
 

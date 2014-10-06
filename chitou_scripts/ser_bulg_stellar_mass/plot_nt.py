@@ -1,9 +1,9 @@
 import sys
 import os
 import numpy as np
-import statistics.bin_stats as bs
+import astro_image_processing.statistics.bin_stats as bs
 import pylab as pl
-from MatplotRc import *
+from astro_image_processing.MatplotRc import *
 from btn_plot_funcs import *
 
 data = np.load('best_model_data.npz')
