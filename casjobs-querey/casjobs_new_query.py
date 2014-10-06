@@ -62,13 +62,13 @@ def casjobs(gal_cat, casjobs_info):
 
     # write config file used by casjobs
     config_str = """wsid={wsid}
-password={password} 
+password={password}
 default_target={search_target}
 default_queue=1
 default_days=1
 verbose=true
 debug=false
-jobs_location=http://skyservice.pha.jhu.edu/casjobs/services/jobs.asmx
+jobs_location=http://skyserver.sdss3.org/casjobs/services/jobs.asmx
 """.format(**casjobs_info)
     
     config_file = open('CasJobs.config','w')
@@ -92,6 +92,7 @@ jobs_location=http://skyservice.pha.jhu.edu/casjobs/services/jobs.asmx
         
         print 'CUT PIPE: Preparing mydb input/output tables'
         exec_cmd('{casjobs} execute -t "mydb" -n "drop output table" "drop table {tablename}"'.format(**job_info))
+        exec_cmd('{casjobs} -j '.format(**job_info))
         print 'NOTICE:It is OK if it said error just then.'
         raw_input()
         fid = open(job_info['query_name'],'w')
