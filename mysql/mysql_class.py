@@ -31,7 +31,7 @@ import sys
 
 class mysql_connect():
     """Connects to mysql and lets you submit queries"""
-    def __init__(self, dba, usr, pwd, lhost = "localhost"):
+    def __init__(self, dba, usr, pwd, lhost = "localhost", autocommit=True):
         """dba: database name
 usr: user name
 pwd: password
@@ -42,12 +42,12 @@ host: hostname (default should work on most machines)
                                  user = "%s" %usr,
                                  passwd = "%s" %pwd,
                                  db = "%s" %dba)
-            Conn.autocommit(True)
+            Conn.autocommit(autocommit)
         except mysql.Error, e:
             print "Error %d: %s" % (e.args[0], e.args[1])
             sys.exit (1)
         self.cursor = Conn.cursor()
-
+        self.Conn = Conn
         return
     
     def get_data_dict(self, cmd, object_names, dtype):
