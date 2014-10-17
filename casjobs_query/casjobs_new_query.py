@@ -38,7 +38,7 @@
 
 import os
 import datetime
-from make_new_query import *
+from astro_image_processing.casjobs_query.make_new_query import *
 import subprocess as sub
 import sys
 
