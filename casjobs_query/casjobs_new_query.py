@@ -54,13 +54,10 @@ def get_filename(casjobs_out):
     filename = casjobs_out.split()[0]
     return filename
 
-def casjobs(gal_cat, casjobs_info):
-    os.system('rm {data_dir}{filename}'.format(**gal_cat))
 
-    thisdir = os.getcwd()
-    casjobs='java -jar %s ' %casjobs_info['cas_jar_path']
 
-    # write config file used by casjobs
+def write_config(casjobs_info):
+    """writes the casjobs configuration info to the Casjobs.config file used by the jar file"""
     config_str = """wsid={wsid}
 password={password}
 default_target={search_target}
@@ -74,6 +71,15 @@ jobs_location=http://skyserver.sdss3.org/casjobs/services/jobs.asmx
     config_file = open('CasJobs.config','w')
     config_file.write(config_str)
     config_file.close()
+    return
+
+def casjobs(gal_cat, casjobs_info):
+    os.system('rm {data_dir}{filename}'.format(**gal_cat))
+
+    thisdir = os.getcwd()
+    casjobs='java -jar %s ' %casjobs_info['cas_jar_path']
+
+    write_config(casjobs_info)
 
     full_jobname = "%s_%s" %(casjobs_info['jobname'],str(datetime.date.today()).replace('-','_'))
     table_count = 1
@@ -94,16 +100,16 @@ jobs_location=http://skyserver.sdss3.org/casjobs/services/jobs.asmx
         exec_cmd('{casjobs} execute -t "mydb" -n "drop output table" "drop table {tablename}"'.format(**job_info))
         exec_cmd('{casjobs} -j '.format(**job_info))
         print 'NOTICE:It is OK if it said error just then.'
-        raw_input()
+        
         fid = open(job_info['query_name'],'w')
         fid.write(catalog_query(job_info))
         fid.close()
-        raw_input()
+        
         print 'CUT PIPE: Running Query'
         job_info['cmd']='{casjobs} run -n "{jobname}" -f {query_name}'.format(**job_info)
         print job_info['cmd']
         exec_cmd(job_info['cmd'])
-        raw_input()
+        
         print 'GALMORPH: Downloading Results'
         job_info['cmd']='{casjobs} extract -force -type "csv" -download {jobname} -table {tablename}'.format(**job_info)
         print job_info['cmd']
