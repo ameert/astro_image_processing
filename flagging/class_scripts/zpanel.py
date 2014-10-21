@@ -9,10 +9,10 @@ from zpanel_functions import *
 cursor = mysql_connect('catalog','pymorph','pymorph','')
 
 sql_values = {# Set these params
-              'band':'g', 
-              'model':'devexp', 
-              'normtype':'flagclass',
-              'galnumlim':10000000,
+              'band':'r', 
+              'model':'serexp', 
+              'normtype':'total',
+              'galnumlim':1000000,
               #do not set this parameter! Set automatically!
               'add_param':'',
               
@@ -33,9 +33,9 @@ elif sql_values['normtype'] == 'total':
 
 flags_to_use = [1,2,3,4,5,6]
 
-fig = pl.figure(figsize=(8,6))
+fig = pl.figure(figsize=(8,6.5))
 pl.subplots_adjust(right = 0.92, left =0.08, top=0.97, 
-                   hspace = 0.5, wspace = 0.5, bottom=0.08)
+                   hspace = 0.5, wspace = 0.5, bottom=0.17)
 
 print "appmag" 
 sql_values['add_param'] = ' b.m_tot-r.extinction_{band}'.format(**sql_values)
@@ -51,6 +51,12 @@ ax2.set_ylim(plot_info.get('ylims',{}).get(sql_values['normtype'],{}).get('mtot'
 if sql_values['band']=='g':
     ax2.set_xlim((14.25,20.0))
     ax1.set_xlim((14.25,20.0))
+if sql_values['band']=='r':
+    ax2.set_xlim((13.0,18.0))
+    ax1.set_xlim((13.0,18.0))
+if sql_values['band']=='i':
+    ax2.set_xlim((13.0,18.0))
+    ax1.set_xlim((13.0,18.0))
 
 print "apprad" 
 sql_values['add_param'] = ' b.Hrad_corr'
@@ -107,8 +113,23 @@ ax1, ax2 = plot_props('R$_{hl, tot, kpc}$',
 pl.xlim((0,12))
 ax2.set_ylim(plot_info.get('ylims',{}).get(sql_values['normtype'],{}).get('absrad',(0.0,1.0)))
 
+print "nbulge" 
+sql_values['add_param'] = "b.n_bulge"
+pl.subplot(3,2,6)
 
-l = ax2.legend(loc='center', bbox_to_anchor=(0.5, -1.05), fontsize='10')
+delta = 0.4
+radbins = np.arange(0, 8.01, delta)
+galcount, autoflag, rad = get_vals('meert', sql_values, cursor)
+props = get_flag_props(flags_to_use, autoflag, rad, radbins)
+props['datamask'] = np.where(np.array(props['total'])>0,True,False)
+props = flag_norm(flags_to_use, props, sql_values['normtype'])
+ax1, ax2 = plot_props('n$_{bulge}$', 
+                      props, radbins, delta, flags_to_use,plot_info)
+pl.xlim((0,8))
+ax2.set_ylim(plot_info.get('ylims',{}).get(sql_values['normtype'],{}).get('nbulge',(0.0,1.0)))
+
+l = ax2.legend(loc='center', bbox_to_anchor=(-0.75, -0.6, 1.0, 0.1), fontsize='10', ncol = 3)
+#l = ax2.legend(loc='center', bbox_to_anchor=(0.5, -1.05), fontsize='10')
 #pl.show()
 pl.savefig(sql_values['savename'])
 

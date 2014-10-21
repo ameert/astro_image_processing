@@ -33,7 +33,7 @@ plot_info = {1:{'color':'r', 'label':'bulges', 'ms':3, 'marker':'o', 'ls':'-'},
 
              'ylims':{'flagclass':{'ba':(0.0,0.13), 'mtot':(0.0,0.25),
                                    'rad':(0.0,0.25), 'absmtot':(0.0,0.25),
-                                   'absrad':(0.0,0.15),'nbulge':(0.0,0.15)},
+                                   'absrad':(0.0,0.15),'nbulge':(0.0,0.075)},
                       'total':{'ba':(0.0,0.045), 'mtot':(0.0,0.09),
                                    'rad':(0.0,0.1), 'absmtot':(0.0,0.09),
                                    'absrad':(0.0,0.04),'nbulge':(0.0,0.15)}
