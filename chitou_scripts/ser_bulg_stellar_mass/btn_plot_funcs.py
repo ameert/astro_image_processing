@@ -8,9 +8,10 @@ from astro_image_processing.MatplotRc import *
 def plot_figs(log_Mstar_bulge,n_bulge, BT,  r_bulge_cir, plotstart, 
               fig, nrow_plots, ncol_plots, title='', xlim=(-8,10.0), 
               xlabel='ttype', xbin=np.arange(-8,10.0,.5)):
-    xmaj = 1.0
+    xmaj = 3.0
     xstr = "%d"
-    xmin = 0.25
+    xmin = 0.5
+    pub_plots(xmaj, xmin, xstr, 2.0, 0.5, '%d')
 
     ax = fig.add_subplot(nrow_plots,ncol_plots,plotstart)
     data_holder = pub_plots(xmaj, xmin, xstr, 2.0, 0.5, '%d')
@@ -44,18 +45,18 @@ def plot_figs(log_Mstar_bulge,n_bulge, BT,  r_bulge_cir, plotstart,
     data_holder3 = pub_plots(xmaj, xmin, xstr, 0.5, 0.1, '%0.1f')
 
     ndata = bs.bin_stats(log_Mstar_bulge, r_bulge_cir, xbin, -100.0, 100.0)
-    #ndata.to_log(1)
+    ndata.to_log(1)
     #raw_input()
     ndata.plot_ebar('median', 'med95ci', ecolor='r', linestyle = 'none', ms=3, marker='o')
     ndata.lay_bounds(sigma_choice = [68,95])
     ax = pl.gca()
     #ax.set_yscale('log')
     #pl.ylim(0.5, 20.0)
-    pl.ylim(-1, 1.0)
+    pl.ylim(-1.0, 1.0)
     pl.xlim(xlim)
     pl.xlabel(xlabel)
-    #pl.ylabel('logR$_{bulge, cir}$ [kpc]')
-    pl.ylabel('r$_{bulge, cir}$/r$_{tot, cir}$ -1')
+    pl.ylabel('logR$_{bulge, cir}$ [kpc]')
+    #pl.ylabel('r$_{bulge, cir}$/r$_{tot, cir}$ -1')
     pl.title(title)
     #pl.text(0.1, 0.1,str(np.sum(ndata.bin_number)), horizontalalignment='left',
     #     verticalalignment='center',transform=ax.transAxes)

@@ -5,13 +5,7 @@ import subprocess as sub
 import sys
 import numpy as np
 import pyfits as pf
-
-#data_types = {}
-def exec_cmd(job_str):
-    p1=sub.Popen(job_str, shell=True, stdout = sub.PIPE)
-    output = p1.communicate()[0]
-    output = output.strip()
-    return output
+from astro_image_processing.casjobs_query.casjobs_new_query import exec_cmd
 
 def clean_cat(infile, outfile):
     fip = open(infile)
@@ -33,19 +27,3 @@ def clean_cat(infile, outfile):
     fop.close()
 
     return
-
-
-
-
-
-
-
-    #names = fip.readline().strip()
-    #for a in names.split(','):
-    #    print "'%s':floata
-    #return
-    #for line in fip.readlines():
-    #    if 'null' in line:
-    #        print line
-
-#    fip.close()
