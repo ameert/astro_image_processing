@@ -55,7 +55,7 @@ def casjobs(gal_cat, casjobs_info):
                 'in_tablename':"in_"+full_jobname,
                 'casjobs':casjobs,
                 'chunknum':0,
-                'chunk':10
+                'chunk':1000
                 }
     
     print 'CUT PIPE: Preparing mydb output tables'
@@ -118,8 +118,6 @@ def casjobs(gal_cat, casjobs_info):
         
         #os.system('rm %s' %down_file)
         if chunkdata['thing_id'].size<job_info['chunk']:
-            break #because we must be at the end of the list
-        if chunkdata['chunknum']>2:
             break #because we must be at the end of the list
     return 0
  

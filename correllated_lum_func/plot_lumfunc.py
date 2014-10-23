@@ -12,18 +12,19 @@ def start_fig(sizech = (13,13)):
     fig = pl.figure(figsize =sizech, frameon = True)
 
     fig.subplots_adjust(left = 0.25,  # the left side of the subplots of the figure
-                        right = 0.97,    # the right side of the subplots of the figure
+                        right = 0.95,    # the right side of the subplots of the figure
                         bottom = 0.3,   # the bottom of the subplots of the figure
-                        top = 0.95,      # the top of the subplots of the figure
+                        top = 0.85,      # the top of the subplots of the figure
                         wspace = 0.48,   # the amount of width reserved for blank space between subplots
                         hspace = 0.48)   # the amount of height reserved for white space between subplots
 
     return fig
 
 def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
-                plot_stem = '', colors = ['k'], write_points=False):
+                plot_stem = '', colors = ['k'], write_points=False, 
+                line_styles=['-'], title=''):
     
-    lsl = [2,2,2,2,2]
+    lsl = [0.5,0.5,0.5,0.5,0.5,0.5]
     if len(plot_stem)> 0 and plot_stem[-1]!='_':
         plot_stem += "_"
 
@@ -42,7 +43,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     plot_set = pub_plots(xmaj = 0.1, xmin = 0.025, xstr = '%02.1f', 
                          ymaj = 0.01, ymin = 0.001, ystr =  '%03.2f')
 
-    for curr_z, curr_weight, curr_color, cls, label  in zip(z, weights, colors, lsl, ['all']): 
+    for curr_z, curr_weight, curr_color, cls, label, clstyle  in zip(z, weights, colors, lsl, ['all'],line_styles): 
         curr_color = 'k'
         n,bins,patches = pl.hist(curr_z, bins= 15*4, weights = curr_weight, range=(0.4,0.6), histtype = 'step', 
                 color = curr_color, lw = cls)
@@ -54,6 +55,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
             for a,b in zip(binctr, n):
                 fout.write('%f %f\n' %(a,b))
 
+    pl.title(title)
     pl.xlabel('z')
     pl.ylabel('n(z)')
     pl.xlim((0.4, 0.6))
@@ -69,9 +71,9 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     plot_set = pub_plots(xmaj = 2, xmin = 0.5, xstr = '%d', 
                          ymaj = 2, ymin = 1, ystr =  '% 02.1f')
 
-    for curr_absmag, curr_color, cls, label in zip(absMag,  colors,lsl, ['g-band','r-band', 'i-band']): 
+    for curr_absmag, curr_color, cls, label, clstyle in zip(absMag,  colors,lsl, ['g-band','r-band', 'i-band']*2,line_styles): 
     
-        n, bins, patches = pl.hist(curr_absmag, bins = 18*4, range=(-30,-10), color = curr_color, linestyle = 'solid', histtype = 'step', lw = cls, weights = np.ones_like(curr_absmag)/curr_absmag.size )
+        n, bins, patches = pl.hist(curr_absmag, bins = 18*4, range=(-30,-10), color = curr_color, linestyle = clstyle, histtype = 'step', lw = cls, weights = np.ones_like(curr_absmag)/curr_absmag.size )
     
         if write_points:
             fout = open('/home/ameert/Desktop/%s_absmag.txt' %label, 'w')
@@ -80,6 +82,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
             for a,b in zip(binctr, n):
                 fout.write('%f %f\n' %(a,b))
         
+    pl.title(title)
     pl.xlim((-13.5,-25.5))
     #pl.ylim((-6.0,0.0))
     pl.xlabel('M$_{petro}$')
@@ -98,10 +101,10 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     plot_set = pub_plots(xmaj = 2, xmin = 0.5, xstr = '%d', 
                          ymaj = 2, ymin = 1, ystr = '% 02.1f')
 
-    for curr_absmag,curr_V, curr_weight, curr_color, cls, label in zip(absMag, V_max, weights, colors,lsl, ['g-band','r-band', 'i-band']): 
+    for curr_absmag,curr_V, curr_weight, curr_color, cls, label, clstyle in zip(absMag, V_max, weights, colors,lsl, ['g-band','r-band', 'i-band']*2,line_styles): 
     
         V_weight = 1.0/curr_V
-        n, bins, patches = pl.hist(curr_absmag, bins = 24, weights = V_weight/np.sum(V_weight), range=(-25,-13), color = curr_color, linestyle = 'solid', histtype = 'step', lw = cls)
+        n, bins, patches = pl.hist(curr_absmag, bins = 24, weights = V_weight/np.sum(V_weight), range=(-25,-13), color = curr_color, linestyle = clstyle, histtype = 'step', lw = cls)
 
         if write_points:
             fout = open('/home/ameert/Desktop/%s_lumfunc.txt' %label, 'w')
@@ -110,6 +113,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
             for a,b in zip(binctr, n):
                 fout.write('%f %f\n' %(a,b))
 
+    pl.title(title)
     pl.xlim((-13.5,-25.5))
     #pl.ylim((10**-7.0,.1))
     pl.xlabel('M$_{petro}$')
@@ -128,9 +132,9 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     plot_set = pub_plots(xmaj = 1, xmin = 0.5, xstr = '%d', 
                          ymaj = 0.05, ymin = 0.01, ystr =  '% 03.2f')
     
-    for curr_appmag, curr_weight, curr_color, cls, label in zip(appMag, weights, colors, lsl, ['g-band','r-band', 'i-band']): 
+    for curr_appmag, curr_weight, curr_color, cls, label, clstyle in zip(appMag, weights, colors, lsl, ['g-band','r-band', 'i-band']*2, line_styles): 
         n, bins, patches = pl.hist(curr_appmag, weights = curr_weight, bins = 10*14, 
-                                   range=(16,30), histtype = 'step', color = curr_color, lw = cls)
+                                   range=(16,30), histtype = 'step', color = curr_color, lw = cls, linestyle=clstyle)
 
         if write_points:
             fout = open('/home/ameert/Desktop/%s_appmag.txt' %label, 'w')
@@ -139,6 +143,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
             for a,b in zip(binctr, n):
                 fout.write('%f %f\n' %(a,b))
 
+    pl.title(title)
     pl.xlabel('m$_{petro}$')
     pl.ylabel('n(m$_{petro}$)')
     
@@ -156,10 +161,11 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
                          ymaj = 0.1, ymin = 0.01, ystr =  '% 02.1f')
     
 
-    for curr_rhl, curr_weight, curr_color, cls in zip(rhl_arcsec, weights, colors, lsl): 
+    for curr_rhl, curr_weight, curr_color, cls, clstyle in zip(rhl_arcsec, weights, colors, lsl, line_styles): 
         n, bins, patches = pl.hist(curr_rhl, weights = curr_weight,bins = 40, 
-                                   range=(0,10), histtype = 'step', color = curr_color, lw = cls)
+                                   range=(0,10), histtype = 'step', color = curr_color, lw = cls, linestyle=clstyle)
 
+    pl.title(title)
     pl.xlim((0,8.5))
     pl.ylim((0,.15))
     pl.xlabel('r$_{hl}$ [arcsec]')
@@ -176,10 +182,11 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     plot_set = pub_plots(xmaj = 2, xmin = 0.5, xstr = '%d', 
                          ymaj = 0.02, ymin = 0.005, ystr =  '% 03.2f')
     
-    for curr_sb, curr_weight, curr_color, cls in zip(surf_bright, weights, colors,lsl): 
+    for curr_sb, curr_weight, curr_color, cls, clstyle in zip(surf_bright, weights, colors,lsl, line_styles): 
         n, bins, patches = pl.hist(curr_sb, weights = curr_weight,bins = 48, 
-                                   range=(18,24), histtype = 'step', color = curr_color, lw = cls)
+                                   range=(18,24), histtype = 'step', color = curr_color, lw = cls, linestyle=clstyle)
 
+    pl.title(title)
     pl.xlim((18,24.5))
     pl.ylim((0,0.1))
     pl.xlabel('$\mu_{hl}$')
@@ -191,8 +198,8 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     pl.close(fig)
     return
 
-def get_alldat(band, distance):
-    cmd = 'select zgal, 1.0 as Vmax, PetroMag_{band} - extinction_{band} - dismod, petromag_{band} - extinction_{band}, 1.0 as petroR50_{band}, petromag_{band}  from catalog.corr_lum_func_CMASS as b where kpc_per_arcsec*distance*60.0 between {dislow} and {dishigh};'.format(band=band, dislow=distance[0], dishigh=distance[1])
+def get_alldat(band, distance, table):
+    cmd = 'select zgal, 1.0 as Vmax, PetroMag_{band} - extinction_{band} - dismod, petromag_{band} - extinction_{band}, 1.0 as petroR50_{band}, petromag_{band}  from catalog.corr_lum_func_{table} as b where kpc_per_arcsec*distance*60.0 between {dislow} and {dishigh};'.format(band=band, dislow=distance[0], dishigh=distance[1], table=table)
 
     z, V_max, absmag, petromag, halflight_rad,ucorr_mag = cursor.get_data(cmd)
 
@@ -214,6 +221,7 @@ cursor = mysql_connect(dba, usr, pwd)
 
 
 for distance in [(100,300),(300,500),(500,700),(700, 900)]:
+    title = '%d$\leq distance \leq$ %d kpc' %(distance[0], distance[1])
     z = []
     absmag = []
     petromag = []
@@ -221,21 +229,43 @@ for distance in [(100,300),(300,500),(500,700),(700, 900)]:
     surf_bright = []
     V_max = []
 
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('g', distance)
+    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('g', distance, 'CMASS')
     z.append(ztmp)
     absmag.append(abtmp)
     petromag.append(petrotmp)
     halflight_rad.append(hradtmp)
     surf_bright.append(sbtmp)
     V_max.append(vmaxtmp)
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('r', distance)
+    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('r', distance, 'CMASS')
     z.append(ztmp)
     absmag.append(abtmp)
     petromag.append(petrotmp)
     halflight_rad.append(hradtmp)
     surf_bright.append(sbtmp)
     V_max.append(vmaxtmp)
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('i', distance)
+    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('i', distance, 'CMASS')
+    z.append(ztmp)
+    absmag.append(abtmp)
+    petromag.append(petrotmp)
+    halflight_rad.append(hradtmp)
+    surf_bright.append(sbtmp)
+    V_max.append(vmaxtmp)
+
+    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('g', distance, 'blanks')
+    z.append(ztmp)
+    absmag.append(abtmp)
+    petromag.append(petrotmp)
+    halflight_rad.append(hradtmp)
+    surf_bright.append(sbtmp)
+    V_max.append(vmaxtmp)
+    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('r', distance, 'blanks')
+    z.append(ztmp)
+    absmag.append(abtmp)
+    petromag.append(petrotmp)
+    halflight_rad.append(hradtmp)
+    surf_bright.append(sbtmp)
+    V_max.append(vmaxtmp)
+    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('i', distance, 'blanks')
     z.append(ztmp)
     absmag.append(abtmp)
     petromag.append(petrotmp)
@@ -245,4 +275,4 @@ for distance in [(100,300),(300,500),(500,700),(700, 900)]:
 
     print z, absmag, petromag, halflight_rad, surf_bright, V_max
 
-    plot_sample(z, absmag, petromag, halflight_rad, surf_bright, V_max, plot_stem = './corr_lum_%s' %distance[0], colors = ['g','r','k'])
+    plot_sample(z, absmag, petromag, halflight_rad, surf_bright, V_max, plot_stem = './corr_lum_all_%s' %distance[0], colors = ['#00CC00','#FF0000','#000000','#66E066','#FF8080','#B2B2B2'], line_styles=['solid','solid','solid','solid','solid','solid'], title=title)
