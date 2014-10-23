@@ -1,5 +1,6 @@
 """This script reads in a file 'ingals.txt' that contains galaxy identifiers
-in the first column (i.e. galcount) and returns a corresponding list of null
+in the first column (i.e. galcount) and redshift in the second column
+ and returns a corresponding list of null
 locations to be used in the subtraction from the true correlated function"""
 
 
@@ -7,12 +8,23 @@ locations to be used in the subtraction from the true correlated function"""
 corresponds to SDSS sky coverage for now"""
 
 
+import os
+from astro_image_processing.mysql import *
+
+
 def get_gals():
     """Returns the list of galaxy identifiers that we will generate 
 random points for"""
-    return np.loadtxt('ingals.txt', usecols=[0,], comments='#', unpack=True)
+    return np.loadtxt('ingals.txt', usecols=[0,1], comments='#', unpack=True)
+
+def get_gals_sql():
+    """Returns the list of galaxy identifiers extracted from SQL
+ that we will generate random points for."""
+    cursor = mysql_connect('catalog','pymorph','pymorph')
+    gals, z = cursor.get_data('select thing_id, zspec from claudia_blanksky;') 
+    return gals, z
     
-def write_gals(gals, pos):
+def write_gals(gals, z, pos):
     """outputs the galaxy position combination for each galaxy"""
     outfile = open('null_pos.txt', 'w')
     outfile.write('# galcount ra_degrees dec_degrees\n')
@@ -21,11 +33,27 @@ def write_gals(gals, pos):
     outfile.close()
     return
 
+def write_gals_sql(gals, z, pos, tablename):
+    """outputs the galaxy position combination for each galaxy"""
+
+    cursor = mysql_connect('catalog','pymorph','pymorph',autocommit=False)
+    
+    count = 0
+    for outgal, outpos in zip(gals, pos):
+        cmd = 'update %s set  ra_gal= %f, dec_gal = %f where thing_id = %d;' %(tablename,outpos[0],outpos[1], outgal)
+    #print cmd
+        cursor.execute(cmd)
+        count+=1
+        if count % 10000 ==0:
+            print count
+            cursor.Conn.commit()            
+    cursor.Conn.commit()
+
 import numpy as np
 
 
 if __name__=="__main__":
-    ingals = get_gals()
+    ingals,zgals = get_gals_sql()
     seed = 4059091349
     np.random.seed(seed)
     
@@ -38,7 +66,7 @@ if __name__=="__main__":
 
     new_pos = np.degrees(new_pos)
 
-    write_gals(ingals, new_pos)
+    write_gals_sql(ingals, zgals,new_pos,'claudia_blanksky')
     
 
 
