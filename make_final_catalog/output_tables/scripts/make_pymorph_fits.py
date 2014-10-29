@@ -23,7 +23,7 @@
 #
 #-----------------------------------
 
-from mysql.mysql_class import *
+from astro_image_processing.mysql import *
 import os
 import itertools
 import pyfits
@@ -80,7 +80,7 @@ def get_table(cursor, ext_dict, suffix,mysqltable, Table_name, model='none'):
 
 if __name__=="__main__":
 
-    save_loc = '/home/ameert/git_projects/alans-image-processing-pipeline/make_final_catalog/output_tables/fits/'
+    save_loc = '/home/ameert/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/'
     this_dir = os.getcwd()
 
     dba = 'catalog'
@@ -89,11 +89,11 @@ if __name__=="__main__":
 
     cursor = mysql_connect(dba, usr, pwd)
 
-    band = 'r'
+    band = sys.argv[1]
 
     tablename = 'UPenn_PhotDec_nonParam'
     table = {'blank':'%s_band_fit' %band, 'c':'CAST as c ','d':'DERT as d ',
-             'f':'Flags_optimize as f '}
+             'f':'Flags_catalog as f '}
     data_dict = meert[0]
     ext_names ='nonParam Table'
 
@@ -125,8 +125,8 @@ if __name__=="__main__":
     
     tabs = []
     for model in ['best','dev','ser','devexp','serexp']:
-        table = {'blank':'%s_band_%s' %(band,model), 'c':'CAST as c ',
-                 'd':'DERT as d ','f':'Flags_optimize as f '}
+        table = {'blank':'final_cat.%s_band_%s' %(band,model), 'c':'CAST as c ',
+                 'd':'DERT as d ','f':'Flags_catalog as f '}
         ext_names ='Model %s Table' %model
 
         tabs.append(get_table(cursor, data_dict, band, table, ext_names, model=model))

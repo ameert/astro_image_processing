@@ -33,7 +33,7 @@ from table_defs import *
 from make_pymorph_fits import get_table
 
 
-save_loc = '/home/ameert/git_projects/alans-image-processing-pipeline/make_final_catalog/output_tables/fits/UPenn_PhotDec_'
+save_loc = '/home/ameert/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/UPenn_PhotDec_'
 this_dir = os.getcwd()
 
 
