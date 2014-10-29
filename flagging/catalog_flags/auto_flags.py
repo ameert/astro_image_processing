@@ -1,7 +1,7 @@
 import numpy as np
 import pyfits as pf
 import pickle
-from mysql.mysql_class import *
+from astro_image_processing.mysql import *
 from flag_configuration import autoflag_vals, autoflag_dict, autoflag_config
 
 

@@ -1,7 +1,7 @@
 import numpy as np
 import pylab as pl
 from scipy import ndimage
-from MatplotRc import *
+from astro_image_processing.MatplotRc import *
 import matplotlib
 import matplotlib.colors as col
 import matplotlib.cm as cm
@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import sys
 from optparse import OptionParser, OptParseError
 
-from statistics.bin_stats import *
+from astro_image_processing.statistics.bin_stats import *
 
 def get_options():
     usage = 'program OPTIONS'
@@ -225,10 +225,10 @@ class outlier_fig():
             self.figsize= figsize
         print "figsize ", self.figsize
         self.fig = pl.figure(figsize = self.figsize)
-        pl.subplots_adjust(left = 0.2,
-                           right = 0.95,
-                           bottom = 0.3,
-                           top = 0.87,    
+        pl.subplots_adjust(left = 0.25,
+                           right = 0.96,
+                           bottom = 0.25,
+                           top = 0.9,    
                            wspace = 0.20,
                            hspace = 0.15)
         self.bins = (60,60)
@@ -373,7 +373,7 @@ def plot_dense(x_dat, y_dat, xtext, ytext, xlim, ylim, bin_num, dense_low,
     pl.ylim((extent[2],extent[3]))
 
     ax = pl.gca()
-    forceAspect(ax, aspect = fig_size[0]/fig_size[1])
+    forceAspect(ax, aspect = fig_size[0]/fig_size[1] +0.25)
     #forceAspect(ax, aspect = 1)
     
     return H, xedges, yedges

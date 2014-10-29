@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 import sys 
-from mysql.mysql_class import *
+from astro_image_processing.mysql import *
 
 
 def create_flag_pickle(folder_num, info_dict, print_info=False):

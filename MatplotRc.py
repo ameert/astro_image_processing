@@ -43,14 +43,14 @@ def get_fig_size(fullwidth=0,fullheight=0):
     if fullheight:
         fig_height = 8.
     else:
-        fig_height =fig_width*golden_mean       # height in inches
+        fig_height =fig_width*golden_mean #height in inches
     
     fig_size = [fig_width,fig_height]
     return fig_size
 
 # this is the settings I use to make publication quality plots...
 def pub_plots(xmaj = 5, xmin = 1, xstr = '%03.2f', ymaj = 5, ymin = 1, ystr = '%d'):
-    MatPlotParams = {'axes.xaxis.labelpad': 40, 'axes.titlesize': 12, 'axes.linewidth' : 1.5, 'axes.labelsize': 14, 'xtick.labelsize': 12, 'ytick.labelsize': 12, 'xtick.major.size': 10, 'ytick.major.size' : 10, 'xtick.minor.size': 4, 'ytick.minor.size': 4, 'xtick.major.pad' : 8, 'ytick.major.pad' : 6}
+    MatPlotParams = {'axes.yaxis.labelpad': 10,'axes.xaxis.labelpad': 10, 'axes.titlesize': 10, 'axes.linewidth' : 1.5, 'axes.labelsize': 10, 'xtick.labelsize': 10, 'ytick.labelsize': 10, 'xtick.major.size': 8, 'ytick.major.size' : 8, 'xtick.minor.size': 4, 'ytick.minor.size': 4, 'xtick.major.pad' : 6, 'ytick.major.pad' : 6}
     rcParams.update(MatPlotParams)
     
     xmajLocator   = MultipleLocator(xmaj)

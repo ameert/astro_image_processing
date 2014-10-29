@@ -7,4 +7,4 @@ gal_cat = {'filename':'spectro_sample_raw.cat',
 
 casjobs_info.update({ 'cas_jar_path':'casjobs.jar',
                  'jobname':'test_name',
-                 'search_target':'DR8'})
+                 'search_target':'DR10'})

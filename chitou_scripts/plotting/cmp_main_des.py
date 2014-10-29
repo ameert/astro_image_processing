@@ -11,9 +11,9 @@ import os
 from matplotlib.backends.backend_pdf import PdfPages
 
 # my personal code imports 
-from mysql.mysql_class import *
+from astro_image_processing.mysql import *
 from cmp_functions import *
-from MatplotRc import *
+from astro_image_processing.MatplotRc import *
 from plot_info import *
 from get_data import *
 
@@ -35,6 +35,7 @@ print data[options['xchoice']+'_1'],data[options['ychoice']+'_1'],data[options['
 for name in ['hrad', 'rbulge', 'rdisk', 'petrorad']:
     data[name+'_2'] =  (data[name+'_1']/data[name+'_2'])-1.0 +data[name+'_2']
 #    data[name+'_2'] =  -(data[name+'_1']/data[name+'_2']) +data[name+'_1']
+#    data[name+'_1'] =  -(data['sexrad']/data[name+'_1'])+1.0 +data[name+'_2']
 
 for posnum in ['1','2']:
     if options['model%s' %posnum] == 'dev':
@@ -85,6 +86,8 @@ oplot.set_ticks(ticksx[options['key_x']][0], ticksx[options['key_x']][1], ticksx
 #oplot.setminval(0.01*options['upper_dense'])
 oplot.setdenselims(1.000025*len(data['galcount']),1.0025*len(data['galcount']))
 oplot.setminval(1*len(data['galcount']))
+#oplot.setdenselims(0.000025*len(data['galcount']),0.0025*len(data['galcount']))
+#oplot.setminval(0.00001*len(data['galcount']))
 #oplot.makeplot(data[options['xchoice']+'_1'],data[options['ychoice']+'_1']-data[options['ychoice']+'_2'], xlims[options['xchoice']],
 
 if options['xlims']!= None:

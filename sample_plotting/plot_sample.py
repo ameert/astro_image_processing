@@ -29,7 +29,7 @@
 #-----------------------------------
 import numpy as np
 import pylab as  pl
-from MatplotRc import *
+from astro_image_processing.MatplotRc import *
 import time
 #from plotting_funcs import *
 def start_fig(sizech = (13,13)):

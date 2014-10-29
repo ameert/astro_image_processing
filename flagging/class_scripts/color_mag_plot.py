@@ -105,6 +105,6 @@ sel = np.where(flag&2**14>0, 1,0)
 rmag_tmp = np.extract(sel==1, rmag)
 color_tmp = np.extract(sel==1, grcolor)
 
-sel = np.where(flag&2**19>0, 1,0)
+sel = np.where(flag&2**20>0, 1,0)
 rmag_tmp = np.extract(sel==1, rmag)
 color_tmp = np.extract(sel==1, grcolor)

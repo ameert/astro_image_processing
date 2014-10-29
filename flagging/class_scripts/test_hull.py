@@ -1,4 +1,4 @@
-from statistics.convex_hull import *
+from astro_image_processing.statistics.convex_hull import *
 import pylab as pl
 import numpy as np
 import matplotlib.pyplot as plt

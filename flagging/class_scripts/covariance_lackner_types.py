@@ -16,7 +16,7 @@ pwd = 'pymorph'
 
 cursor = mysql_connect(dba, usr, pwd)
 
-cmd = """select d.galcount,c.flag, If(d.model='dvc',1,0)+If(d.model='exp',2,0)+If(d.model='ser',3,0)+If(d.model='nb1',4,0)+If(d.model='nb4',5,0), f.n_bulge from catalog.Flags_optimize as c, catalog.r_lackner_fit as d, catalog.r_lackner_ser as f where d.galcount = f.galcount and c.galcount = d.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by d.galcount;""".format(model = model, band = 'r')
+cmd = """select d.galcount,c.flag, If(d.model='dvc',1,0)+If(d.model='exp',2,0)+If(d.model='ser',3,0)+If(d.model='nb1',4,0)+If(d.model='nb4',5,0), f.n_bulge from catalog.Flags_catalog as c, catalog.r_lackner_fit as d, catalog.r_lackner_ser as f where d.galcount = f.galcount and c.galcount = d.galcount and c.band='{band}' and c.model = '{model}' and c.ftype = 'u' order by d.galcount;""".format(model = model, band = 'r')
 
 data = cursor.get_data(cmd)
 

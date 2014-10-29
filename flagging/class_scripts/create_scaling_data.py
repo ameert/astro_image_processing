@@ -6,8 +6,7 @@ import pickle
 import os
 import sys 
 
-from flag_defs import *
-from mysql.mysql_class import *
+from astro_image_processing.mysql import *
 #from gal_panel import *
 
 model = 'serexp'
@@ -25,7 +24,7 @@ x.petromag_g - x.extinction_g, x.petromag_r - x.extinction_r,
 x.petromag_i - x.extinction_i, -4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd, s.kcorr_g, s.kcorr_r, s.kcorr_i
 from 
 {band}_band_{model} as z,{band}_band_fit as y,CAST as x, DERT as s,
-M2010 as m, Flags_optimize as c 
+M2010 as m, Flags_catalog as c 
 where 
 y.galcount = x.galcount and
 x.galcount = s.galcount and 

@@ -1,4 +1,4 @@
-from mysql.mysql_class import *
+from astro_image_processing.mysql.mysql_class import *
 import numpy as np
 from plot_sample_data import *
 import scipy.stats as stats

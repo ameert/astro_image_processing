@@ -1,13 +1,13 @@
-from mysql.mysql_class import *
+from astro_image_processing.mysql.mysql_class import *
 import numpy as np
 import pylab as pl
-from MatplotRc import *
-from statistics.bin_stats import *
+from astro_image_processing.MatplotRc import *
+from astro_image_processing.statistics.bin_stats import *
 import sys
 import os
 import os.path
 import pyfits as pf
-import astro_utils.image_analysis.image_info as info
+import astro_image_processing.astro_utils.image_analysis.image_info as info
 import scipy.stats as stats
 
 real = 1

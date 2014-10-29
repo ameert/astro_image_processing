@@ -4,7 +4,7 @@ from sklearn import linear_model
 from sklearn.cross_validation import train_test_split
 from cmp_functions import *
 
-ttype, pell, ps0, psab, pscd = np.loadtxt('claib_gals_again.txt', unpack=True)
+ttype, pell, ps0, psab, pscd = np.loadtxt('calib_gals.txt', unpack=True)
 
 probs = np.array([list(pell), list(ps0), list(psab), list(pscd)]).T
 

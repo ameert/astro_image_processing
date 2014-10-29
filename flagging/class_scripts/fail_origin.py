@@ -82,7 +82,7 @@ def get_flag_props(flags_to_use, autoflag, binvalx, binvaly, bins):
 
 
 def get_vals(binval1, binval2): 
-    cmd = """select a.galcount, a.flag, %s, %s from Flags_optimize as a, M2010 as b, CAST as c, DERT as d, r_band_serexp as f, SSDR6 as z   where a.flag >=0 and a.band = 'r' and a.model = 'serexp' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = c.galcount and a.galcount = d.galcount and a.galcount = f.galcount and a.galcount = z.galcount and a.flag&pow(2,19)>0 order by a.galcount limit 1000000;""" %(binval1, binval2)
+    cmd = """select a.galcount, a.flag, %s, %s from Flags_catalog as a, M2010 as b, CAST as c, DERT as d, r_band_serexp as f, SSDR6 as z   where a.flag >=0 and a.band = 'r' and a.model = 'serexp' and a.ftype = 'u' and a.galcount = b.galcount and a.galcount = c.galcount and a.galcount = d.galcount and a.galcount = f.galcount and a.galcount = z.galcount and a.flag&pow(2,20)>0 order by a.galcount limit 1000000;""" %(binval1, binval2)
 
     galcount, flags, binval1, binval2 = cursor.get_data(cmd)
     galcount = np.array(galcount, dtype=int)
@@ -97,13 +97,13 @@ cursor = mysql_connect('catalog','pymorph','pymorph','')
 band = 'r'
 model = 'serexp'
 
-flags_to_use = [1,4,10,14,19]
+flags_to_use = [1,4,10,14,20]
 
 plot_info = {1:{'color':'r', 'label':'bulges', 'ms':3},
              4:{'color':'b', 'label':'disks', 'ms':3},
              10:{'color':'g', 'label':'2com', 'ms':3},
              14:{'color':'y', 'label':'bad 2com', 'ms':3},
-             19:{'color':'k', 'label':'bad', 'ms':3},
+             20:{'color':'k', 'label':'bad', 'ms':3},
              'total': {'color':"#D0D0D0",'label':'total'}
              }
 

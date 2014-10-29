@@ -32,7 +32,7 @@ import numpy as np
 import os
 import sys
 
-from mysql.mysql_class import *
+from astro_image_processing.mysql import *
 from create_flag_file_catalog import *
 from auto_flags import *
 from u_flags import *
@@ -40,7 +40,8 @@ from u_flags import *
 
 if __name__ == "__main__":
     model = sys.argv[1]
-    for bandval in 'r':
+    bands = sys.argv[2]
+    for bandval in bands:
         info_dict = {'dba':'catalog', 'usr':'pymorph', 'pwd':'pymorph', 'host':'',
                      'band':bandval, 'model':model,'autoflag_ftype':'r',
                      'uflag_ftype':'u', 'table':'Flags_catalog'
@@ -49,9 +50,9 @@ if __name__ == "__main__":
 
 
 
-        for folder_number in range(1,51):
+        for folder_number in range(1, 2684):
             print "folder number:", folder_number
-            #create_flag_pickle(folder_number, info_dict, print_info=False)
+            create_flag_pickle(folder_number, info_dict, print_info=False)
             run_auto_flags(info_dict['model'],info_dict['band'], folder_number, print_flags=False)
             load_autoflag(folder_number, info_dict, print_info = False)
 
