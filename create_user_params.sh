@@ -99,5 +99,30 @@ else
   echo "If ${topdir} is not added, this module may not be found!";
 fi
 
+
+
+echo "Please enter the full path to GALFIT (not required):";
+read galfit_path;
+
+echo "You have entered 
+Path to GALFIT:${galfit_path}";
+
+echo "Continue with these settings? Enter 'yes' to continue:";
+
+read isgood;
+if [ $isgood == yes ]; then
+echo "Continuing with user entered settings";
+else
+echo "You dont want to continue.
+Terminating";
+exit 1;
+fi
+
+echo "
+galfit_path=${galfit_path}'
+
+">>$pathfile;
+
+
 exit 0;
 

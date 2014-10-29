@@ -16,7 +16,8 @@ to_remove = ['OEM_*.fits', 'SO_*.fits', 'R_*.html', 'seg.fits', 'SegCat.cat',
 #os.system('/data2/home/ameert/catalog/scripts/compare_gin.py ser g %s' %count)
 
 try:
-    targetdir = sys.argv[1]
+    targetdir = int(sys.argv[1])
+    targetdir = '%04d' %targetdir
 except:
     targetdir = './'
     
