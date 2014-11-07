@@ -188,5 +188,6 @@ for model in ['dev','ser','devexp','serexp']:
 
     model_table(flags, info_dict['model'])
 
-#write_full_table(['Test', 'serexp', 'devexp'])
 write_full_table_band('serexp', ['g','r','i'])
+#write_full_table(['dev','ser','devexp', 'serexp', 'Test'])
+

@@ -44,7 +44,7 @@ BEGIN
   SELECT  @thing_id, @objid, @zgal, N.distance, p.objid, p.petroMag_g, p.petroMag_r, p.petroMag_i, p.ModelMag_g, p.ModelMag_r, p.ModelMag_i, 
     p.CModelMag_g, p.CModelMag_r, p.CModelMag_i, p.fracdev_g, p.fracdev_r, p.fracdev_i, p.devmag_g, p.devmag_r, p.devmag_i, p.expmag_g, p.expmag_r, p.expmag_i,
     p.extinction_g, p.extinction_r, p.extinction_i
-  FROM PhotoPrimary as p,
+  FROM Galaxy as p,
 dbo.fGetNearbyObjEq(@ra,@dec,3.0) as N where p.objid=N.objid
 END
 
@@ -70,7 +70,7 @@ BEGIN
   SELECT  @thing_id, @objid, @zgal, N.distance, p.objid, p.petroMag_g, p.petroMag_r, p.petroMag_i, p.ModelMag_g, p.ModelMag_r, p.ModelMag_i, 
     p.CModelMag_g, p.CModelMag_r, p.CModelMag_i, p.fracdev_g, p.fracdev_r, p.fracdev_i, p.devmag_g, p.devmag_r, p.devmag_i, p.expmag_g, p.expmag_r, p.expmag_i,
     p.extinction_g, p.extinction_r, p.extinction_i
-  FROM PhotoPrimary as p,
+  FROM Galaxy as p,
 dbo.fGetNearbyObjEq(@ra,@dec,3.0) as N where p.objid=N.objid
 END
 

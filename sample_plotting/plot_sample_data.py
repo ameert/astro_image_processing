@@ -167,7 +167,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     ax = pl.gca()
     plot_set.set_plot(ax)
     pl.ylim((0,0.16))
-    pl.xlim((14.0,17.9))
+    pl.xlim((14.0,19.9))
     pl.savefig(plot_stem+'appmag_dist.eps')#, bbox_inches = 'tight')
     pl.close(fig)
 

@@ -69,9 +69,8 @@ def casjobs(gal_cat, casjobs_info):
     exec_cmd('{casjobs} execute -t "mydb" -n "drop input table" "drop table {in_tablename}"'.format(**job_info))
     exec_cmd('{casjobs} -j '.format(**job_info))
     
-#    exec_cmd('{casjobs} execute -t "mydb" -n "create input table" "CREATE table {in_tablename} (thing_id int, plate smallint, mjd int, fiber int, zspec float);"'.format(**job_info))
-#    exec_cmd('{casjobs} -j '.format(**job_info))
-    exec_cmd('{casjobs} execute -t "mydb" -n "create input table" "CREATE table {in_tablename} (thing_id int, zspec float, ra_gal float, dec_gal float);"'.format(**job_info))
+    exec_cmd('{casjobs} execute -t "mydb" -n "create input table" "CREATE table {in_tablename} (thing_id int, plate smallint, mjd int, fiber int, zspec float);"'.format(**job_info))
+#    exec_cmd('{casjobs} execute -t "mydb" -n "create input table" "CREATE table {in_tablename} (thing_id int, zspec float, ra_gal float, dec_gal float);"'.format(**job_info))
     exec_cmd('{casjobs} -j '.format(**job_info))
 
     cursor = mysql_connect('catalog',mysql_params['user'],mysql_params['pwd'])
@@ -91,13 +90,13 @@ def casjobs(gal_cat, casjobs_info):
         exec_cmd('{casjobs} -j '.format(**job_info))
         
         print 'CUT PIPE: Loading Chunk'
-        chunkdata = get_chunk_blanksky(cursor, job_info['chunk'],job_info['chunknum'])
-        exec_cmd('{casjobs} execute -t "mydb" -n "load chunk" "{cmd}"'.format(cmd=load_chunk_blanksky(chunkdata, job_info['in_tablename']),**job_info))
+        chunkdata = get_chunk(cursor, job_info['chunk'],job_info['chunknum'])
+        exec_cmd('{casjobs} execute -t "mydb" -n "load chunk" "{cmd}"'.format(cmd=load_chunk(chunkdata, job_info['in_tablename']),**job_info))
         exec_cmd('{casjobs} -j '.format(**job_info))
         print 'CUT PIPE: Chunk successfully loaded!'
         
         fid = open(job_info['query_name'],'w')
-        fid.write(cone_search_blanksky_query(job_info))
+        fid.write(cone_search_query(job_info))
         fid.close()
 
         print 'CUT PIPE: Running Query'
@@ -125,11 +124,11 @@ if __name__ == "__main__":
     from astro_image_processing.user_settings import casjobs_info
 
     casjobs_info.update({ 'cas_jar_path':'/home/ameert/git_projects/astro_image_processing/casjobs_query/casjobs.jar',
-                          'jobname':'correlation_lum_blanks',
+                          'jobname':'correlation_lum_galaxy',
                           'search_target':'DR10'})
-    gal_cat = {'filename':'correlated_sample_raw_blanks.cat',
+    gal_cat = {'filename':'correlated_sample_raw_galaxy.cat',
                'data_dir':'/home/ameert/claudia/data/',
-               'out_file':'correlated_sample_blanks.cat'
+               'out_file':'correlated_sample_galaxy.cat'
                }
 
     casjobs(gal_cat, casjobs_info)
