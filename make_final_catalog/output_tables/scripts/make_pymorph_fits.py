@@ -43,6 +43,7 @@ def get_table(cursor, ext_dict, suffix,mysqltable, Table_name, model='none'):
         cmd = 'Select '
         addstr= ''
         cmd += column[3].format(band=suffix)
+        print column
         for pref in ['c','d', 'f', 'u', 'm']:
             if '%s.' %pref in column[3]:
                 tmp_table = mysqltable[pref]

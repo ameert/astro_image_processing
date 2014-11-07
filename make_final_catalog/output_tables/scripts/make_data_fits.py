@@ -23,7 +23,7 @@
 #
 #-----------------------------------
 
-from mysql.mysql_class import *
+from astro_image_processing.mysql import *
 import os
 import itertools
 import pyfits
@@ -47,7 +47,8 @@ bands = 'gri'
 
 if __name__=="__main__":
 #    for tablename, table, data_dict,ext_names in [('CAST','CAST', CAST, ('CAST Table')),('H2011','M2010', H2010, ('H2010 Table',)),('CASTmodels','CAST',CAST_models, ('CASTmodels g band','CASTmodels r band','CASTmodels i band')),('UKIDSS','UKIDSS',UKIDSS, ('nonParam', 'Y band','J1 band','H band','K band')),('GALEX','GALEX',GALEX, ('nonParam', 'nuv band','fuv band')),]:
-    for tablename, table, data_dict,ext_names in [('JHU','JHU_matches',JHU_matches, ('JHU matching data')), ('YANG','YANG',YANG, ('YANG matching data')),]:
+    for tablename, table, data_dict,ext_names in [('CAST','CAST', CAST, ('CAST Table')),]:
+#    for tablename, table, data_dict,ext_names in [('JHU','JHU_matches',JHU_matches, ('JHU matching data')), ('YANG','YANG',YANG, ('YANG matching data')),]:
         
         table_pre = {'m':' M2010 as m ', 'c':' CAST as c ',
                   'd':' DERT as d ',  'u':' UKIDSS as u ',  'g':' GALEX as g '
@@ -61,7 +62,7 @@ if __name__=="__main__":
         #all tables are band independant except for CAST_models
         if tablename=='CASTmodels':
             for a in zip(data_dict, ext_names, ['_g','_r','_i']):
-                tabs.append(get_table(a[0], a[2],table, a[1]))
+                tabs.append(get_table(cursor, a[0], a[2],table, a[1]))
         elif tablename=='UKIDSS':
             for a in zip(data_dict, ext_names, ['','Y','J1',
                                                 'J2', 'H', 'K']):
@@ -75,13 +76,17 @@ if __name__=="__main__":
             table_pre['blank']=table_pre['j']
             for a in zip(data_dict, ext_names, ['']):
                 tabs.append(get_table(cursor, a[0], a[2],  table_pre, a[1]))
+        elif tablename=='CAST':
+            table_pre['blank']=table_pre['c']
+            for a in zip(data_dict, ext_names, ['']):
+                tabs.append(get_table(cursor, a[0], a[2],  table_pre, a[1]))
         elif tablename=='YANG':
             table_pre['blank']=table_pre['y']
             for a in zip(data_dict, ext_names, ['',]):
                 tabs.append(get_table(cursor, a[0], a[2],  table_pre, a[1]))
         else:
             for a in zip(data_dict, ext_names, ['']):
-                tabs.append(get_table(a[0], a[2],table, a[1]))
+                tabs.append(get_table(cursor, a[0], a[2],table, a[1]))
 
         hdu = pyfits.PrimaryHDU(np.array([0]))
         hdu.header.add_blank(' ')
