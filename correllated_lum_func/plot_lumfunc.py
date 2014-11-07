@@ -29,13 +29,12 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
         plot_stem += "_"
 
     # weight all gals equally
-    weights = []
-    for tmp_z in z:
-        tmp = np.ones_like(tmp_z)
-        tmp = tmp/np.sum(tmp)
-        
-        weights.append(tmp)
-
+    weights = [ 1.0/a for a in V_max]
+    #for tmp_z in z:
+        #tmp = np.ones_like(tmp_z)
+        #tmp = tmp/np.sum(tmp)   
+        #weights.append(tmp)
+     
     # first plot z distribution
     fig_size = get_fig_size()
     #fig_size = (10,10)
@@ -57,11 +56,11 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
 
     pl.title(title)
     pl.xlabel('z')
-    pl.ylabel('n(z)')
-    pl.xlim((0.4, 0.6))
-    pl.ylim((0,0.05))
+    pl.ylabel('n(z) [mpc$^{-1}$]')
+    #pl.xlim((0.4, 0.6))
+    #pl.ylim((0,0.05))
     ax = pl.gca()
-    plot_set.set_plot(ax)
+    #plot_set.set_plot(ax)
     pl.savefig(plot_stem + 'z_dist.eps')#, bbox_inches = 'tight')
     pl.close(fig)
     
@@ -71,9 +70,9 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     plot_set = pub_plots(xmaj = 2, xmin = 0.5, xstr = '%d', 
                          ymaj = 2, ymin = 1, ystr =  '% 02.1f')
 
-    for curr_absmag, curr_color, cls, label, clstyle in zip(absMag,  colors,lsl, ['g-band','r-band', 'i-band']*2,line_styles): 
+    for curr_absmag, curr_color, cls, label, clstyle, curr_weight in zip(absMag,  colors,lsl, ['g-band','r-band', 'i-band']*2,line_styles, weights): 
     
-        n, bins, patches = pl.hist(curr_absmag, bins = 18*4, range=(-30,-10), color = curr_color, linestyle = clstyle, histtype = 'step', lw = cls, weights = np.ones_like(curr_absmag)/curr_absmag.size )
+        n, bins, patches = pl.hist(curr_absmag, bins = 18*4, range=(-30,-10), color = curr_color, linestyle = clstyle, histtype = 'step', lw = cls, weights = curr_weight )
     
         if write_points:
             fout = open('/home/ameert/Desktop/%s_absmag.txt' %label, 'w')
@@ -86,12 +85,12 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     pl.xlim((-13.5,-25.5))
     #pl.ylim((-6.0,0.0))
     pl.xlabel('M$_{petro}$')
-    pl.ylabel('log(n)')
+    pl.ylabel('log(n)  [mpc$^{-1}$]')
     
     ax = pl.gca()
     ax.set_yscale('log')
-    plot_set.set_plot(ax)
-    pl.yticks((1,1/10.,1/100.,1/1000.,1/10000.,1/100000.,1/1000000.,1/10000000.),(' 0.0', '','-2.0','','-4.0','','-6.0',''))#ax.set_yscale('log')
+    #plot_set.set_plot(ax)
+    #pl.yticks((1,1/10.,1/100.,1/1000.,1/10000.,1/100000.,1/1000000.,1/10000000.),(' 0.0', '','-2.0','','-4.0','','-6.0',''))#ax.set_yscale('log')
     pl.savefig(plot_stem+'absmag.eps')#, bbox_inches = 'tight')
     pl.close(fig)
 
@@ -117,11 +116,11 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     pl.xlim((-13.5,-25.5))
     #pl.ylim((10**-7.0,.1))
     pl.xlabel('M$_{petro}$')
-    pl.ylabel('log(n)')
+    pl.ylabel('log(n)  [mpc$^{-1}$]')
     
     ax = pl.gca()
     ax.set_yscale('log')
-    plot_set.set_plot(ax)
+    #plot_set.set_plot(ax)
     pl.yticks((1,1/10.,1/100.,1/1000.,1/10000.,1/100000.,1/1000000.,1/10000000.),(' 0.0', '','-2.0','','-4.0','','-6.0',''))
     pl.savefig(plot_stem+'lum_func.eps')#, bbox_inches = 'tight')
     pl.close(fig)
@@ -145,11 +144,11 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
 
     pl.title(title)
     pl.xlabel('m$_{petro}$')
-    pl.ylabel('n(m$_{petro}$)')
+    pl.ylabel('n(m$_{petro}$)  [mpc$^{-1}$]')
     
     ax = pl.gca()
-    plot_set.set_plot(ax)
-    pl.ylim((0,0.05))
+    #plot_set.set_plot(ax)
+    #pl.ylim((0,0.05))
     pl.xlim((17.0,27.0))
     pl.savefig(plot_stem+'appmag_dist.eps')#, bbox_inches = 'tight')
     pl.close(fig)
@@ -167,12 +166,12 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
 
     pl.title(title)
     pl.xlim((0,8.5))
-    pl.ylim((0,.15))
+    #pl.ylim((0,.15))
     pl.xlabel('r$_{hl}$ [arcsec]')
-    pl.ylabel('n(r$_{hl}$)')
+    pl.ylabel('n(r$_{hl}$)  [mpc$^{-1}$]')
     
     ax = pl.gca()
-    plot_set.set_plot(ax)
+    #plot_set.set_plot(ax)
     pl.savefig(plot_stem+'rad_dist.eps')#, bbox_inches = 'tight')
     pl.close(fig)
 
@@ -188,12 +187,12 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
 
     pl.title(title)
     pl.xlim((18,24.5))
-    pl.ylim((0,0.1))
+    #pl.ylim((0,0.1))
     pl.xlabel('$\mu_{hl}$')
-    pl.ylabel('n($\mu_{hl}$)')
+    pl.ylabel('n($\mu_{hl}$)  [mpc$^{-1}$]')
     
     ax = pl.gca()
-    plot_set.set_plot(ax)
+    #plot_set.set_plot(ax)
     pl.savefig(plot_stem+'surfbright_dist.eps')#, bbox_inches = 'tight')
     pl.close(fig)
     return
@@ -229,50 +228,61 @@ for distance in [(100,300),(300,500),(500,700),(700, 900)]:
     surf_bright = []
     V_max = []
 
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('g', distance, 'CMASS')
-    z.append(ztmp)
-    absmag.append(abtmp)
-    petromag.append(petrotmp)
-    halflight_rad.append(hradtmp)
-    surf_bright.append(sbtmp)
-    V_max.append(vmaxtmp)
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('r', distance, 'CMASS')
-    z.append(ztmp)
-    absmag.append(abtmp)
-    petromag.append(petrotmp)
-    halflight_rad.append(hradtmp)
-    surf_bright.append(sbtmp)
-    V_max.append(vmaxtmp)
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('i', distance, 'CMASS')
-    z.append(ztmp)
-    absmag.append(abtmp)
-    petromag.append(petrotmp)
-    halflight_rad.append(hradtmp)
-    surf_bright.append(sbtmp)
-    V_max.append(vmaxtmp)
+    vol_corr = 4.0*np.pi/3.0*(distance[1]**2 - distance[0]**2)**1.5 / 1.0e9 #in mpc
+    print "distance, vol_corr"
+    print distance, vol_corr
 
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('g', distance, 'blanks')
+
+    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('g', distance, 'galaxy')
     z.append(ztmp)
     absmag.append(abtmp)
     petromag.append(petrotmp)
     halflight_rad.append(hradtmp)
     surf_bright.append(sbtmp)
-    V_max.append(vmaxtmp)
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('r', distance, 'blanks')
+    #V_max.append(vmaxtmp)
+    V_max.append(np.ones_like(petrotmp)*vol_corr)
+    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('r', distance, 'galaxy')
     z.append(ztmp)
     absmag.append(abtmp)
     petromag.append(petrotmp)
     halflight_rad.append(hradtmp)
     surf_bright.append(sbtmp)
-    V_max.append(vmaxtmp)
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('i', distance, 'blanks')
+    #V_max.append(vmaxtmp)
+    V_max.append(np.ones_like(petrotmp)*vol_corr)
+    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('i', distance, 'galaxy')
     z.append(ztmp)
     absmag.append(abtmp)
     petromag.append(petrotmp)
     halflight_rad.append(hradtmp)
     surf_bright.append(sbtmp)
-    V_max.append(vmaxtmp)
+    V_max.append(np.ones_like(petrotmp)*vol_corr)
+    #V_max.append(vmaxtmp)
+
+    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('g', distance, 'galaxy_blanks')
+    z.append(ztmp)
+    absmag.append(abtmp)
+    petromag.append(petrotmp)
+    halflight_rad.append(hradtmp)
+    surf_bright.append(sbtmp)
+    V_max.append(np.ones_like(petrotmp)*vol_corr)
+    #V_max.append(vmaxtmp)
+    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('r', distance, 'galaxy_blanks')
+    z.append(ztmp)
+    absmag.append(abtmp)
+    petromag.append(petrotmp)
+    halflight_rad.append(hradtmp)
+    surf_bright.append(sbtmp)
+    V_max.append(np.ones_like(petrotmp)*vol_corr)
+    #V_max.append(vmaxtmp)
+    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('i', distance, 'galaxy_blanks')
+    z.append(ztmp)
+    absmag.append(abtmp)
+    petromag.append(petrotmp)
+    halflight_rad.append(hradtmp)
+    surf_bright.append(sbtmp)
+    #V_max.append(vmaxtmp)
+    V_max.append(np.ones_like(petrotmp)*vol_corr)
 
     print z, absmag, petromag, halflight_rad, surf_bright, V_max
 
-    plot_sample(z, absmag, petromag, halflight_rad, surf_bright, V_max, plot_stem = './corr_lum_all_%s' %distance[0], colors = ['#00CC00','#FF0000','#000000','#66E066','#FF8080','#B2B2B2'], line_styles=['solid','solid','solid','solid','solid','solid'], title=title)
+    plot_sample(z, absmag, petromag, halflight_rad, surf_bright, V_max, plot_stem = './corr_lum_all_galaxy_%s' %distance[0], colors = ['#00CC00','#FF0000','#000000','#66E066','#FF8080','#B2B2B2'], line_styles=['solid','solid','solid','solid','solid','solid'], title=title)
