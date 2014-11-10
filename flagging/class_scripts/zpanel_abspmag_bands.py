@@ -15,7 +15,7 @@ sql_values = {'band':band,
               'add_param':' r.petromag_{band}-r.extinction_{band}-s.dismod-s.kcorr_{band} '.format(band=band),
               'normtype': 'xbin'}
 
-names=[ plot_info[key]['label'] for key in plot_info.keys()] 
+#names=[ plot_info[key]['label'] for key in plot_info.keys()] 
 matplotlib.rc('xtick', labelsize=8)
 fig = pl.figure(figsize=(6,8))
 pl.subplots_adjust(right = 0.92, top = 0.97, left =0.1, bottom=0.1,

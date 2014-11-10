@@ -39,14 +39,15 @@ plot_figs(new_arr_list[3],new_arr_list[1], new_arr_list[0],  new_arr_list[2], 1,
 new_arr_list = get_data(good_2com, array_list)
 plot_figs(new_arr_list[3],new_arr_list[1], new_arr_list[0],  new_arr_list[2], 4, fig, nrow_plots, ncol_plots, title="2com", xlim=(0.0, 10.0), xlabel='r$_{tot, hl}$ [arcsec]', xbin=np.arange(0,10.01, 0.5))
 
-new_arr_list = get_data(n8, array_list)
-plot_figs(new_arr_list[3],new_arr_list[1], new_arr_list[0],  new_arr_list[2], 7, fig, nrow_plots, ncol_plots, title="n8", xlim=(0.0, 10.0), xlabel='r$_{tot, hl}$ [arcsec]', xbin=np.arange(0,10.01, 0.5))
+if 0:
+    new_arr_list = get_data(n8, array_list)
+    plot_figs(new_arr_list[3],new_arr_list[1], new_arr_list[0],  new_arr_list[2], 7, fig, nrow_plots, ncol_plots, title="n8", xlim=(0.0, 10.0), xlabel='r$_{tot, hl}$ [arcsec]', xbin=np.arange(0,10.01, 0.5))
 
-new_arr_list = get_data(prob_2com, array_list)
-plot_figs(new_arr_list[3],new_arr_list[1], new_arr_list[0],  new_arr_list[2], 10, fig, nrow_plots, ncol_plots, title="prob 2com", xlim=(0.0, 10.0), xlabel='r$_{tot, hl}$ [arcsec]', xbin=np.arange(0,10.01, 0.5))
+    new_arr_list = get_data(prob_2com, array_list)
+    plot_figs(new_arr_list[3],new_arr_list[1], new_arr_list[0],  new_arr_list[2], 10, fig, nrow_plots, ncol_plots, title="prob 2com", xlim=(0.0, 10.0), xlabel='r$_{tot, hl}$ [arcsec]', xbin=np.arange(0,10.01, 0.5))
 
-new_arr_list = get_data(bad, array_list)
-plot_figs(new_arr_list[3],new_arr_list[1], new_arr_list[0],  new_arr_list[2], 13, fig, nrow_plots, ncol_plots, title="bad", xlim=(0.0, 10.0), xlabel='r$_{tot, hl}$ [arcsec]', xbin=np.arange(0,10.01, 0.5))
+    new_arr_list = get_data(bad, array_list)
+    plot_figs(new_arr_list[3],new_arr_list[1], new_arr_list[0],  new_arr_list[2], 13, fig, nrow_plots, ncol_plots, title="bad", xlim=(0.0, 10.0), xlabel='r$_{tot, hl}$ [arcsec]', xbin=np.arange(0,10.01, 0.5))
 
 
 pl.savefig('rtot_bt.eps', bbox_inches='tight')
