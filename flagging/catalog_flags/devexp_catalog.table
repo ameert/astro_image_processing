@@ -1,26 +1,26 @@
-Trust Total and Component Magnitudes and Sizes:45.353216
-	Two-Component Galaxies:45.353216
-		No Flags:36.839108
-		Good Ser, Good Exp (Some Flags):7.111590
-		Flip Components, n$_{Ser}<$2:1.402518
-Trust Total Magnitudes and Sizes Only:49.821387
-	Bulge Galaxies:14.785858
-		No Exp Component, n$_{Ser}>=$2:4.659606
-		Ser Dominates Always, n$_{Ser}>=$2:10.126252
-	Disk Galaxies:28.614836
-		No Ser Component:25.148273
+Trust Total and Component Magnitudes and Sizes:42.222709
+	Two-Component Galaxies:42.222709
+		No Flags:30.151836
+		Good Ser, Good Exp (Some Flags):10.701453
+		Flip Components, n$_{Ser}<$2:1.369420
+Trust Total Magnitudes and Sizes Only:52.443784
+	Bulge Galaxies:14.635572
+		No Exp Component, n$_{Ser}>=$2:4.646336
+		Ser Dominates Always, n$_{Ser}>=$2:9.989235
+	Disk Galaxies:28.461717
+		No Ser Component:25.040628
 		No Exp, n$_{Ser}<$2, Flip Components:0.000000
 		Ser Dominates Always, n$_{Ser}<$2:0.000000
-		Exp Dominates Always:3.466563
+		Exp Dominates Always:3.421090
 		Parallel Components:0.000000
-	Problemmatic Two-Component Galaxies:6.420693
-		Ser Outer Only:5.441151
-		Exp Inner Only:0.518844
-		Good Ser, Bad Exp, B/T$>=$0.5:0.011480
-		Bad Ser, Good Exp, B/T$<$0.5:0.449217
-Bad Total Magnitudes and Sizes:4.825397
-	Centering Problems:0.682399
-	Ser Component Contamination by Neighbors or Sky:1.265651
-	Exp Component Contamination by Neighbors or Sky:2.783717
-	Bad Ser and Bad Exp Components:0.188155
-	Galfit Failure:0.214396
+	Problemmatic Two-Component Galaxies:9.346495
+		Ser Outer Only:5.288778
+		Exp Inner Only:0.513626
+		Good Ser, Bad Exp, B/T$>=$0.5:0.011331
+		Bad Ser, Good Exp, B/T$<$0.5:0.884271
+Bad Total Magnitudes and Sizes:5.333506
+	Centering Problems:0.599056
+	Ser Component Contamination by Neighbors or Sky:1.250742
+	Exp Component Contamination by Neighbors or Sky:2.788339
+	Bad Ser and Bad Exp Components:0.176824
+	Galfit Failure:0.248687

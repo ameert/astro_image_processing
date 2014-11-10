@@ -8,7 +8,7 @@ from pylab import rcParams
 from matplotlib import rc
 
 rc('text', usetex=True)
-fsize = 8
+fsize = 9
 
 cursor = mysql_connect('catalog','pymorph','pymorph','')
 
@@ -77,25 +77,25 @@ def do_band(gal, band, pos):
     zmin, zmax = make_panel(data, pticks, color = cm.gray_r, zmin=2.0*np.nanmin(data)-np.percentile(np.extract(np.isnan(data)==0,data), 95.0))
     pl.title('{band}-band'.format(band=band),fontsize=12)
     ax = pl.gca()
-    pl.text(0.05, 0.9, 'm$_{petro, %s}$=%3.1f' %(band,petromag), 
+    pl.text(0.05, 0.9, 'm$_{petro}$=%3.1f' %(petromag), 
             fontsize=fsize, 
             horizontalalignment='left', verticalalignment='center',
             transform=ax.transAxes)
-    pl.text(0.95, 0.9, 'r$_{petro, %s}$=%4.2f"' %(band,petrorad), 
+    pl.text(0.95, 0.9, 'r$_{petro}$=%4.2f"' %(petrorad), 
             fontsize=fsize, 
             horizontalalignment='right', verticalalignment='center',
             transform=ax.transAxes)
     pl.text(0.05, 0.1, 'galnum=%s' %gal, fontsize=fsize, 
             horizontalalignment='left', verticalalignment='center',
             transform=ax.transAxes)
-    pl.text(0.95, 0.1, 'P(Early)=%03.2f"' %(probaE), 
+    pl.text(0.95, 0.1, 'P(Early)=%03.2f' %(probaE), 
             fontsize=fsize, 
             horizontalalignment='right', verticalalignment='center',
             transform=ax.transAxes)
    
     return
 
-etype = 'late'
+etype = 'early'
 all_gals = {'early': [21399 ,    57356 ,    107851 ,   
                       185809 ,   193875 , 257306 ,   260211 ,   
                       267820 ,    470073 ,   

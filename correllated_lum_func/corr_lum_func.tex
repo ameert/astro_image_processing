@@ -1,0 +1,91 @@
+\documentclass[10pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[dvips]{graphicx}
+
+
+%opening
+\title{Correlated Luminosity Function}
+\author{Alan}
+\date{23 Oct 2014}
+
+
+\begin{document}
+\maketitle
+
+I now have code to select all neighboring galaxies within a given radius on the sky from the SDSS CasJobs database. The data are from DR10.
+I have downloaded this data for a small subset of galaxies (about 10,000) located at $0.500\leq z \leq 0.505$. For each galaxy, I search out to 
+3 arc-minutes. For 10,000 galaxies, this returns about 2 million objects, or about 200 neighbors per galaxy. I collect the PetroMag, CModelMag, ModelMag, 
+DevMag, ExpMag, and Fracdev for each galaxy in the g, r, and i bands.
+
+Using the separation and the redshift, I calculate the projected physical separation in kpc assuming the neighbor is at the same redshift as the target 
+galaxy. For the plots below, I separate into 4 bins: 
+\begin{enumerate}
+ \item $100\leq distance \leq 300$ kpc
+ \item $300\leq distance \leq 500$ kpc
+ \item $500\leq distance \leq 700$ kpc
+ \item $700\leq distance \leq 900$ kpc
+\end{enumerate}
+I plot the distribution of magnitudes for the g (in green), r (in red), and i (in black) bands for the CMASS galaxies (the darker lines) and for the blank
+sky patches (the lighter lines). The difference is easiest to see in the i-band, but it appears that the distribution is shifted toward brighter magnitudes
+for the CMASS galaxies relative to the blank sky (the darker black line is above the light black line to the left of the maximum and below to the right 
+of the maximum). There is also a second peak around 24-25 magnitude. This is near the detection limit. I am not sure what these objects are yet.
+
+
+\begin{figure}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_100_appmag_dist.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_300_appmag_dist.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_500_appmag_dist.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_700_appmag_dist.eps}
+\caption{Appmag distribution using all primary objects and random sky locations 
+(ie all stars and galaxies, blank sky positions are not centered on an object).}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_100_absmag.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_300_absmag.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_500_absmag.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_700_absmag.eps}
+\caption{Absmag distribution using all primary objects and random sky locations 
+(ie all stars and galaxies, blank sky positions are not centered on an object).}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_100_lum_func.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_300_lum_func.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_500_lum_func.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_700_lum_func.eps}
+\caption{Luminosity function using all primary objects and random sky locations 
+(ie all stars and galaxies, blank sky positions are not centered on an object).}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_100_appmag_dist.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_300_appmag_dist.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_500_appmag_dist.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_700_appmag_dist.eps}
+\caption{Appmag distribution using only primary Galaxies and random sky locations 
+(ie only galaxies, blank sky positions are not centered on an object).}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_100_absmag.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_300_absmag.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_500_absmag.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_700_absmag.eps}
+\caption{Absmag distribution using only primary Galaxies and random sky locations 
+(ie only galaxies, blank sky positions are not centered on an object).}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_100_lum_func.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_300_lum_func.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_500_lum_func.eps}
+ \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_700_lum_func.eps}
+\caption{Luminosity function using only primary Galaxies and random sky locations 
+(ie only galaxies, blank sky positions are not centered on an object).}
+\end{figure}
+
+
+\end{document}

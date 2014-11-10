@@ -23,11 +23,21 @@ from match_query_functions import *
 def get_chunk(cursor, chunksize, chunknum):
     """returns a chunk of objects for the cone search. This must be done in chuncks to aoid overfilling the casjobs mydb storage space"""
     
-    cmd = """select thing_id, plate, mjd, fibre, zspec from claudia.claudia_values where zspec between 0.50 and 0.505 
+    cmd = """select thing_id, plate, mjd, fibre, zspec from claudia_values where zspec between 0.50 and 0.505 
 order by thing_id limit {offset},{chunksize};""".format(offset = max((chunknum-1)*chunksize,0), chunksize=chunksize)
 
 
     chunkdata = cursor.get_data_dict(cmd, ['thing_id', 'plate','mjd','fiber','zspec'], [int, int, int, int, float])
+    return chunkdata
+
+def get_chunk_blanksky(cursor, chunksize, chunknum):
+    """returns a chunk of objects for the cone search. This must be done in chuncks to aoid overfilling the casjobs mydb storage space"""
+    
+    cmd = """select thing_id, zspec, ra_gal, dec_gal from claudia_blanksky where zspec between 0.50 and 0.505 
+order by thing_id limit {offset},{chunksize};""".format(offset = max((chunknum-1)*chunksize,0), chunksize=chunksize)
+
+
+    chunkdata = cursor.get_data_dict(cmd, ['thing_id', 'zspec','ra_gal','dec_gal'], [int, float, float, float])
     return chunkdata
 
 
@@ -45,7 +55,7 @@ def casjobs(gal_cat, casjobs_info):
                 'in_tablename':"in_"+full_jobname,
                 'casjobs':casjobs,
                 'chunknum':0,
-                'chunk':10#10000
+                'chunk':1000
                 }
     
     print 'CUT PIPE: Preparing mydb output tables'
@@ -60,9 +70,10 @@ def casjobs(gal_cat, casjobs_info):
     exec_cmd('{casjobs} -j '.format(**job_info))
     
     exec_cmd('{casjobs} execute -t "mydb" -n "create input table" "CREATE table {in_tablename} (thing_id int, plate smallint, mjd int, fiber int, zspec float);"'.format(**job_info))
+#    exec_cmd('{casjobs} execute -t "mydb" -n "create input table" "CREATE table {in_tablename} (thing_id int, zspec float, ra_gal float, dec_gal float);"'.format(**job_info))
     exec_cmd('{casjobs} -j '.format(**job_info))
 
-    cursor = mysql_connect('claudia',mysql_params['user'],mysql_params['pwd'])
+    cursor = mysql_connect('catalog',mysql_params['user'],mysql_params['pwd'])
 
     while True:
         job_info['chunknum']+=1
@@ -107,19 +118,17 @@ def casjobs(gal_cat, casjobs_info):
         #os.system('rm %s' %down_file)
         if chunkdata['thing_id'].size<job_info['chunk']:
             break #because we must be at the end of the list
-        if job_info['chunknum']>2:
-            break
     return 0
  
 if __name__ == "__main__":
     from astro_image_processing.user_settings import casjobs_info
 
-    casjobs_info.update({ 'cas_jar_path':'/home/alan/git_projects/astro_image_processing/casjobs_query/casjobs.jar',
-                          'jobname':'test_name',
+    casjobs_info.update({ 'cas_jar_path':'/home/ameert/git_projects/astro_image_processing/casjobs_query/casjobs.jar',
+                          'jobname':'correlation_lum_galaxy',
                           'search_target':'DR10'})
-    gal_cat = {'filename':'correlated_sample_raw.cat',
-               'data_dir':'/home/alan/testdir/',
-               'out_file':'correlated_sample.cat'
+    gal_cat = {'filename':'correlated_sample_raw_galaxy.cat',
+               'data_dir':'/home/ameert/claudia/data/',
+               'out_file':'correlated_sample_galaxy.cat'
                }
 
     casjobs(gal_cat, casjobs_info)

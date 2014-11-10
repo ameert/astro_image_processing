@@ -13,13 +13,15 @@ def loadnames(infile):
     return names
 
 
-def check_done(incat, outcat, doneness= 0.05):
+def check_done(incat, outcat):
     indat = loadnames(incat)
-    try:
-        outfile = open(outcat)
-        goodness = 1
+    num_to_run = len(indat)
+    goodness = 1
+    if num_to_run>0:
+        try:
+            outfile = open(outcat)
 
-        if len(indat) > 0:
+
             try:
                 outstr = outfile.read()
                 outfile.close()
@@ -27,20 +29,32 @@ def check_done(incat, outcat, doneness= 0.05):
                 goodness = 0
 
             if goodness: #If we haven't screwed up yet, check completeness
-                count = 0
+                fitcount = 0
                 for line in indat:
-                    if line not in outstr:
-                        count +=1
+                    if line in outstr:
+                        fitcount +=1
 
-                print "len = ", count
+                print "len = ", fitcount
 
-                if count/float(len(indat)) > .05:
-                    goodness = 0
-                else:
-                    goodness = 1
-    except IOError:
-        goodness = 0
+            complete_prop = float(fitcount)/float(num_to_run)
+
+            if num_to_run < 10:
+                prop = 0.0
+            elif num_to_run < 25:
+                prop = 0.7
+            elif num_to_run < 50:
+                prop = 0.9
+            else:
+                prop = 0.95
+
+            if complete_prop < prop:
+                goodness = 0
+            else:
+                goodness = 1
+
+
+        except IOError:
+            goodness = 0
     return goodness
-
 
     
