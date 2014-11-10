@@ -1,5 +1,5 @@
 from numpy import *
-from mysql_class import *
+from astro_image_processing.mysql import *
 
 from flag_analysis import get_percent
 from flag_configuration import uflag_dict
@@ -89,12 +89,14 @@ def model_table(flags, model_type):
                     "\t\tExp Inner Only", 
                     "\t\tGood Ser, Bad Exp, B/T$>=$0.5", 
                     "\t\tBad Ser, Good Exp, B/T$<$0.5", 
+                    "\t\tTiny Bulge, otherwise good",
                     "Bad Total Magnitudes and Sizes", 
                     "\tCentering Problems",   
                     "\tSer Component Contamination by Neighbors or Sky",  
                     "\tExp Component Contamination by Neighbors or Sky", 
                     "\tBad Ser and Bad Exp Components",     
-                    "\tGalfit Failure"    
+                    "\tGalfit Failure",
+                    "\tPolluted or Fractured"
                     ]
 
     cats_to_plot = [(a, '%f' %get_percent(np.where(flags&2**uflag_dict[a]>0,1,0))) for a in cats_to_plot]
@@ -108,13 +110,13 @@ def model_table(flags, model_type):
     return
 
 
-cmd = """select a.flag from {table} as a, classify_test as b where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = '{uflag_ftype}' and b.galaxy = a.galcount and b.band='r' order by a.galcount;""".format(table = 'Flags_optimize', band='r', model='serexp', uflag_ftype='u')
+cmd = """select a.flag from {table} as a, classify_test as b where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = '{uflag_ftype}' and b.galaxy = a.galcount and b.band='r' order by a.galcount;""".format(table = 'Flags_catalog', band='r', model='serexp', uflag_ftype='u')
 
 flags = info_dict['cursor'].get_data(cmd)
 flags = np.array(flags, dtype = int)
 
 model_table(flags, 'Test')
-
+sys.exit()
 for model in ['dev','ser','devexp','serexp']:
     info_dict['model'] = model
     cmd = """select a.flag from {table} as a where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = '{uflag_ftype}' order by a.galcount;""".format(table = 'Flags_optimize', band=info_dict['band'], model=info_dict['model'], uflag_ftype=info_dict['uflag_ftype'])
