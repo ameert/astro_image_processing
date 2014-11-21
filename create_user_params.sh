@@ -10,7 +10,7 @@ cd ${gitdir};
 #sed $sed_str <$gitdir/src/mysql/load_CAMEO.raw >$gitdir/src/mysql/load_CAMEO.mysql
 
 pathfile=${gitdir}'/user_settings.py';
-
+echo 'Building pathfile: $pathfile';
 
 ############## SQL SETTINGS ###############################
 
