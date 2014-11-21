@@ -176,17 +176,18 @@ cmd = """select a.flag from {table} as a, classify_test as b where a.flag >=0 an
 flags = info_dict['cursor'].get_data(cmd)
 flags = np.array(flags, dtype = int)
 
-model_table(flags, 'Test')
-sys.exit()
+#model_table(flags, 'Test')
+
 for model in ['dev','ser','devexp','serexp']:
-    break
-    info_dict['model'] = model
-    cmd = """select a.flag from {table} as a where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = '{uflag_ftype}' order by a.galcount;""".format(table = 'Flags_catalog', band=info_dict['band'], model=info_dict['model'], uflag_ftype=info_dict['uflag_ftype'])
+    for band in 'gri':
+        info_dict['model'] = model
+        info_dict['band']=band
+        cmd = """select a.flag from {table} as a where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = '{uflag_ftype}' order by a.galcount;""".format(table = 'Flags_catalog', band=info_dict['band'], model=info_dict['model'], uflag_ftype=info_dict['uflag_ftype'])
 
-    flags = info_dict['cursor'].get_data(cmd)
-    flags = np.array(flags, dtype = int)
+        flags = info_dict['cursor'].get_data(cmd)
+        flags = np.array(flags, dtype = int)
 
-    model_table(flags, info_dict['model'])
+        model_table(flags, info_dict['model'])
 
 write_full_table_band('serexp', ['g','r','i'])
 #write_full_table(['dev','ser','devexp', 'serexp', 'Test'])
