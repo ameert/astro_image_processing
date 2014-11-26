@@ -56,7 +56,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
 
     pl.title(title)
     pl.xlabel('z')
-    pl.ylabel('n(z) [mpc$^{-1}$]')
+    pl.ylabel('n(z) [mpc$^{-3}$]')
     #pl.xlim((0.4, 0.6))
     #pl.ylim((0,0.05))
     ax = pl.gca()
@@ -85,7 +85,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     pl.xlim((-13.5,-25.5))
     #pl.ylim((-6.0,0.0))
     pl.xlabel('M$_{petro}$')
-    pl.ylabel('log(n)  [mpc$^{-1}$]')
+    pl.ylabel('log(n)  [mpc$^{-3}$]')
     
     ax = pl.gca()
     ax.set_yscale('log')
@@ -116,7 +116,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     pl.xlim((-13.5,-25.5))
     #pl.ylim((10**-7.0,.1))
     pl.xlabel('M$_{petro}$')
-    pl.ylabel('log(n)  [mpc$^{-1}$]')
+    pl.ylabel('log(n)  [mpc$^{-3}$]')
     
     ax = pl.gca()
     ax.set_yscale('log')
@@ -144,7 +144,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
 
     pl.title(title)
     pl.xlabel('m$_{petro}$')
-    pl.ylabel('n(m$_{petro}$)  [mpc$^{-1}$]')
+    pl.ylabel('n(m$_{petro}$)  [mpc$^{-3}$]')
     
     ax = pl.gca()
     #plot_set.set_plot(ax)
@@ -168,7 +168,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     pl.xlim((0,8.5))
     #pl.ylim((0,.15))
     pl.xlabel('r$_{hl}$ [arcsec]')
-    pl.ylabel('n(r$_{hl}$)  [mpc$^{-1}$]')
+    pl.ylabel('n(r$_{hl}$)  [mpc$^{-3}$]')
     
     ax = pl.gca()
     #plot_set.set_plot(ax)
@@ -189,7 +189,7 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     pl.xlim((18,24.5))
     #pl.ylim((0,0.1))
     pl.xlabel('$\mu_{hl}$')
-    pl.ylabel('n($\mu_{hl}$)  [mpc$^{-1}$]')
+    pl.ylabel('n($\mu_{hl}$)  [mpc$^{-3}$]')
     
     ax = pl.gca()
     #plot_set.set_plot(ax)
@@ -197,9 +197,17 @@ def plot_sample(z, absMag, appMag, rhl_arcsec, surf_bright, V_max,
     pl.close(fig)
     return
 
-def get_alldat(band, distance, table):
-    cmd = 'select zgal, 1.0 as Vmax, PetroMag_{band} - extinction_{band} - dismod, petromag_{band} - extinction_{band}, 1.0 as petroR50_{band}, petromag_{band}  from catalog.corr_lum_func_{table} as b where kpc_per_arcsec*distance*60.0 between {dislow} and {dishigh};'.format(band=band, dislow=distance[0], dishigh=distance[1], table=table)
+def get_alldat(band, distance, table, typesearch = 'all'):
+    if typesearch=='all':
+        type_trim=''
+    elif typesearch=='star':
+        type_trim=' and type=6 '
+    elif typesearch=='galaxy':
+        type_trim=' and type=3 '
 
+    cmd = 'select zgal, 1.0 as Vmax, PetroMag_{band} - extinction_{band} - dismod, petromag_{band} - extinction_{band}, 1.0 as petroR50_{band}, petromag_{band}  from catalog.corr_lum_func_{table} as b where kpc_per_arcsec*distance*60.0 between {dislow} and {dishigh} {type_trim};'.format(band=band, dislow=distance[0], dishigh=distance[1], table=table,type_trim=type_trim)
+
+    print cmd
     z, V_max, absmag, petromag, halflight_rad,ucorr_mag = cursor.get_data(cmd)
 
     z1 = np.array(z, dtype=float)
@@ -217,72 +225,37 @@ dba = 'catalog'
 usr = 'pymorph'
 pwd = 'pymorph'
 cursor = mysql_connect(dba, usr, pwd)
+colors = {'i':('#000000','#B2B2B2'),'r':('#FF0000','#FF8080'), 
+          'g':('#00CC00','#66E066')}
 
 
-for distance in [(100,300),(300,500),(500,700),(700, 900)]:
-    title = '%d$\leq distance \leq$ %d kpc' %(distance[0], distance[1])
-    z = []
-    absmag = []
-    petromag = []
-    halflight_rad =[]
-    surf_bright = []
-    V_max = []
+for band in 'gri':
+    for distance in [(a,a+200) for a in range(100,4000,200)]:
+        title = '%d$\leq distance \leq$ %d kpc' %(distance[0], distance[1])
+        z = []
+        absmag = []
+        petromag = []
+        halflight_rad =[]
+        surf_bright = []
+        V_max = []
 
-    vol_corr = 4.0*np.pi/3.0*(distance[1]**2 - distance[0]**2)**1.5 / 1.0e9 #in mpc
-    print "distance, vol_corr"
-    print distance, vol_corr
+        vol_corr = 4.0*np.pi/3.0*(distance[1]**2 - distance[0]**2)**1.5 / 1.0e9 #in mpc
+        print "distance, vol_corr"
+        print distance, vol_corr
 
 
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('g', distance, 'galaxy')
-    z.append(ztmp)
-    absmag.append(abtmp)
-    petromag.append(petrotmp)
-    halflight_rad.append(hradtmp)
-    surf_bright.append(sbtmp)
-    #V_max.append(vmaxtmp)
-    V_max.append(np.ones_like(petrotmp)*vol_corr)
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('r', distance, 'galaxy')
-    z.append(ztmp)
-    absmag.append(abtmp)
-    petromag.append(petrotmp)
-    halflight_rad.append(hradtmp)
-    surf_bright.append(sbtmp)
-    #V_max.append(vmaxtmp)
-    V_max.append(np.ones_like(petrotmp)*vol_corr)
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('i', distance, 'galaxy')
-    z.append(ztmp)
-    absmag.append(abtmp)
-    petromag.append(petrotmp)
-    halflight_rad.append(hradtmp)
-    surf_bright.append(sbtmp)
-    V_max.append(np.ones_like(petrotmp)*vol_corr)
-    #V_max.append(vmaxtmp)
+        for choice in ['CMASS',]:#, 'CMASS_blanks']:
+            for typesearch in ['all','galaxy','star']:
+                ztmp1, vmaxtmp1, petrotmp1, hradtmp1, abtmp1, sbtmp1  = get_alldat(band, distance, choice,typesearch = typesearch)
+                ztmp2, vmaxtmp2, petrotmp2, hradtmp2, abtmp2, sbtmp2  = get_alldat(band, distance, choice+"_blanks",typesearch = typesearch)
+                z.append(np.concatenate((ztmp1, ztmp2)))
+                absmag.append(np.concatenate((abtmp1, abtmp2)))
+                petromag.append(np.concatenate((petrotmp1, petrotmp2)))
+                halflight_rad.append(np.concatenate((hradtmp1, hradtmp2)))
+                surf_bright.append(np.concatenate((sbtmp1, sbtmp2)))
+                V_max.append(np.concatenate((np.ones_like(petrotmp1)*vol_corr,np.ones_like(petrotmp2)*vol_corr*-1.0)))
+                #V_max.append(vmaxtmp)
 
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('g', distance, 'galaxy_blanks')
-    z.append(ztmp)
-    absmag.append(abtmp)
-    petromag.append(petrotmp)
-    halflight_rad.append(hradtmp)
-    surf_bright.append(sbtmp)
-    V_max.append(np.ones_like(petrotmp)*vol_corr)
-    #V_max.append(vmaxtmp)
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('r', distance, 'galaxy_blanks')
-    z.append(ztmp)
-    absmag.append(abtmp)
-    petromag.append(petrotmp)
-    halflight_rad.append(hradtmp)
-    surf_bright.append(sbtmp)
-    V_max.append(np.ones_like(petrotmp)*vol_corr)
-    #V_max.append(vmaxtmp)
-    ztmp, vmaxtmp, petrotmp, hradtmp, abtmp, sbtmp  = get_alldat('i', distance, 'galaxy_blanks')
-    z.append(ztmp)
-    absmag.append(abtmp)
-    petromag.append(petrotmp)
-    halflight_rad.append(hradtmp)
-    surf_bright.append(sbtmp)
-    #V_max.append(vmaxtmp)
-    V_max.append(np.ones_like(petrotmp)*vol_corr)
+        print z, absmag, petromag, halflight_rad, surf_bright, V_max
 
-    print z, absmag, petromag, halflight_rad, surf_bright, V_max
-
-    plot_sample(z, absmag, petromag, halflight_rad, surf_bright, V_max, plot_stem = './corr_lum_all_galaxy_%s' %distance[0], colors = ['#00CC00','#FF0000','#000000','#66E066','#FF8080','#B2B2B2'], line_styles=['solid','solid','solid','solid','solid','solid'], title=title)
+        plot_sample(z, absmag, petromag, halflight_rad, surf_bright, V_max, plot_stem = './plots/corr_lum_all_%sband_%s' %(band,distance[0]), colors = [colors['i'][0],colors['r'][0],colors['g'][0],colors['i'][1],colors['r'][1],colors['g'][1]], line_styles=['solid','solid','solid','solid','solid','solid'], title=title)

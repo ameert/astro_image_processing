@@ -173,8 +173,8 @@ def model_table(flags, model_type):
 
 cmd = """select a.flag from {table} as a, classify_test as b where a.flag >=0 and a.band = '{band}' and a.model = '{model}' and a.ftype = '{uflag_ftype}' and b.galaxy = a.galcount and b.band='r' order by a.galcount;""".format(table = 'Flags_catalog', band='r', model='serexp', uflag_ftype='u')
 
-flags = info_dict['cursor'].get_data(cmd)
-flags = np.array(flags, dtype = int)
+#flags = info_dict['cursor'].get_data(cmd)
+#flags = np.array(flags, dtype = int)
 
 #model_table(flags, 'Test')
 
@@ -189,6 +189,9 @@ for model in ['dev','ser','devexp','serexp']:
 
         model_table(flags, info_dict['model'])
 
+write_full_table_band('dev', ['g','r','i'])
+write_full_table_band('ser', ['g','r','i'])
+write_full_table_band('devexp', ['g','r','i'])
 write_full_table_band('serexp', ['g','r','i'])
 #write_full_table(['dev','ser','devexp', 'serexp', 'Test'])
 

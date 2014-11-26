@@ -3,89 +3,263 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage[dvips]{graphicx}
-
+\usepackage{comment}
 
 %opening
 \title{Correlated Luminosity Function}
 \author{Alan}
-\date{23 Oct 2014}
+\date{11 Nov 2014}
 
 
 \begin{document}
 \maketitle
 
-I now have code to select all neighboring galaxies within a given radius on the sky from the SDSS CasJobs database. The data are from DR10.
-I have downloaded this data for a small subset of galaxies (about 10,000) located at $0.500\leq z \leq 0.505$. For each galaxy, I search out to 
-3 arc-minutes. For 10,000 galaxies, this returns about 2 million objects, or about 200 neighbors per galaxy. I collect the PetroMag, CModelMag, ModelMag, 
+I have downloaded this data for a small subset of galaxies (about 10,000) located at $0.500\leq z \leq 0.505$ from DR10. For each galaxy, I search out to 
+12 arc-minutes. For 10,000 galaxies, this returns about 30 million objects, or about 3000 neighbors per galaxy. I collect the PetroMag, CModelMag, ModelMag, 
 DevMag, ExpMag, and Fracdev for each galaxy in the g, r, and i bands.
 
 Using the separation and the redshift, I calculate the projected physical separation in kpc assuming the neighbor is at the same redshift as the target 
-galaxy. For the plots below, I separate into 4 bins: 
-\begin{enumerate}
- \item $100\leq distance \leq 300$ kpc
- \item $300\leq distance \leq 500$ kpc
- \item $500\leq distance \leq 700$ kpc
- \item $700\leq distance \leq 900$ kpc
-\end{enumerate}
-I plot the distribution of magnitudes for the g (in green), r (in red), and i (in black) bands for the CMASS galaxies (the darker lines) and for the blank
-sky patches (the lighter lines). The difference is easiest to see in the i-band, but it appears that the distribution is shifted toward brighter magnitudes
-for the CMASS galaxies relative to the blank sky (the darker black line is above the light black line to the left of the maximum and below to the right 
-of the maximum). There is also a second peak around 24-25 magnitude. This is near the detection limit. I am not sure what these objects are yet.
+galaxy. For the plots below, I separate into bins of width 200 kpc, starting with the bin for separations of 100-300 kpc. I exclude the central region to
+avoid double-counting or deblending issues. 
+
+The SDSS provides a star-galaxy separation for each object based on its photometric properties. This allows the neighbors to be view in several ways. We 
+can compare all primary objects (i.e. stars+galaxies). We can also separately compare the galaxies only or the stars only. We would expect the stars to 
+have no excess around CMASS galaxies relative to random sky patches. If this is violated, it can be because of one of multiple reasons. These reasons 
+include some selection effects. CMASS galaxies could be in fields with different star density than the average location in SDSS, which could have made identification of the CMASS galaxy easier. The most extreme example of this is that there are few/no CMASS galaxies near the galactic plane because we cannot see through the disk of our galaxy. However, in the plane of the galaxy the star density is quite high, certainly higher than near the galactic poles. 
+
+A second effect could be that CMASS neighbor galaxies are mis-identified as ``stars'' by the star-galaxy separation algorithm because the colors of
+these high-redshift galaxies do not appear similar to the colors of galaxies in the SDSS main galaxy sample. The unusual colors could be mis-interpreted as stars if the star-galaxy separation is optimized for galaxies near z$=$0.1 rather than z$\sim$0.5.
+
+These two effects should affect the luminosity distribution differently. The first effect (star density correlating with CMASS galaxies) would naievely be expected to push up the incidence of stars in the blank-sky patches. The second effect (neighbor mis-indentification) would increase the incidence of stars
+near CMASS galaxies relative to the blank sky patches.
+
+ 
+In the plots below, I plot the distribution of magnitudes for the g-, r-, and i- bands in separate plots. g-band is plotted in the left column, r-band is plotted in the center, and i-band is plotted in the righ column. The number of neighbors around CMASS galaxies is plotted as darker lines and the density at the blank sky is plotted in lighter colors. The colors show different divisions of the catalog: all Primary objects (stars+galaxies) in black, galaxies only   
+in  red, and stars only in green. 
+
+Each plot is normalized by the volume contained in the intersection of the annulus (a hollow cylinder) with the sphere of radius $R_b$ surrounding the target galaxy. This volume is 
+\begin{equation}
+V= \dfrac{4\pi}{3}(R_b^2 - R_a^2)^{3/2} [\mathrm{Mpc}^3]
+\end{equation}
+where $R_b$ is the outer radius of the annulus (and the sphere), and $R_a$ is the inner radius of the annulus. 
+A weight of 1/$V$ is applied to each galaxy to account for the different volumes contained in each annulus. 
+Since this is constant across all galaxies in a given annulus, it amounts to a scaling of the magnitude distribution.
+ 
+There is a peak in each distribution near 22 magnitudes. There is also a second peak in the distributions around 24-25 magnitude. 
+This is near the detection limit and may require more investigation.
 
 
 \begin{figure}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_100_appmag_dist.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_300_appmag_dist.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_500_appmag_dist.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_700_appmag_dist.eps}
-\caption{Appmag distribution using all primary objects and random sky locations 
-(ie all stars and galaxies, blank sky positions are not centered on an object).}
+\centering
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_700_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_900_appmag_dist.eps}
+\end{minipage}
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_700_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_900_appmag_dist.eps}
+\end{minipage}
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_700_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_900_appmag_dist.eps}
+\end{minipage}
+\caption{Appmag distribution using all primary objects(ie all stars and galaxies) (black line) 
+Only galaxies (red lines) and only stars (green lines).
+The lighter line in each color is the blank sky location.
+These measurements use random sky locations(blank sky positions are not centered on an object)
+The left column is for the g-band, center for the r-band and right for the i-band.
+}
 \end{figure}
 
 \begin{figure}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_100_absmag.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_300_absmag.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_500_absmag.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_700_absmag.eps}
-\caption{Absmag distribution using all primary objects and random sky locations 
-(ie all stars and galaxies, blank sky positions are not centered on an object).}
+\centering
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_1100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_1300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_1500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_1700_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_1900_appmag_dist.eps}
+\end{minipage}
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_1100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_1300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_1500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_1700_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_1900_appmag_dist.eps}
+\end{minipage}
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_1100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_1300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_1500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_1700_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_1900_appmag_dist.eps}
+\end{minipage}
+\caption{Appmag distribution using all primary objects(ie all stars and galaxies) (black line) 
+Only galaxies (red lines) and only stars (green lines).
+The lighter line in each color is the blank sky location.
+These measurements use random sky locations(blank sky positions are not centered on an object)
+The left column is for the g-band, center for the r-band and right for the i-band.
+}
 \end{figure}
 
 \begin{figure}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_100_lum_func.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_300_lum_func.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_500_lum_func.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_700_lum_func.eps}
-\caption{Luminosity function using all primary objects and random sky locations 
-(ie all stars and galaxies, blank sky positions are not centered on an object).}
+\centering
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_2100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_2300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_2500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_2700_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_2900_appmag_dist.eps}
+\end{minipage}
+ \begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_2100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_2300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_2500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_2700_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_2900_appmag_dist.eps}
+\end{minipage}
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_2100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_2300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_2500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_2700_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_2900_appmag_dist.eps}
+\end{minipage}
+\caption{Appmag distribution using all primary objects(ie all stars and galaxies) (black line) 
+Only galaxies (red lines) and only stars (green lines).
+The lighter line in each color is the blank sky location.
+These measurements use random sky locations(blank sky positions are not centered on an object)
+The left column is for the g-band, center for the r-band and right for the i-band.
+}
 \end{figure}
 
 \begin{figure}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_100_appmag_dist.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_300_appmag_dist.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_500_appmag_dist.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_700_appmag_dist.eps}
-\caption{Appmag distribution using only primary Galaxies and random sky locations 
-(ie only galaxies, blank sky positions are not centered on an object).}
+\centering
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_3100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_3300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_3500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_3700_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_3900_appmag_dist.eps}
+\end{minipage}
+ \begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_3100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_3300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_3500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_3700_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_3900_appmag_dist.eps}
+\end{minipage}
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_3100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_3300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_3500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_3700_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_3900_appmag_dist.eps}
+\end{minipage}
+\caption{Appmag distribution using all primary objects(ie all stars and galaxies) (black line) 
+Only galaxies (red lines) and only stars (green lines).
+The lighter line in each color is the blank sky location.
+These measurements use random sky locations(blank sky positions are not centered on an object)
+The left column is for the g-band, center for the r-band and right for the i-band.
+}
+\end{figure}
+
+\end{document}
+
+\begin{figure}
+\centering
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_700_appmag_dist.eps}
+\end{minipage}
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_700_appmag_dist.eps}
+\end{minipage}
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_100_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_300_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_500_appmag_dist.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_700_appmag_dist.eps}
+\end{minipage}
+\caption{Appmag distribution using all primary objects(ie all stars and galaxies) (black line) 
+Only galaxies (red lines) and only stars (green lines).
+The lighter line in each color is the blank sky location centered on a random object.
+These measurements use random sky locations(blank sky positions are centered on an object)
+The left column is for the g-band, center for the r-band and right for the i-band.
+}
 \end{figure}
 
 \begin{figure}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_100_absmag.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_300_absmag.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_500_absmag.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_700_absmag.eps}
-\caption{Absmag distribution using only primary Galaxies and random sky locations 
-(ie only galaxies, blank sky positions are not centered on an object).}
+\centering
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_100_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_300_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_500_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_700_absmag.eps}
+\end{minipage}
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_100_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_300_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_500_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_700_absmag.eps}
+\end{minipage}
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_100_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_300_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_500_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_700_absmag.eps}
+\end{minipage}
+\caption{Absmag distribution using all primary objects(ie all stars and galaxies) (black line) 
+Only galaxies (red lines) and only stars (green lines).
+The lighter line in each color is the blank sky location.
+These measurements use random sky locations(blank sky positions are not centered on an object)
+The left column is for the g-band, center for the r-band and right for the i-band.
+}
 \end{figure}
 
+
 \begin{figure}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_100_lum_func.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_300_lum_func.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_500_lum_func.eps}
- \includegraphics[width=0.5\textwidth]{corr_lum_all_galaxy_700_lum_func.eps}
-\caption{Luminosity function using only primary Galaxies and random sky locations 
-(ie only galaxies, blank sky positions are not centered on an object).}
+\centering
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_100_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_300_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_500_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_gband_700_absmag.eps}
+\end{minipage}
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_100_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_300_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_500_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_rband_700_absmag.eps}
+\end{minipage}
+\begin{minipage}{0.32\textwidth}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_100_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_300_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_500_absmag.eps}
+ \includegraphics[width=\textwidth]{./plots/corr_lum_all_iband_700_absmag.eps}
+\end{minipage}
+\caption{Absmag distribution using all primary objects(ie all stars and galaxies) (black line) 
+Only galaxies (red lines) and only stars (green lines).
+The lighter line in each color is the blank sky location centered on a random object.
+These measurements use random sky locations(blank sky positions are centered on an object)
+The left column is for the g-band, center for the r-band and right for the i-band.
+}
 \end{figure}
+
 
 
 \end{document}
