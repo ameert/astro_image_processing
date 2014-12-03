@@ -27,22 +27,10 @@
 import numpy as np
 import pylab as pl
 import scipy as sc
-from astro_image_processing.mysql.mysql_class import *
+from astro_image_processing.mysql import *
 import os
 import sys
-
-this_dir = os.getcwd()
-
-dba = 'catalog'
-pwd = 'pymorph'
-usr = 'pymorph'
-
-cursor = mysql_connect(dba, usr, pwd)
-
-bands = 'i'
-#models = ['ser', 'serexp'] 
-models = ['ser'] 
-#models = ['exp','dev', 'ser', 'devexp', 'serexp', 'cmodel']
+ 
 
 def build_tables(bands, models, new_tablestem = 'band'):
     for band in bands:
@@ -50,7 +38,7 @@ def build_tables(bands, models, new_tablestem = 'band'):
     (galcount int primary key, 
     SexMag float default -999,  SexMag_err float default -999, 
     SexHrad float default -999,  SexSky  float default -999, 
-    num_targets int default -999, 
+    num_targets int default -999, num_neighborfit int default 0,
     C float default -999, C_err float default -999, 
     A float default -999, A_err float default -999,
     S float default -999, S_err float default -999,  
@@ -59,7 +47,7 @@ def build_tables(bands, models, new_tablestem = 'band'):
         print cmd
         cursor.execute(cmd)
 
-        cmd = 'insert into {band}_{new_tablestem}_fit (galcount) select galcount from claudia_CAST order by galcount;'.format(band=band, new_tablestem = new_tablestem)
+        cmd = 'insert into {band}_{new_tablestem}_fit (galcount) select galcount from CAST order by galcount;'.format(band=band, new_tablestem = new_tablestem)
         print cmd
         cursor.execute(cmd)
 
@@ -89,7 +77,7 @@ def build_tables(bands, models, new_tablestem = 'band'):
     Comments varchar(1000));""".format(band = band, model = model, new_tablestem=new_tablestem)
             print cmd
             cursor.execute(cmd)
-            cmd = """insert into {band}_{new_tablestem}_{model} (galcount) select galcount from claudia_CAST order by galcount;""".format(band = band, model = model, new_tablestem=new_tablestem)
+            cmd = """insert into {band}_{new_tablestem}_{model} (galcount) select galcount from CAST order by galcount;""".format(band = band, model = model, new_tablestem=new_tablestem)
             print cmd
             cursor.execute(cmd)
 
@@ -141,7 +129,7 @@ def load_fit_calc(bands, models, old_tablestem='raw_catalog_fits.full_dr7', new_
              cursor.execute(cmd)
 
              # now do SexSky, SexMag, and SexMagErr 
-             base_cmd = """update {band}_{new_tablestem}_fit as a, {old_tablestem}_{band}_{model} as b, claudia_CAST as c set {argument} where a.galcount = b.galcount and c.galcount = a.galcount {condition};"""
+             base_cmd = """update {band}_{new_tablestem}_fit as a, {old_tablestem}_{band}_{model} as b, CAST as c set {argument} where a.galcount = b.galcount and c.galcount = a.galcount {condition};"""
 
              cmd = base_cmd.format(band = band, model = model,old_tablestem = old_tablestem, 
                                        new_tablestem = new_tablestem,
@@ -215,7 +203,7 @@ def load_model_calc(bands, models, old_tablestem='raw_catalog_fits.full_dr7', ne
 
     for band in bands:
         for model in models:
-            base_cmd = """update {band}_{new_tablestem}_{model} as a, {old_tablestem}_{band}_{model} as b, claudia_CAST as c set {argument} where a.galcount = b.galcount and c.galcount = a.galcount {condition};"""
+            base_cmd = """update {band}_{new_tablestem}_{model} as a, {old_tablestem}_{band}_{model} as b, CAST as c set {argument} where a.galcount = b.galcount and c.galcount = a.galcount {condition};"""
             # now do rads
             for val in rads_to_copy:
                 if (model in ['dev','ser']) and ((val[0] == 'r_disk') or (val[0] == 'r_disk_err')):
@@ -278,9 +266,24 @@ def load_model_calc(bands, models, old_tablestem='raw_catalog_fits.full_dr7', ne
             
     return
 
-#build_tables(bands, models, new_tablestem='CMASS')
-#load_fit_uncalc(bands, models[:],old_tablestem='CMASS',new_tablestem='CMASS')
-#separate_CASGM(bands, ['ser'],old_tablestem='CMASS',new_tablestem='CMASS')
-#load_fit_calc(bands, models[:],old_tablestem='CMASS',new_tablestem='CMASS')
-load_model_uncalc(bands, models,old_tablestem='CMASS',new_tablestem='CMASS')
-load_model_calc(bands, models,old_tablestem='CMASS',new_tablestem='CMASS')
+
+
+if __name__ == "__main__":
+    dba = 'catalog'
+    pwd = 'pymorph'
+    usr = 'pymorph'
+
+    cursor = mysql_connect(dba, usr, pwd)
+    
+    bands = 'ig'
+    models = ['dev','ser', 'devexp','serexp'] 
+    
+    newstem = 'failed'
+    oldstem = 'raw_catalog_fits.failed_rerun'
+
+    #build_tables(bands, models, new_tablestem=newstem)
+    #load_fit_uncalc(bands,models[:],old_tablestem=oldstem,new_tablestem=newstem)
+    #separate_CASGM(bands, ['dev'],old_tablestem=oldstem,new_tablestem=newstem)
+    #load_fit_calc(bands, models[:],old_tablestem=oldstem,new_tablestem=newstem)
+    load_model_uncalc(bands, models,old_tablestem=oldstem,new_tablestem=newstem)
+    load_model_calc(bands, models,old_tablestem=oldstem,new_tablestem=newstem)
