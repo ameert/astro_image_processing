@@ -1,3 +1,10 @@
 *.txt
 *.csv
 *.config
+*.aux
+*.dvi
+*.log
+*.pdf
+*.ps
+*.backup
+*.bak
