@@ -94,9 +94,12 @@ def get_options_main():
     parser.add_option("-n","--model2", action="store", type="string",
                       dest="model2", default = None,
                       help="model being matched")
-    parser.add_option("-b","--band", action="store", type="string",
-                      dest="band", default = 'r',
-                      help="band being compared")
+    parser.add_option("-b","--band1", action="store", type="string",
+                      dest="band1", default = 'r',
+                      help="first band being compared")
+    parser.add_option("-d","--band2", action="store", type="string",
+                      dest="band2", default = 'r',
+                      help="second band being compared")
     parser.add_option("-x","--xchoice", action="store", type="string",
                       dest="xchoice", 
                       default = None,

@@ -7,9 +7,9 @@ from utilities import *
 from scipy import ndimage
 from test_hull import *
 
-def dense_plot(rmag,grcolor, contours = False, color = 'r'):
+def dense_plot(rmag,mcolor, contours = False, color = 'r'):
     extent = [(-26.0, -16.0),(-0.20, 1.2)]
-    H, xedges, yedges = np.histogram2d(rmag, grcolor, range = extent, 
+    H, xedges, yedges = np.histogram2d(rmag, mcolor, range = extent, 
                                    bins = (50,50))
 
     xval, yval = np.meshgrid(xedges, yedges)
@@ -30,28 +30,28 @@ a = open('color_file.npz')
 gal = np.load(a)
 print gal.keys()
 
-rmag = gal['petror']-gal['dismod']-gal['kr']
-grcolor = gal['petrog']-gal['kg'] - (gal['petror']-gal['kr'])
+rmag = gal['cmodelr']-gal['dismod']-gal['kr']
+mcolor = gal['modelg']-gal['kg'] - (gal['modelr']-gal['kr'])
 flag = gal['flag']
 
 pl.subplot(1,1,1)
-dense_plot(rmag,grcolor)
+dense_plot(rmag,mcolor)
 
 #bulges
 rmag_tmp = np.extract(flag&2**1>0, rmag)
-color_tmp = np.extract(flag&2**1>0, grcolor)
+color_tmp = np.extract(flag&2**1>0, mcolor)
 plot_data(rmag_tmp, color_tmp, 1000, 5, -26, -16, 50,-0.20, 1.2, 50, color = 'r')
 
 #disks
 rmag_tmp = np.extract(flag&2**4>0, rmag)
-color_tmp = np.extract(flag&2**4>0, grcolor)
+color_tmp = np.extract(flag&2**4>0, mcolor)
 plot_data(rmag_tmp, color_tmp, 1000, 5, -26, -16, 50,-0.20, 1.2, 50, color = 'b')
 
 
 sel = (np.where(flag&2**11>0, 1,0)|np.where(flag&2**12>0, 1,0))
 #*np.where(gal['n_bulge']>2, 1,0)*np.where(gal['n_bulge']<7.95, 1,0)
 rmag_tmp = np.extract(sel==1, rmag)
-color_tmp = np.extract(sel==1, grcolor)
+color_tmp = np.extract(sel==1, mcolor)
 plot_data(rmag_tmp, color_tmp, 1000, 5, -26, -16, 50,-0.20, 1.2, 50, color = 'g')
 
 mags = np.arange(-26.0, -15.0,0.1)
@@ -70,20 +70,20 @@ pl.close('all')
 
 
 pl.subplot(1,1,1)
-dense_plot(rmag,grcolor)
+dense_plot(rmag,mcolor)
 sel = (np.where(flag&2**11>0, 1,0)|np.where(flag&2**12>0, 1,0))*np.where(gal['n_bulge']>2, 1,0)*np.where(gal['n_bulge']<7.95, 1,0)
 rmag_tmp = np.extract(sel==1, rmag)
-color_tmp = np.extract(sel==1, grcolor)
+color_tmp = np.extract(sel==1, mcolor)
 plot_data(rmag_tmp, color_tmp, 1000, 5, -26, -16, 50,-0.20, 1.2, 50, color = 'g')
 
 sel = (np.where(flag&2**11>0, 1,0)|np.where(flag&2**12>0, 1,0))*np.where(gal['n_bulge']<=2, 1,0)
 rmag_tmp = np.extract(sel==1, rmag)
-color_tmp = np.extract(sel==1, grcolor)
+color_tmp = np.extract(sel==1, mcolor)
 plot_data(rmag_tmp, color_tmp, 1000, 5, -26, -16, 50,-0.20, 1.2, 50, color = 'c')
 
 sel = (np.where(flag&2**11>0, 1,0)|np.where(flag&2**12>0, 1,0))*np.where(gal['n_bulge']>=7.95, 1,0)
 rmag_tmp = np.extract(sel==1, rmag)
-color_tmp = np.extract(sel==1, grcolor)
+color_tmp = np.extract(sel==1, mcolor)
 plot_data(rmag_tmp, color_tmp, 1000, 5, -26, -16, 50,-0.20, 1.2, 50, color = 'm')
 
 mags = np.arange(-26.0, -15.0,0.1)
@@ -103,8 +103,8 @@ a.close()
 
 sel = np.where(flag&2**14>0, 1,0)
 rmag_tmp = np.extract(sel==1, rmag)
-color_tmp = np.extract(sel==1, grcolor)
+color_tmp = np.extract(sel==1, mcolor)
 
 sel = np.where(flag&2**20>0, 1,0)
 rmag_tmp = np.extract(sel==1, rmag)
-color_tmp = np.extract(sel==1, grcolor)
+color_tmp = np.extract(sel==1, mcolor)

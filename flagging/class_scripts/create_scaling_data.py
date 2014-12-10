@@ -20,8 +20,11 @@ z.r_bulge*sqrt(z.ba_bulge), z.n_bulge,
 z.r_disk*sqrt(z.ba_disk),
 s.kpc_per_arcsec, z.m_bulge-x.extinction_{band}, 
 z.m_disk-x.extinction_{band}, c.flag, s.dismod,
-x.petromag_g - x.extinction_g, x.petromag_r - x.extinction_r, 
-x.petromag_i - x.extinction_i, -4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd, s.kcorr_g, s.kcorr_r, s.kcorr_i
+x.modelmag_g - x.extinction_g, x.modelmag_r - x.extinction_r, 
+x.modelmag_i - x.extinction_i, 
+-2.5*log10(x.fracdev_r*pow(10, -0.4*x.devmag_r) + (1.0-x.fracdev_r)*pow(10, -0.4*x.expmag_r)) as cmodel_r,
+-4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd, 
+s.kcorr_g, s.kcorr_r, s.kcorr_i
 from 
 {band}_band_{model} as z,{band}_band_fit as y,CAST as x, DERT as s,
 M2010 as m, Flags_catalog as c 
@@ -48,8 +51,9 @@ pos_dict = dict([(a[0],a[1]) for a in zip(['galcount', 'hrad_corr', 'BT',
                                       'mag', 'r_bulge','n_bulge',
                                       'r_disk', 'kpc_per_arcsec', 
                                       'm_bulge', 'm_disk', 
-                                      'flag','dismod', 'petrog','petror',
-                                      'petroi', 'ttype', 'kg', 'kr', 'ki'
+                                      'flag','dismod', 'modelg','modelr',
+                                      'modeli', 'cmodelr',
+                                           'ttype', 'kg', 'kr', 'ki'
                                            ], data)])
 
 outfile = open('./color_file.npz', 'w')

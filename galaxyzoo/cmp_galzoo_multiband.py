@@ -42,15 +42,17 @@ def fix_n(n, flag):
     return newr, weights/newr.size
 
 def panel_plot(BT, flags, r_bulge, n_bulge,ba_bulge,ba_disk, zspec):
-    colors = ('#00CC00','#66E066','#FF0000','#FF8080', '#000000','#B2B2B2')
+    colors = ('#00CC00','#66E066','#FF0000' ,'#FF8080', '#000000','#B2B2B2')
     labels = ('g w/bars', 'g w/o bars', 'r w/bars', 'r w/o bars', 'i w/bars', 'i w/o bars')
+    ls = ('solid', 'solid')*3
+    lw = (2,1) *3
     
     fig = pl.figure(figsize=(8,5))
     pl.subplot(2,3,1)
     typebins = np.array([0,1,2,3,4,5])
 
-    for ftmp, ctmp, ltmp in zip(flags,colors, labels):
-        pl.step(typebins, flag_sep(ftmp), color = ctmp, ls='-', lw=2, label = ltmp,where='post')
+    for ftmp, ctmp, ltmp, lstmp, lwtmp in zip(flags,colors, labels, ls, lw):
+        pl.step(typebins, flag_sep(ftmp), color = ctmp, ls=lstmp, lw=lwtmp, label = ltmp,where='post')
         
     x_names = ['bulges','disks','2com','prob 2com','bad']
     pl.xticks(typebins[:-1]+0.5, x_names, fontsize = 10)
@@ -60,10 +62,10 @@ def panel_plot(BT, flags, r_bulge, n_bulge,ba_bulge,ba_disk, zspec):
 
 
     pl.subplot(2,3,2)
-    for bttmp, ftmp, ctmp, ltmp in zip(BT, flags,colors, labels):
+    for bttmp, ftmp, ctmp, ltmp, lstmp, lwtmp in zip(BT, flags,colors, labels, ls, lw):
         new_bt, weights = fix_BT(bttmp, ftmp)
-        pl.hist(new_bt, range=(-0.1,1.0), bins = 22, histtype='step',lw=2,
-            color = ctmp, linestyle='solid', label = ltmp, weights = weights)
+        pl.hist(new_bt, range=(-0.1,1.0), bins = 22, histtype='step',lw=lwtmp,
+            color = ctmp, linestyle=lstmp, label = ltmp, weights = weights)
     pl.title('B/T')
     pl.xlim((0,1))
     pl.ylim((0,0.5))
@@ -71,10 +73,10 @@ def panel_plot(BT, flags, r_bulge, n_bulge,ba_bulge,ba_disk, zspec):
     pl.ylabel('N/N$_{tot}$')
 
     pl.subplot(2,3,3)
-    for rtmp, ftmp, ctmp, ltmp in zip(r_bulge, flags,colors, labels):
+    for rtmp, ftmp, ctmp, ltmp, lstmp, lwtmp in zip(r_bulge, flags,colors, labels, ls, lw):
         new_r, weights = fix_r(rtmp, ftmp)
-        pl.hist(new_r, range=(-2,10.0), bins = 24, histtype='step',lw=2,
-                color = ctmp, linestyle='solid', label = ltmp, weights = weights)
+        pl.hist(new_r, range=(-2,10.0), bins = 24, histtype='step',lw=lwtmp,
+                color = ctmp, linestyle=lstmp, label = ltmp, weights = weights)
     pl.title('bulge r')
     pl.xlim((0,6))
     pl.ylim((0,0.25))
@@ -82,10 +84,10 @@ def panel_plot(BT, flags, r_bulge, n_bulge,ba_bulge,ba_disk, zspec):
     pl.ylabel('N/N$_{tot}$')
 
     pl.subplot(2,3,4)
-    for ntmp, ftmp, ctmp, ltmp in zip(n_bulge, flags,colors, labels):
+    for ntmp, ftmp, ctmp, ltmp, lstmp, lwtmp in zip(n_bulge, flags,colors, labels, ls, lw):
         new_n, weights = fix_n(ntmp, ftmp)
-        pl.hist(new_n, range=(-2,8.01), bins = 20, histtype='step',lw=2,
-                color = ctmp, linestyle='solid', label = ltmp, weights = weights)
+        pl.hist(new_n, range=(-2,8.01), bins = 20, histtype='step',lw=lwtmp,
+                color = ctmp, linestyle=lstmp, label = ltmp, weights = weights)
     pl.title('bulge n')
     pl.xlim((0,8))
     pl.ylim((0,0.15))
@@ -93,10 +95,10 @@ def panel_plot(BT, flags, r_bulge, n_bulge,ba_bulge,ba_disk, zspec):
     pl.ylabel('N/N$_{tot}$')
 
     pl.subplot(2,3,5)
-    for batmp, ftmp, ctmp, ltmp in zip(ba_bulge, flags,colors, labels):
+    for batmp, ftmp, ctmp, ltmp, lstmp, lwtmp in zip(ba_bulge, flags,colors, labels, ls, lw):
         new_ba, weights = fix_ba(batmp, ftmp)
-        pl.hist(new_ba, range=(-0.2,1.0), bins = 24, lw=2,
-                histtype='step',color = ctmp, linestyle='solid', label = ltmp, weights = weights)
+        pl.hist(new_ba, range=(-0.2,1.0), bins = 24, lw=lwtmp,
+                histtype='step',color = ctmp, linestyle=lstmp, label = ltmp, weights = weights)
     pl.title('bulge b/a')
     pl.xlim((0,1))
     pl.ylim((0,0.1))
@@ -116,10 +118,10 @@ def zpanel_plot(BT, flags, r_bulge, n_bulge,ba_bulge,ba_disk, ref_BT,ref_flag, r
     new_zspec, weights = fix_zspec(zspec, flags)
     new_ref_zspec, ref_weights = fix_zspec(ref_zspec, ref_flag)
 
-    pl.hist(new_zspec, range=(0.0,0.2), bins = 10, lw=2,
-            histtype='step',color = 'r', linestyle='solid', label = 'w/ bars', weights = weights)
-    pl.hist(new_ref_zspec, range=(0.0,0.2), bins = 10, lw=2,
-            histtype='step',color = 'k', linestyle='solid', 
+    pl.hist(new_zspec, range=(0.0,0.2), bins = 10, lw=lwtmp,
+            histtype='step',color = 'r', linestyle=lstmp, label = 'w/ bars', weights = weights)
+    pl.hist(new_ref_zspec, range=(0.0,0.2), bins = 10, lw=lwtmp,
+            histtype='step',color = 'k', linestyle=lstmp, 
             label = 'w/o bar', weights =ref_weights)
     pl.title('z dist')
     pl.xlim((0,0.2))
@@ -148,6 +150,7 @@ def do_panel(condition, refcondition, figtitle, cursor):
     zspec = []
     
     for band in 'gri':
+        print "fetching band %s" %band
         cmd = "select a.BT, f.flag, a.r_bulge,  a.n_bulge, a.ba_bulge, a.ba_disk, c.z from CAST as c, Flags_catalog as f, {band}_band_serexp as a, gz2_flags as z where a.galcount = c.galcount and a.galcount = f.galcount and a.galcount = z.galcount and f.band='{band}' and f.model='serexp' and f.ftype ='u' and {condition};"
 #a.r_bulge,
         a =cursor.get_data(cmd.format(condition=condition, band=band))
@@ -169,6 +172,7 @@ def do_panel(condition, refcondition, figtitle, cursor):
         zspec.append(np.array(a[6]))
 
 
+        
     panel_plot(BT, flags, r_bulge, n_bulge,ba_bulge,ba_disk, zspec)
     pl.figtext(0.5, 0.95, figtitle)
     print figtitle+' ',BT[0].size, ' objects' 
@@ -180,7 +184,7 @@ def do_panel(condition, refcondition, figtitle, cursor):
 
 if __name__ == "__main__":
     cursor = mysql_connect('catalog','pymorph','pymorph')
-    band = 'g'
+    
     if 0:
         # look at ellipticals vs total
         condition = 'z.t01_smooth>0'

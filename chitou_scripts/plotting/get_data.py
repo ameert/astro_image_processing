@@ -1,22 +1,28 @@
 from astro_image_processing.mysql import *
 
-def get_data(cursor, table1, table2, add_tables = '', conditions = '', flags=False, flagmodel = 'serexp'):
+def get_data(cursor, table1, table2, band1, band2,add_tables = '', conditions = '', flags=False, flagmodel = 'serexp'):
     cmd = """select a.galcount, 
-a.m_tot-c.extinction_r, a.Hrad_corr, a.ba_tot_corr, a.BT,
-a.m_bulge-c.extinction_r , a.r_bulge, a.n_bulge, a.ba_bulge, a.pa_bulge, 
-a.m_disk-c.extinction_r , a.r_disk, a.ba_disk, a.pa_disk, a.galsky,
-b.m_tot-c.extinction_r , b.Hrad_corr, b.ba_tot_corr, b.BT,
-b.m_bulge-c.extinction_r , b.r_bulge, b.n_bulge, b.ba_bulge, b.pa_bulge, 
-b.m_disk-c.extinction_r , b.r_disk, b.ba_disk, b.pa_disk,b.galsky, 
-d.kcorr_r + d.dismod, d.kpc_per_arcsec, c.z, d.vmax,
-c.PetroMag_r-c.extinction_r, c.PetroR50_r
-from %s as a, %s as b, CAST as c, DERT as d %s,  
-Flags_optimize as x
-where a.galcount = b.galcount and a.galcount = c.galcount and 
+a.m_tot-c.extinction_{band1}, a.Hrad_corr, a.ba_tot_corr, a.BT,
+a.m_bulge-c.extinction_{band1} , a.r_bulge, a.n_bulge, a.ba_bulge, a.pa_bulge, 
+a.m_disk-c.extinction_{band1} , a.r_disk, a.ba_disk, a.pa_disk, a.galsky,
+b.m_tot-c.extinction_{band2} , b.Hrad_corr, b.ba_tot_corr, b.BT,
+b.m_bulge-c.extinction_{band2} , b.r_bulge, b.n_bulge, b.ba_bulge, b.pa_bulge, 
+b.m_disk-c.extinction_{band2} , b.r_disk, b.ba_disk, b.pa_disk,b.galsky, 
+d.kcorr_{band1} + d.dismod,d.kcorr_{band2} + d.dismod,
+d.kpc_per_arcsec, c.z, d.vmax,
+c.PetroMag_{band1}-c.extinction_{band1}, c.PetroR50_{band1},
+c.PetroMag_{band2}-c.extinction_{band2}, c.PetroR50_{band2},
+-4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd
+from {table1} as a, {table2} as b, CAST as c, DERT as d {add_tables},  
+Flags_optimize as x, M2010 as m
+where 
+a.galcount = b.galcount and  a.galcount = c.galcount and
+m.galcount = c.galcount and 
 a.galcount = x.galcount  and x.band = 'r' and x.ftype = 'u' and 
-x.model = '%s' and
+x.model = '{flagmodel}' and
 d.galcount = c.galcount 
-""" %(table1, table2,add_tables, flagmodel)
+""".format(table1=table1, table2=table2,add_tables=add_tables, 
+           flagmodel=flagmodel, band1= band1, band2=band2)
     if flags:
         cmd += """ and ( x.flag&pow(2,19)=0 ) 
 """
@@ -32,8 +38,9 @@ d.galcount = c.galcount
                  'padisk_1', 'sky_1','mtot_2', 'hrad_2', 'batot_2', 
                  'BT_2', 'mbulge_2', 'rbulge_2', 'nbulge_2', 'babulge_2', 
                  'pabulge_2', 'mdisk_2', 'rdisk_2', 'badisk_2','padisk_2', 
-                 'sky_2', 'magcorr','kpc_per_arcsec','z', 'vmax',
-                 'petromag_1', 'petrorad_1']
+                 'sky_2', 'magcorr1', 'magcorr2','kpc_per_arcsec','z', 'vmax',
+                 'petromag_1', 'petrorad_1','petromag_2', 'petrorad_2',
+                 'ttype_1']
 
     data = {}
     for a,b in zip(data_list, data_name):
@@ -42,23 +49,23 @@ d.galcount = c.galcount
     data['surf_bright_1'] = -2.5*np.log10(10**(-0.4*data['mtot_1'])/(2.0*np.pi*data['hrad_1']**2))
     data['surf_bright_2'] = -2.5*np.log10(10**(-0.4*data['mtot_2'])/(2.0*np.pi*data['hrad_2']**2))
     
-    data['mtot_abs_1'] = data['mtot_1'] - data['magcorr']
-    data['mtot_abs_2'] = data['mtot_2'] - data['magcorr']
+    data['mtot_abs_1'] = data['mtot_1'] - data['magcorr1']
+    data['mtot_abs_2'] = data['mtot_2'] - data['magcorr2']
     
 
-    data['petromag_2'] = data['petromag_1']
-    data['petrorad_2'] = data['petrorad_1']
-
-    data['petromag_abs_1'] = data['petromag_1'] - data['magcorr']
-    data['petromag_abs_2'] = data['petromag_2'] - data['magcorr']
+    data['petromag_abs_1'] = data['petromag_1'] - data['magcorr1']
+    data['petromag_abs_2'] = data['petromag_2'] - data['magcorr2']
     
     data['n_1'] = data['nbulge_1']
     data['n_2'] = data['nbulge_2']
-
     
     data['rbulge_1'] = data['rbulge_1']*np.sqrt(data['babulge_1'])
     data['rbulge_2'] = data['rbulge_2']*np.sqrt(data['babulge_2'])
    
+
+    data['ttype_2'] = data['ttype_1']
+
+
     #source_count = mag_to_counts( data['mtot_in'], -1.0*data['magzp'], 
     #                              kk = 0,airmass=0,exptime=data['exptime'])
 
