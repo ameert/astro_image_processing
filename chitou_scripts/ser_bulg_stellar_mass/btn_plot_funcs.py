@@ -13,7 +13,7 @@ def plot_figs(log_Mstar_bulge,n_bulge, BT,  r_bulge_cir, plotstart,
     xmin = 0.5
     pub_plots(xmaj, xmin, xstr, 2.0, 0.5, '%d')
 
-    if 0:
+    if 1:
         ax = fig.add_subplot(nrow_plots,ncol_plots,plotstart)
         data_holder = pub_plots(xmaj, xmin, xstr, 2.0, 0.5, '%d')
         ndata = bs.bin_stats(log_Mstar_bulge, n_bulge, xbin, 0.0, 8.0)
@@ -42,7 +42,7 @@ def plot_figs(log_Mstar_bulge,n_bulge, BT,  r_bulge_cir, plotstart,
     #     verticalalignment='center',transform=ax.transAxes)
     data_holder2.set_plot(ax)
 
-    if 0:
+    if 1:
         ax = fig.add_subplot(nrow_plots,ncol_plots,plotstart+2)
         data_holder3 = pub_plots(xmaj, xmin, xstr, 0.5, 0.1, '%0.1f')
 
