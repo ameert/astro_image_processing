@@ -138,8 +138,8 @@ to a mysql database"""
                  np.where(data['ba_bulge']<autoflag_config['posang_d']['ba_cut'],1,0) * \
                  np.where(pa_diff>autoflag_config['posang_d']['pa_cut'], 1,0)    
 
-    no_bulge = np.where(autoflag_config['bulge_cut'](data['BT'], data['m_bulge']), 1,0)
-    no_disk = np.where(autoflag_config['disk_cut'](data['BT'], data['m_disk']), 1,0)  
+    no_bulge = np.where(autoflag_config['bulge_cut'][band](data['BT'], data['m_bulge']), 1,0)
+    no_disk = np.where(autoflag_config['disk_cut'][band](data['BT'], data['m_disk']), 1,0)  
 
     parallel_com_flag = parallel_com(data, autoflag_config['par_com'])*np.where(no_bulge==1, 0,1)*np.where(no_disk==1, 0,1)*np.where(data['n_bulge']<autoflag_config['disky_n'],1,0)
 
