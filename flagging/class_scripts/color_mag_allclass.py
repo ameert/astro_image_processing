@@ -35,9 +35,9 @@ for band in 'gri':
 
 rmag = gal['r']['cmodelr']-gal['r']['dismod']-gal['r']['kr']
 mcolor = gal['r']['modelg']-gal['r']['kg'] - (gal['r']['modelr']-gal['r']['kr'])
-flaglist = [ (1,1,1), (4,4,4),  (10,10,10), (4, 10, 1), (4,10,10), (10, 10, 1)]
-colorlist = [ 'Red', 'Blue',  'Green',  'Cyan', 'Magenta']
-labellist = [ "BBB", "DDD", "222", "D22", "22B"]
+flaglist = [ (1,1,1), (4,4,4),  (10,10,10)]
+colorlist = [ 'Red', 'Blue',  'Green']
+labellist = [ "BBB", "DDD", "222"]
 pl.subplot(1,1,1)
 dense_plot(rmag,mcolor)
 
@@ -48,6 +48,7 @@ for ftmp, ctmp, ltmp in zip(flaglist, colorlist, labellist):
     print rmag_tmp.size
     plot_data(rmag_tmp, color_tmp, 1000, 5, -26, -16, 50,-0.20, 1.2, 50, color = ctmp)
     
+
 #handles, labels = pl.gca().get_legend_handles_labels()
 #pl.legend(handles, labellist)
 mags = np.arange(-26.0, -15.0,0.1)
