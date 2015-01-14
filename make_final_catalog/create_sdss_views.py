@@ -265,6 +265,54 @@ sky_r as Galsky , skyErr_r as Galsky_err ,
 FROM CAST;
 
 
+DROP VIEW IF EXISTS g_cmodel_serexp;
+CREATE VIEW g_cmodel_serexp AS SELECT galcount, -2.5*log10(pow(10,-0.4*(devmag_g-0.0637))*fracdev_g + (1.0-fracdev_g)*pow(10,-0.4*(expmag_g-0.0103))) as m_tot, fracdev_g as BT,  
+-999.0 as Hrad_corr , -999.0 as ba_tot_corr ,
+-999.0 as xctr_bulge , -999.0 as xctr_bulge_err ,  
+-999.0 as yctr_bulge , -999.0 as yctr_bulge_err ,  
+-999.0 as m_bulge , -999.0 as m_bulge_err ,
+-999.0 as r_bulge , -999.0 as r_bulge_err ,
+-999.0 as n_bulge , -999.0 as n_bulge_err ,
+-999.0 as ba_bulge , -999.0 as ba_bulge_err ,
+-999.0 as pa_bulge , -999.0 as pa_bulge_err ,
+-999.0 as xctr_disk , -999.0 as xctr_disk_err ,  
+-999.0 as yctr_disk , -999.0 as yctr_disk_err ,  
+-999.0 as m_disk , -999.0 as m_disk_err ,
+-999.0 as r_disk , -999.0 as r_disk_err ,
+-999.0 as ba_disk , -999.0 as ba_disk_err ,
+-999.0 as pa_disk , -999.0 as pa_disk_err ,
+-999.0 as chi2nu , -999.0 as Goodness ,
+sky_g as Galsky , skyErr_g as Galsky_err , 
+-999 as fit , -999 as FitFlag,
+-999 as flag, -999 as Manual_flag,
+-999 as FinalFlag, '-999' as Comments
+FROM CAST;
+
+
+DROP VIEW IF EXISTS i_cmodel_serexp;
+CREATE VIEW i_cmodel_serexp AS SELECT galcount, -2.5*log10(pow(10,-0.4*(devmag_i-0.0637))*fracdev_i + (1.0-fracdev_i)*pow(10,-0.4*(expmag_i-0.0103))) as m_tot, fracdev_i as BT,  
+-999.0 as Hrad_corr , -999.0 as ba_tot_corr ,
+-999.0 as xctr_bulge , -999.0 as xctr_bulge_err ,  
+-999.0 as yctr_bulge , -999.0 as yctr_bulge_err ,  
+-999.0 as m_bulge , -999.0 as m_bulge_err ,
+-999.0 as r_bulge , -999.0 as r_bulge_err ,
+-999.0 as n_bulge , -999.0 as n_bulge_err ,
+-999.0 as ba_bulge , -999.0 as ba_bulge_err ,
+-999.0 as pa_bulge , -999.0 as pa_bulge_err ,
+-999.0 as xctr_disk , -999.0 as xctr_disk_err ,  
+-999.0 as yctr_disk , -999.0 as yctr_disk_err ,  
+-999.0 as m_disk , -999.0 as m_disk_err ,
+-999.0 as r_disk , -999.0 as r_disk_err ,
+-999.0 as ba_disk , -999.0 as ba_disk_err ,
+-999.0 as pa_disk , -999.0 as pa_disk_err ,
+-999.0 as chi2nu , -999.0 as Goodness ,
+sky_i as Galsky , skyErr_i as Galsky_err , 
+-999 as fit , -999 as FitFlag,
+-999 as flag, -999 as Manual_flag,
+-999 as FinalFlag, '-999' as Comments
+FROM CAST;
+
+
 create table r_band_best like r_band_dev;
 
 create table r_lackner_best like r_band_dev;
