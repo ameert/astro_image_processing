@@ -6,9 +6,13 @@ bins = {'mag':np.arange(14.0, 18.1, .5),
         'absmag':np.arange(-24.0, -15.99, .5), 'rad':np.arange(0.0, 12.1, 1.0),
         'n':np.arange(0.0, 8.01, 1.0), 'BT':np.arange(0.0, 1.01, .1),
         'pa':np.arange(0.0, 360.01, 30.0), 'ba':np.arange(0.0, 1.01, .1),
-        'rbulgerdisk': np.arange(0.0, 1.51, 0.1),'sky':np.arange(-2.0, 2.01, .2)}
+        'rbulgerdisk': np.arange(0.0, 1.51, 0.1),
+        'ttype':np.arange(-5.0, 6.01, .5),'sky':np.arange(-2.0, 2.01, .2)}
         
-bins_num = { 'mag':{'mag':(45,30),'rad':(45,30),'n': (45,30),
+bins_num = { 'ttype':{'mag':(45,30),'rad':(45,30),'n': (45,30),
+                    'BT':(45,30),'rbulgerdisk':(45,30),'pa':(45,30),
+                    'ba':(45,30),'sky':(45,30)},
+             'mag':{'mag':(45,30),'rad':(45,30),'n': (45,30),
                     'BT':(45,30),'rbulgerdisk':(45,30),'pa':(45,30),
                     'ba':(45,30),'sky':(45,30)},
              'absmag':{'mag':(45,30),'absmag':(45,30),
@@ -25,7 +29,9 @@ bins_num = { 'mag':{'mag':(45,30),'rad':(45,30),'n': (45,30),
              'sky':{'mag':(45,30),'abmag':(45,30),'rad':(45,30),'n': (45,30),
                     'BT':(45,30),'rbulgerdisk':(45,30)}}
 
-bin_max = { 'mag':{'mag':5.0,'rad':1.5,'n': 1.0,
+bin_max = { 'ttype':{'mag':5.0,'rad':1.5,'n': 1.0,
+                     'BT':5.0,'rbulgerdisk':5.0,'ba':5.0,'pa':5.0 ,'sky':5.0 },
+            'mag':{'mag':5.0,'rad':1.5,'n': 1.0,
                     'BT':5.0,'rbulgerdisk':5.0,'ba':5.0,'pa':5.0 ,'sky':5.0 },
             'absmag':{'mag':5.0,'absmag':5.0,'rad':1.5,'n': 1.0,
                     'BT':5.0,'rbulgerdisk':5.0,'ba':5.0,'pa':5.0,'sky':5.0 },
@@ -41,6 +47,9 @@ bin_max = { 'mag':{'mag':5.0,'rad':1.5,'n': 1.0,
 bin_lims = {'sky':{'mag':(-2.0,2.0),'absmag':(-2.0,2.0),
                    'rad':(-1.0,1.0),'n': (-8.0,8.0),
                     'BT':(-1.0,1.0),'rbulgerdisk':(-2.0,2.0)},
+            'ttype':{'mag':(-5.0,5.0),'absmag':(-5.0,5.0),
+                     'rad':(-1.0,1.0),'n': (-8.0,8.0),
+                     'BT':(-1.0,1.0),'rbulgerdisk':(-2.0,2.0)},
             'mag':{'mag':(-2.0,2.0),'rad':(-1.0,0.75),'n': (-8.0,8.0),
                     'BT':(-1.0,1.0),'rbulgerdisk':(-10.0,10.0),
                    'ba':(-1.0,1.0),'pa':(-1.0,1.0),'sky': (-8.0,8.0)},
@@ -60,7 +69,7 @@ bin_lims = {'sky':{'mag':(-2.0,2.0),'absmag':(-2.0,2.0),
 
 # selected by "ticks[x_tick][y_tick]"
 ticksx = { 'mag':[1.0, 0.25,'%d'],'absmag':[2.0, 0.25,'%d'],
-           'rad':[2.0, 0.5, '%d'],
+           'rad':[2.0, 0.5, '%d'],'ttype':[1.0, 0.25,'%d'],
            'n':[2.0, 0.5, '%02.1f'], 'BT':[0.2, 0.05,'%02.1f'],
            'ba':[0.2, 0.05,'%02.1f'],'pa':[60.0, 10.0,'%d'], 
            'rbulgerdisk':[0.5, 0.1, '%02.1f'], 'sky': [1.0,0.5, '%d']}
@@ -99,7 +108,9 @@ xlabs = {'petromag':'m$_{\mathrm{petro,\ {band}}}$',
          'BT':'B/T$_{\mathrm{{band},\ pm}}$', 
          'rbulgerdisk': '(r$_{\mathrm{bulge,\ {band}}}\ $/$\ $r$_{\mathrm{disk,\ {band}}}$)$_{\mathrm{pm}}$',
          'cutsize': 'size', 
-         'sky':r'$\Delta$sky$_{\mathrm{{band}}}$ (\%)'}
+         'sky':r'$\Delta$sky$_{\mathrm{{band}}}$ (\%)',
+         'ttype':'T-type' 
+         }
 
 xlims = {'mtot':(14.0, 17.8),
          'mtot_app':(14.0, 17.8),
@@ -124,7 +135,9 @@ xlims = {'mtot':(14.0, 17.8),
          'pabulge':(0.0, 360.0), 
          'rbulgerdisk':(0.0, 1.0),
          'cutsize': (8,27),
-         'sky':(-2.0,2.0)}
+         'sky':(-2.0,2.0),
+         'ttype':(-5.0, 6.0)
+         }
 
 
 ylabs = {'mtot':'$\Delta$m$_{\mathrm{tot,\ {band}}}$', 
@@ -220,5 +233,15 @@ ticks = { 'mag':{'mag':set_ticks('mag','mag'),
                  'rdisk': set_ticks('sky', 'sky_rdisk'),
                  'n':set_ticks('sky', 'sky_n'),
                  'BT': set_ticks('sky', 'sky_BT'),
-                 'rbulgerdisk': set_ticks('sky', 'sky_rbulgerdisk')}
+                 'rbulgerdisk': set_ticks('sky', 'sky_rbulgerdisk')},
+          'ttype':{'mag':set_ticks('ttype','mag'),
+                 'radfull':set_ticks('ttype','radfull'),
+                 'rad':set_ticks('ttype','rad'),
+                 'n': set_ticks('ttype','n'),
+                 'BT':set_ticks('ttype','BT'),
+                 'ba':set_ticks('ttype','ba'),
+                 'pa':set_ticks('ttype','pa'),
+                 'rbulgerdisk':set_ticks('ttype','rbulgerdisk'),
+                 'sn':set_ticks('ttype','sn'),
+                 'sky':set_ticks('ttype','sky')},
           }

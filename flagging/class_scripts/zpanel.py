@@ -11,7 +11,7 @@ cursor = mysql_connect('catalog','pymorph','pymorph','')
 sql_values = {# Set these params
               'band':'i', 
               'model':'serexp', 
-              'normtype':'flagclass',
+              'normtype':'total',
               'galnumlim':1000000,
               #do not set this parameter! Set automatically!
               'add_param':'',

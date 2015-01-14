@@ -9,7 +9,7 @@ dba = 'catalog'
 pwd = 'al130568'
 usr = 'ameert'
 
-stem = 'newt507'
+stem = 'newt5057'
 
 cursor = mysql_connect(dba, usr, pwd)
 
@@ -147,6 +147,102 @@ f.galcount = z.galcount and u.ftype = 'u' and u.band='r' and u.model = 'serexp'
 order by f.galcount 
 into outfile "/tmp/%s_4.txt";""" %(stem)
 
+#cursor.execute(cmd)
+#os.system('echo "#galcount, hrad_ser, hrad_serexp, ba_ser, ba_serexp, r20_ser, r50_ser, r80_ser, r90_ser,r20_serexp, r50_serexp, r80_serexp, r90_serexp" > /scratch/concentration_alans_code_interpolated.txt' )
+#os.system('cat /tmp/%s_4.txt >> /scratch/concentration_alans_code_interpolated.txt' %(stem))
+
+
+cmd = """select f.galcount, 
+a.hrad_corr, 
+a.ba_tot_corr,
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h03), -999),
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h05), -999),
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h10), -999),
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h20), -999),
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h25), -999),
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h30), -999),
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h50), -999),
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h80), -999),
+IFNULL(a.m_tot-f.extinction_r, -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h03), -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h05), -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h10), -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h20), -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h25), -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h30), -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h50), -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h80), -999),
+IFNULL(b.m_tot-f.extinction_r, -999)
+from 
+catalog.alan_hrad_ser_ser as g,
+catalog.alan_hrad_ser_serexp as h,
+catalog.r_band_ser as a,
+catalog.r_band_fit as c,
+catalog.r_band_serexp as b, 
+catalog.CAST as f left join JHU.JHU_masses as j on f.galcount = j.galcount,
+catalog.DERT as d, catalog.r_simard_fit as s,
+catalog.M2010 as m, catalog.Flags_optimize as u,
+COLOR_GRAD_ser as z
+where
+f.galcount = g.galcount and
+f.galcount = h.galcount and
+f.galcount = c.galcount and 
+f.galcount = a.galcount and f.galcount = b.galcount and 
+f.galcount = d.galcount and f.galcount = s.galcount and
+f.galcount = m.galcount and f.galcount = u.galcount and 
+f.galcount = z.galcount and u.ftype = 'u' and u.band='r' and u.model = 'serexp' 
+order by f.galcount 
+into outfile "/tmp/%s_5.txt";""" %(stem)
+
 cursor.execute(cmd)
-os.system('echo "#galcount, hrad_ser, hrad_serexp, ba_ser, ba_serexp, r20_ser, r50_ser, r80_ser, r90_ser,r20_serexp, r50_serexp, r80_serexp, r90_serexp" > /scratch/concentration_alans_code_interpolated.txt' )
-os.system('cat /tmp/%s_4.txt >> /scratch/concentration_alans_code_interpolated.txt' %(stem))
+os.system('echo "#galcount, hrad_serexp, ba_serexp, h03_ser, h05_ser, h10_ser, h20_ser, h25_ser, h30_ser, h50_ser, h80_ser, mtot_ser,h03_serexp,h05_serexp, h10_serexp, h20_serexp,h25_serexp,h30_serexp,h50_serexp,h80_serexp, mtot_serexp" > /scratch/concentration_alans_serrad_light.txt' )
+os.system('cat /tmp/%s_5.txt >> /scratch/concentration_alans_serrad_light.txt' %(stem))
+
+
+
+cmd = """select f.galcount, 
+a.hrad_corr, 
+a.ba_tot_corr,
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h03), -999),
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h05), -999),
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h10), -999),
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h20), -999),
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h25), -999),
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h30), -999),
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h50), -999),
+IFNULL(a.m_tot-f.extinction_r-2.5*log10(g.h80), -999),
+IFNULL(a.m_tot-f.extinction_r, -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h03), -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h05), -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h10), -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h20), -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h25), -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h30), -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h50), -999),
+IFNULL(b.m_tot-f.extinction_r-2.5*log10(h.h80), -999),
+IFNULL(b.m_tot-f.extinction_r, -999)
+from 
+catalog.alan_hrad_serexp_ser as g,
+catalog.alan_hrad_serexp_serexp as h,
+catalog.r_band_ser as a,
+catalog.r_band_fit as c,
+catalog.r_band_serexp as b, 
+catalog.CAST as f left join JHU.JHU_masses as j on f.galcount = j.galcount,
+catalog.DERT as d, catalog.r_simard_fit as s,
+catalog.M2010 as m, catalog.Flags_optimize as u,
+COLOR_GRAD_ser as z
+where
+f.galcount = g.galcount and
+f.galcount = h.galcount and
+f.galcount = c.galcount and 
+f.galcount = a.galcount and f.galcount = b.galcount and 
+f.galcount = d.galcount and f.galcount = s.galcount and
+f.galcount = m.galcount and f.galcount = u.galcount and 
+f.galcount = z.galcount and u.ftype = 'u' and u.band='r' and u.model = 'serexp' 
+order by f.galcount 
+into outfile "/tmp/%s_6.txt";""" %(stem)
+
+cursor.execute(cmd)
+os.system('echo "#galcount, hrad_serexp, ba_serexp, h03_ser, h05_ser, h10_ser, h20_ser, h25_ser, h30_ser, h50_ser, h80_ser, mtot_ser,h03_serexp,h05_serexp, h10_serexp, h20_serexp,h25_serexp,h30_serexp,h50_serexp,h80_serexp, mtot_serexp" > /scratch/concentration_alans_serexprad_light.txt' )
+os.system('cat /tmp/%s_6.txt >> /scratch/concentration_alans_serexprad_light.txt' %(stem))
+

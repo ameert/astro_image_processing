@@ -25,7 +25,7 @@ if options['model2']==None:
 
 cursor = mysql_connect('catalog','pymorph','pymorph','')
 
-data = get_data(cursor, '%s_%s_%s' %(options['band'], options['table1'],options['model1']), '%s_%s_%s' %(options['band'], options['table2'],options['model2']), flags = options['use_flags'], flagmodel = options['flagmodel'], add_tables = options['add_tables'], conditions = options['conditions'])
+data = get_data(cursor, '%s_%s_%s' %(options['band1'], options['table1'],options['model1']), '%s_%s_%s' %(options['band2'], options['table2'],options['model2']), options['band1'],options['band2'],flags = options['use_flags'], flagmodel = options['flagmodel'], add_tables = options['add_tables'], conditions = options['conditions'])
 
 print 'num_objects: ', len(data['galcount'])
 print data[options['xchoice']+'_1'],data[options['ychoice']+'_1'],data[options['ychoice']+'_2']
@@ -108,8 +108,8 @@ if options['bins']!= None:
 
 print bins[options['key_x']]
 
-pl.xlabel(xlabs[options['xchoice']].replace('{band}', options['band']), fontsize=10)
-pl.ylabel(ylabs[options['ychoice']].replace('{band}', options['band']), fontsize=10)
+pl.xlabel(xlabs[options['xchoice']].replace('{band}', options['band1']), fontsize=10)
+pl.ylabel(ylabs[options['ychoice']].replace('{band}', options['band2']), fontsize=10)
 oplot.bin_it(bins[options['key_x']], bin_lims[options['key_x']][options['key_y']][0],
             bin_lims[options['key_x']][options['key_y']][1])
 oplot.add_bars('r')
@@ -119,8 +119,8 @@ if ">=" in options['title']:
     options['title'] = options['title'].replace(">=","$\\geq$")
 
 pl.title(options['title'], fontsize=8)
-print '%s_%s_%s_%s_%s_%s%s.eps' %(options['band'], options['table1'],options['table2'], options['model2'], options['xchoice'], options['ychoice'], options['postfix'])
+print '%s_%s_%s_%s_%s_%s_%s%s.eps' %(options['band1'], options['table1'],options['band2'],options['table2'], options['model2'], options['xchoice'], options['ychoice'], options['postfix'])
 #pl.show()
-oplot.savefig('%s_%s_%s_%s_%s_%s%s.eps' %(options['band'], options['table1'],options['table2'], options['model2'], options['xchoice'], options['ychoice'], options['postfix']))
+oplot.savefig('%s_%s_%s_%s_%s_%s_%s%s.eps' %(options['band1'], options['table1'],options['band2'],options['table2'], options['model2'], options['xchoice'], options['ychoice'], options['postfix']))
 
 

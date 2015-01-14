@@ -65,10 +65,10 @@ def plot_data(x_in, y_in, sample_size, num_sample, xmin, xmax, xbin,ymin, ymax, 
     # plt.imshow(zi, vmin=0, vmax=1, origin='lower',
     #           extent=[x.min(), x.max(), y.min(), y.max()])
     #pl.scatter(points[0], points[1], s = 4, edgecolor = 'none')
-    pl.contour(xi,yi,z_full, (0.0,0.25, 0.5, 0.75,1.0),linewidths = 3, colors = [color]*4, linestyles = ['-','-','--',':'])
+    C = pl.contour(xi,yi,z_full, (0.0,0.25, 0.5, 0.75,1.0),linewidths = 3, colors = [color]*4, linestyles = ['-','-','--',':'])
 
     #plt.colorbar()
-    return
+    return C
 
    
 

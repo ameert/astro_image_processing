@@ -26,50 +26,47 @@ def dense_plot(rmag,mcolor, contours = False, color = 'r'):
 
     return
 
+gal = {}
+
 for band in 'gri':
     a = open('color_file_{band}.npz'.format(band=band))
-    gal = np.load(a)
+    gal[band]  = np.load(a)
     print gal.keys()
 
-    rmag = gal['cmodelr']-gal['dismod']-gal['kr']
-    mcolor = gal['modelg']-gal['kg'] - (gal['modelr']-gal['kr'])
-    flag = gal['flag']
+rmag = gal['r']['cmodelr']-gal['r']['dismod']-gal['r']['kr']
+mcolor = gal['r']['modelg']-gal['r']['kg'] - (gal['r']['modelr']-gal['r']['kr'])
+flaglist = [ (1,1,1), (4,4,4),  (10,10,10)]
+colorlist = [ 'Red', 'Blue',  'Green']
+labellist = [ "BBB", "DDD", "222"]
+pl.subplot(1,1,1)
+dense_plot(rmag,mcolor)
 
-    pl.subplot(1,1,1)
-    dense_plot(rmag,mcolor)
+for ftmp, ctmp, ltmp in zip(flaglist, colorlist, labellist):
+    
+    rmag_tmp = np.extract((gal['g']['flag']&2**ftmp[0])*(gal['r']['flag']&2**ftmp[1])*(gal['i']['flag']&2**ftmp[2]) >0, rmag)
+    color_tmp = np.extract((gal['g']['flag']&2**ftmp[0])*(gal['r']['flag']&2**ftmp[1])*(gal['i']['flag']&2**ftmp[2]) >0, mcolor)
+    print rmag_tmp.size
+    plot_data(rmag_tmp, color_tmp, 1000, 5, -26, -16, 50,-0.20, 1.2, 50, color = ctmp)
+    
 
-    #bulges
-    rmag_tmp = np.extract(flag&2**1>0, rmag)
-    color_tmp = np.extract(flag&2**1>0, mcolor)
-    plot_data(rmag_tmp, color_tmp, 1000, 5, -26, -16, 50,-0.20, 1.2, 50, color = 'r')
+#handles, labels = pl.gca().get_legend_handles_labels()
+#pl.legend(handles, labellist)
+mags = np.arange(-26.0, -15.0,0.1)
+pl.plot(mags, -0.025*(mags+20)+0.611, 'm-')
+pl.plot(mags, -0.05-0.025*(mags+20)+0.611, 'm:')
+pl.plot(mags, 0.05-0.025*(mags+20)+0.611, 'm:')
 
-    #disks
-    rmag_tmp = np.extract(flag&2**4>0, rmag)
-    color_tmp = np.extract(flag&2**4>0, mcolor)
-    plot_data(rmag_tmp, color_tmp, 1000, 5, -26, -16, 50,-0.20, 1.2, 50, color = 'b')
+pl.xlim(-25, -16)
+pl.ylim(0.2, 1.0)
+pl.xlabel('M$_r$')
+pl.ylabel('M$_g$-M$_r$')
+pl.title('mag color diagram')
 
-
-    sel = (np.where(flag&2**11>0, 1,0)|np.where(flag&2**12>0, 1,0))
-    #*np.where(gal['n_bulge']>2, 1,0)*np.where(gal['n_bulge']<7.95, 1,0)
-    rmag_tmp = np.extract(sel==1, rmag)
-    color_tmp = np.extract(sel==1, mcolor)
-    plot_data(rmag_tmp, color_tmp, 1000, 5, -26, -16, 50,-0.20, 1.2, 50, color = 'g')
-
-    mags = np.arange(-26.0, -15.0,0.1)
-    pl.plot(mags, -0.025*(mags+20)+0.611, 'm-')
-    pl.plot(mags, -0.05-0.025*(mags+20)+0.611, 'm:')
-    pl.plot(mags, 0.05-0.025*(mags+20)+0.611, 'm:')
-
-    pl.xlim(-25, -16)
-    pl.ylim(0.2, 1.0)
-    pl.xlabel('M$_r$')
-    pl.ylabel('M$_g$-M$_r$')
-    pl.title('mag color diagram')
-
-    pl.savefig('colormag_{band}.eps'.format(band=band))
-    pl.close('all')
+pl.savefig('colormag_allclass.eps'.format(band=band))
+pl.close('all')
 
 
+if 0:
     pl.subplot(1,1,1)
     dense_plot(rmag,mcolor)
     sel = (np.where(flag&2**11>0, 1,0)|np.where(flag&2**12>0, 1,0))*np.where(gal['n_bulge']>2, 1,0)*np.where(gal['n_bulge']<7.95, 1,0)

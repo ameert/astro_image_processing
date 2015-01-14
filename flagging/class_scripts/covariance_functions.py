@@ -3,7 +3,6 @@ import numpy as np
 import sys
 import pylab as pl
 import matplotlib.cm as cm
-from flag_configuration import uflag_dict
 
 def get_score(true_val, test_val, trueflag, testflag):
 

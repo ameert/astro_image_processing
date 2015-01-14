@@ -112,9 +112,15 @@ autoflag_config = {
                                'pa_cut':45.0
                                },
                    
-                   'bulge_cut':lambda BT,mag: 1000*(0.2-BT)**3+mag-19>0.5,
+                   'bulge_cut':{
+                        'g':lambda BT,mag: 1000*(0.2-BT)**3+mag-19.05>0.5,
+                        'r':lambda BT,mag: 1000*(0.2-BT)**3+mag-19.0>0.5,
+                        'i':lambda BT,mag: 1000*(0.2-BT)**3+mag-18.2>0.5},
                    #no_bulge = np.where(data['BT']<0.05,1,0) | np.where(data['r_bulge']*np.sqrt(data['ba_bulge'])<0.396/2, 1,0)
-                   'disk_cut' :lambda BT,mag: 1000*(BT-0.8)**3+mag-19>0.5,
+                   'disk_cut' :{
+                           'g':lambda BT,mag: 1000*(BT-0.8)**3+mag-19.05>0.5,
+                           'r':lambda BT,mag: 1000*(BT-0.8)**3+mag-19.0>0.5,
+                           'i':lambda BT,mag: 1000*(BT-0.8)**3+mag-18.2>0.5},
                    'par_com':0.1,
                    'disky_n':2.0,
 
