@@ -18,7 +18,7 @@ dba = 'catalog'
 usr = 'pymorph'
 pwd = 'pymorph'
 ### Paths ###
-data_dir = '/media/SDSS1/sdss_sample/data/'
+data_dir = '/home/alan/Desktop/test/data'
 cut_dir =  '/scratch/rerun/'
 ### Settings for cutouts ###
 bands = 'gri' # list all desired bands in a single string

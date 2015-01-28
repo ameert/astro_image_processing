@@ -32,7 +32,31 @@
 #-----------------------------------
 import os
 
-def download_files(gal, data_stem, bands = 'r'):
+def download_files(gal, data_stem, bands = 'r', data_release=12):
+    """downloads the files of interest from SDSS3. locations of more files can be found 
+at http://data.sdss3.org/datamodel/index-files.html"""
+    psf_dir = data_stem+'/psField/'
+
+    urlstem = "http://data.sdss3.org/sas/dr%d/boss" %data_release
+
+    for gal_to_do in zip(gal['galcount'],gal['run'],gal['rerun'],gal['camCol'],gal['field']):        
+        galcount, run, rerun, camCol, field = gal_to_do 
+    
+        # see if psField exists, if not get it from SDSS
+        nm  = 'psField-%06d-%d-%04d.fit' %(run, camCol, field)
+        str1 = '%s/photo/redux/%d/%d/objcs/%d/%s' %(urlstem, rerun, run, camCol, nm)
+        get_file(nm, str1, psf_dir)
+    
+        for band in bands:
+            # see if frame file exists, if not, then get it from SDSS
+            nm  = 'frame-%s-%06d-%d-%04d.fits.bz2' %(run, band, camCol, field)
+            str1 = '%s/photoObj/frames/%d/%d/%d/%s' %(urlstem, rerun, run, camCol, nm)
+            get_file(nm, str1, data_stem+band+'/')
+
+    return
+
+def download_files_old(gal, data_stem, bands = 'r'):
+    """old version of the download script from dr7 and earlier from SDSS2"""
     for band in bands:
         psf_dir = data_stem+'/psField/'
         data_dir = data_stem + band + '/'
