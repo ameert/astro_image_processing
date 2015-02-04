@@ -1,5 +1,5 @@
 #!/data2/home/ameert/python/bin/python2.5
-
+#some junk
 import os
 import sys
 
