@@ -49,7 +49,7 @@ at http://data.sdss3.org/datamodel/index-files.html"""
     
         for band in bands:
             # see if frame file exists, if not, then get it from SDSS
-            nm  = 'frame-%s-%06d-%d-%04d.fits.bz2' %(run, band, camCol, field)
+            nm  = 'frame-%s-%06d-%d-%04d.fits.bz2' %(band, run, camCol, field)
             str1 = '%s/photoObj/frames/%d/%d/%d/%s' %(urlstem, rerun, run, camCol, nm)
             get_file(nm, str1, data_stem+band+'/')
 

@@ -2,6 +2,7 @@ from numpy import *
 import numpy as np 
 import pyfits as pf
 import os
+import astro_image_processing.user_settings as user_settings
 
 def prepare_psf(gal, bands, data_stem, out_path):
     for band_char in bands:
@@ -42,7 +43,7 @@ def prepare_psf(gal, bands, data_stem, out_path):
             if os.path.isfile(data_path+nm+'.gz'):
                 os.system('gunzip -f '+data_path+nm+'.gz')
                 
-            str = '/home/ameert/software/readAtlasImages-v5_4_11/read_PSF  %s%s %d %f %f %s%s/%s/%spsf.fits' %(data_path,nm, band, rowc_tmp, colc_tmp, out_path, band_char, path_app, file_base)
+            str = '%s  %s%s %d %f %f %s%s/%s/%spsf.fits' %(user_settings.readatlas_readPSF_path, data_path,nm, band, rowc_tmp, colc_tmp, out_path, band_char, path_app, file_base)
             os.system(str)
 
             os.system('gzip -f '+data_path+nm)

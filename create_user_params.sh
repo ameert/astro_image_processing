@@ -124,5 +124,30 @@ galfit_path=${galfit_path}'
 ">>$pathfile;
 
 
+
+
+echo "Please enter the full path to SDSS ReadAtlasImages read_PSF (not required):";
+read readatlas_path;
+
+echo "You have entered 
+Path to :${readatlas_path}";
+
+echo "Continue with these settings? Enter 'yes' to continue:";
+
+read isgood;
+if [ $isgood == yes ]; then
+echo "Continuing with user entered settings";
+else
+echo "You dont want to continue.
+Terminating";
+exit 1;
+fi
+
+echo "
+readatlas_readPSF_path=${readatlas_path}'
+
+">>$pathfile;
+
+
 exit 0;
 
