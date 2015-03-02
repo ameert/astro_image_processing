@@ -45,7 +45,9 @@ at http://data.sdss3.org/datamodel/index-files.html"""
         # see if psField exists, if not get it from SDSS
         nm  = 'psField-%06d-%d-%04d.fit' %(run, camCol, field)
         str1 = '%s/photo/redux/%d/%d/objcs/%d/%s' %(urlstem, rerun, run, camCol, nm)
-        get_file(nm, str1, psf_dir)
+        if get_file(nm, str1, psf_dir):
+            #zip the file to save space
+            os.system('gzip %s/%s' %(psf_dir,nm))
     
         for band in bands:
             # see if frame file exists, if not, then get it from SDSS
@@ -56,7 +58,8 @@ at http://data.sdss3.org/datamodel/index-files.html"""
     return
 
 def download_files_old(gal, data_stem, bands = 'r'):
-    """old version of the download script from dr7 and earlier from SDSS2"""
+    """DEPRECATED!!!!!!
+old version of the download script from dr7 and earlier from SDSS2"""
     for band in bands:
         psf_dir = data_stem+'/psField/'
         data_dir = data_stem + band + '/'
@@ -127,8 +130,12 @@ def download_files_old(gal, data_stem, bands = 'r'):
 #-----------------------------------
 
 def get_file(nm, str1, download_dir):
+    is_download = False
     if not os.path.isfile(download_dir + nm):
         if not os.path.isfile(download_dir + nm+'.gz'):
-            command = 'wget -P %s %s' %(download_dir, str1)
-            os.system(command)
-    return
+            if not os.path.isfile(download_dir + nm+'.bz2'):
+                command = 'wget -P %s %s' %(download_dir, str1)
+                os.system(command)
+                is_download = True
+                
+    return is_download

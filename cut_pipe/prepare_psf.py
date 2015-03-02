@@ -40,13 +40,13 @@ def prepare_psf(gal, bands, data_stem, out_path):
             file_base = '%08d_%s_' %(galcount_tmp, band_char)
     
             nm  = 'psField-%06d-%d-%04d.fit' %(run_tmp, camCol_tmp, field_tmp)
-            if os.path.isfile(data_path+nm+'.gz'):
-                os.system('gunzip -f '+data_path+nm+'.gz')
+            if not os.path.isfile(data_path+nm):
+                if os.path.isfile(data_path+nm+'.gz'):
+                    print 'gunzip -f -k '+data_path+nm+'.gz'
+                    os.system('gunzip -f -k '+data_path+nm+'.gz')
                 
             str = '%s  %s%s %d %f %f %s%s/%s/%spsf.fits' %(user_settings.readatlas_readPSF_path, data_path,nm, band, rowc_tmp, colc_tmp, out_path, band_char, path_app, file_base)
             os.system(str)
-
-            os.system('gzip -f '+data_path+nm)
 
             a = pf.open('%s%s/%s/%spsf.fits' %(out_path, band_char, path_app, file_base),'update' )
             # remove 1000 count soft-bias from images and normalize
@@ -55,5 +55,11 @@ def prepare_psf(gal, bands, data_stem, out_path):
             
             a.close()
 
+    raw_input()
+    # remove unpacked fits files but leave zipped files to save space
+    cmd = 'rm %s/*.fit' %data_path
+    print "REMOVING FIT images to save space"
+    print cmd
+    os.system(cmd)
     return
 

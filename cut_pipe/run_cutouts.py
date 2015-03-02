@@ -1,95 +1,76 @@
 #!/usr/bin/python
 
 ### First the imports ####
-from download_files import *
-from prepare_psf import *
-from cut_sdss3 import *
 import os 
 import sys
 import numpy as np
+from argparse import ArgumentParser, ArgumentError
+from download_files import *
+from prepare_psf import *
+from cut_sdss3 import *
 import astro_image_processing.user_settings as user_settings
+import astro_image_processing.cut_pipe.get_data as get_data
 from astro_image_processing.mysql import *
+from make_dirs import build_dirs
 
-### Now set the essential variables ###
-### mysql info ###
-table_name = 'manga_cast'
-### Paths ###
-data_dir = '/home/alan/Desktop/test/data/'
-cut_dir =  '/home/alan/Desktop/test/cutouts/'
-### Settings for cutouts ###
-bands = 'gri' # list all desired bands in a single string
-pix_scale = 0.396 # arcsec per pixel
-cut_size = 20.0 # the radius of the cutout image in multiples of PetroRad50
-min_size = 80.0 # minimum size in pixels
-folder_size = 250 # num of galaxies/folder
-folder_fmt = "%04d"
+### Now import configuration variables ###
+from cutout_config import *
 
-### And fetch the starting and ending points, if not supplied, it will
-### try to do EVERYTHING ###
-try:
-    start_num = int(sys.argv[1])
-except:
-    start_num = -999
-try:
-    end_num = int(sys.argv[2])
-except:
-    end_num = 1000000000
+def get_options_main():
+    desc = """Downloads the data and makes cutouts for galaxies with ID numbers 
+between start_num and end_num given by the user"""
 
-if (end_num-start_num > 1000000) or start_num < 0 or end_num >999999999:
-    print """-----------------------------------------------
-!!!!WARNING!!!!
------------------------------------------------
-The start_num %d and/or end_num %d may be wrong. 
-Hit enter to continue, otherwise type "exit" to 
-quit the program.
-"""
-    choice = raw_input("Please enter your choice: ")
+    parser = ArgumentParser(description = desc)
+    parser.add_argument("start_num", action="store", type=int,
+                         help="Starting Galaxy for cutouts")
+    parser.add_argument("end_num", action="store", type=int,
+                        help="Ending Galaxy for cutouts")
+    parser.add_argument("-t","--test", action="store_false", 
+                        dest="full_run", default = True,
+                        help="run a test set")
 
-    if choice.strip() == 'exit':
+    # parses command line aguments for pymorph
+    args = parser.parse_args()
+
+    return args
+
+def main():
+    """run_cutouts downloads the images and runs the cutouts, weight, and PSF images for a set of galaxies"""
+
+    options = get_options_main()
+
+    # Test for the folders and fix if possible, otherwise exit
+    if not build_dirs(data_dir, cut_dir, bands):
+        print "Dir structure is wrong and can't be fixed!!!\nExiting now..."
         sys.exit()
 
-cursor = mysql_connect(user_settings.mysql_params['dba'],
-                       user_settings.mysql_params['user'],
-                       user_settings.mysql_params['pwd'],
-                       user_settings.mysql_params['host'])
+    if options.full_run:
+        #runs on user-submitted data
+        """get the data needed for fitting
+    This script requires galcount, run, rerun, camCol, field, 
+    rowc(for each band), colc(for each band), petroR50(for each band) 
+    """
+        gal = get_data.get_cut_data(options.start_num, options.end_num)
 
-### construct the query
-### the first entry is the name in mysql, the second in the name for my program
-table_prefix = 'a'
-band_params = ['rowc','colc','petroR50']
-params = ['galcount','run','rerun','camCol','field']
+    else:
+        #uses a small test set provided for the user
+        testfile = 'cut_example_data.pickle'
+        print "Running test set contained in %s" %testfile
+        import pickle
+        a = open(testfile)
+        gal = pickle.load(a)
+        a.close()
 
-def get_cut_data(table_prefix, params, bands, band_params, start_num, end_num,
-                 cursor):
-    """gets data from SQL table for fitting"""
-    gal = {}
-    cmd = 'select '+table_prefix+'.'+ (', '+table_prefix + '.').join(params)
-    for bp in band_params:
-        for band in bands:
-            cmd += ", %s.%s_%s" %(table_prefix, bp, band)
+    ### now cut the data
+    for band in bands:
+        download_files(gal, data_dir, band)
+        prepare_psf(gal, band, data_dir, cut_dir)
+        cut_images(gal, band, data_dir, cut_dir, cut_size = cut_size, 
+                   pix_scale = pix_scale, min_size = min_size)
 
-    cmd += ' from %s as %s where %s.galcount >= %d and %s.galcount <= %d order by %s.galcount;' %(table_name, table_prefix, table_prefix, start_num, table_prefix, end_num, table_prefix)
-
-
-    ### fetch data
-    print cmd
-    data  =  cursor.get_data(cmd)
-
-    for tmp_data, name in zip(data, params+['%s_%s' %(tmp_param, band) for tmp_param in band_params for band in bands]):
-        gal[name] = tmp_data
+    return 0
 
 
-    return gal
 
-gal = get_cut_data(table_prefix, params, bands, band_params, start_num, end_num,
-                   cursor)
-### group the output into directories for easier handling
-gal['dir_end'] = [ folder_fmt %a for a in ((np.array(gal['galcount'])-1)/folder_size +1)]
- 
-### now cut the data
-for band in bands:
-    #download_files(gal, data_dir, band)
-    #prepare_psf(gal, band, data_dir, cut_dir)
-    cut_images(gal, band, data_dir, cut_dir, cut_size = cut_size, 
-               pix_scale = pix_scale, min_size = min_size)
-
+if __name__ == "__main__":
+    main()
