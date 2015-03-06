@@ -1,4 +1,0 @@
-start_mysql -e "select a.thing_id, a.modelMag_r-a.extinction_r-a.kcorrR-a.modelMag_i+a.extinction_i+a.kcorrI as color_ri, a.kcorrR, a.zspec, b.plate, b.MJD, b.fibre from claudia_dr10_modelmag as a, claudia_values as b where a.thing_id=b.thing_id and a.zspec between 0.5 and 0.6 and a.kcorrR between 0.0 and 0.5 and a.modelMag_r-a.extinction_r-a.kcorrR-a.modelMag_i+a.extinction_i+a.kcorrI between 0.4 and 0.75 order by RAND(20) limit 200;" > color_red_low_tmp.txt
-
-start_mysql -e "select a.thing_id, a.modelMag_r-a.extinction_r-a.kcorrR-a.modelMag_i+a.extinction_i+a.kcorrI as color_ri, a.kcorrR, a.zspec, b.plate, b.MJD, b.fibre from claudia_dr10_modelmag as a, claudia_values as b where a.thing_id=b.thing_id and a.zspec between 0.5 and 0.6 and a.kcorrR between 1.0 and 1.1 and a.modelMag_r-a.extinction_r-a.kcorrR-a.modelMag_i+a.extinction_i+a.kcorrI between 0.25 and 0.40 order by RAND(40) limit 200;" > color_blue_high.txt
-
