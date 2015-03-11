@@ -1,8 +1,8 @@
 #++++++++++++++++++++++++++
 #
-# TITLE: get_field_cat
+# TITLE: casjobs_allspec
 #
-# PURPOSE: queries casjobs for all targets in a field
+# PURPOSE: queries casjobs for all spectroscopic galaxies
 #
 # INPUTS: gal_cat :  a dictionary containing the keys: 
 #                    'filename'- names the file that 
@@ -41,17 +41,8 @@ import datetime
 import traceback
 import astro_image_processing.casjobs_query.casjobs_functions as query_casjobs
 
-class field_query(query_casjobs.query_class):
-    """This implements the query_casjobs class for a field query"""
-
-    def __init__(self,  gal_cat, casjobs_info):
-        super(field_query, self).__init__(gal_cat, casjobs_info)
-        self.job_info['run']=gal_cat['run']
-        self.job_info['rerun']=gal_cat['rerun']
-        self.job_info['camcol']=gal_cat['camcol']
-        self.job_info['field']=gal_cat['field']
-        return
-
+class spec_query(query_casjobs.query_class):
+    """This implements the query_casjobs class for a all-spectroscopic data search"""
 
     def catalog_query(self):
         try:
@@ -65,7 +56,7 @@ DECLARE @SATURATED bigint SET @SATURATED=dbo.fPhotoFlags('SATURATED')
 DECLARE @NODEBLEND bigint SET @NODEBLEND=dbo.fPhotoFlags('NODEBLEND')
 DECLARE @bad_flags bigint SET
 @bad_flags=(@SATURATED|@BRIGHT|@EDGE|@NODEBLEND|@CHILD|@DEBLENDED_AS_PSF)
-SELECT 
+SELECT top {chunk}
 p.objid, (p.flags & @bad_flags)  as badflag, p.nchild, 
 p.run,p.rerun,p.camCol,p.field,p.obj, 
 s.specobjid, s.plate, s.mjd, s.fiberid,  
@@ -106,37 +97,37 @@ FROM
 LEFT OUTER JOIN Photoz as x on x.objid =p.objid, field f
 WHERE
 f.fieldID = p.fieldID and  
-p.run={run} and p.rerun = {rerun} and p.camcol = {camcol} 
-and p.field = {field}
+p.objid > {lastnum} and
+(p.petroMag_r - p.extinction_r) between 14.0 and 17.77 and p.type = 3 
+and s.class ='GALAXY'
 order by p.objid
 """.format(**self.job_info)
         except KeyError:
             print """WARNING: Not all query info was supplied:
-You must supply a run, rerun, camcol, field, and table name"""
-            traceback.print_exc()
+You must supply a limiting chunk size, a starting photoobjid, and table name"""
+        traceback.print_exc()
 
         return cmd
 
     
+    
+
+
+
 if __name__ == "__main__":
     from astro_image_processing.user_settings import casjobs_info
+
+    gal_cat = {'filename':'spectro_sample_raw.cat',
+               'data_dir':'/home/alan/Desktop/test/data/',
+               'out_file':'spectro_sample.cat',
+               'chunksize':10,
+               }
 
     casjobs_info.update({ 'jobname':'test_name',
                           'search_target':'DR12'})
 
-    for a in [(1,4849,301,1,917),
-              (2,109, 301,5,11),
-              (3,307, 301,6,11),
-              (4,308, 301,4,11),
-              (5,752, 301,3,11)]:
-        gal_cat = {'galcount':a[0], 'run':a[1], 'rerun':a[2],
-                   'camcol':a[3], 'field':a[4], 
-                   'filename':'field_%06d.fits'%a[0],
-                   'data_dir':'/home/alan/Desktop/test/data/',
-                   'chunksize':1000000000
-                   }
 
-        our_query = field_query(gal_cat, casjobs_info)
+    our_query = spec_query(gal_cat, casjobs_info)
 
-        our_query.run_full_query()
-
+    our_query.run_full_query()
+    

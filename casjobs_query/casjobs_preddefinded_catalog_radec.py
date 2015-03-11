@@ -1,4 +1,4 @@
-#++++++++++++++++++++++++++
+l#++++++++++++++++++++++++++
 #
 # TITLE: casjobs
 #
@@ -11,49 +11,110 @@
 
 import os
 import datetime
-from astro_image_processing.casjobs_query.make_new_query import *
-import subprocess as sub
 import sys
-from astro_image_processing.casjobs_query.casjobs_new_query import get_file_info, write_config,get_filename, exec_cmd
-from astro_image_processing.mysql import *
-from astro_image_processing.user_settings import *
+from astro_image_processing.casjobs_query.casjobs_functions import *
+from astro_image_processing.casjobs_query.make_new_query import *
+import astro_image_processing.casjobs_query.casjobs_functions as cas_func
+import traceback
 
-def cone_search_query(job_info):
-    """The cone serch query used in building the correlated luminostiy function"""
-    cmd = """declare @thing_id int, @ra float, @dec float, @zgal float;
+class conematch_query(query_class):
+    """This implements the query_casjobs class for a ra/dec cone search"""
+
+    def cone_query(self):
+        try:
+            cmd = """
+declare @thing_id int, @ra float, @dec float, @zgal float;
 
 DECLARE my_cursor cursor read_only
 FOR
 SELECT mt.thing_id, mt.ra_gal, mt.dec_gal, mt.zgal FROM MYDB.{in_tablename} as mt
 OPEN my_cursor
 
+DECLARE @BRIGHT bigint SET 
+@BRIGHT=dbo.fPhotoFlags('BRIGHT')
+DECLARE @CHILD bigint SET @CHILD=dbo.fPhotoFLAGS('CHILD')
+DECLARE @DEBLENDED_AS_PSF bigint 
+    SET @DEBLENDED_AS_PSF=dbo.fPhotoFLAGS('DEBLENDED_AS_PSF')
+DECLARE @EDGE bigint SET @EDGE=dbo.fPhotoFlags('EDGE')
+DECLARE @SATURATED bigint SET @SATURATED=dbo.fPhotoFlags('SATURATED')
+DECLARE @NODEBLEND bigint SET @NODEBLEND=dbo.fPhotoFlags('NODEBLEND')
+DECLARE @bad_flags bigint SET
+@bad_flags=(@SATURATED|@BRIGHT|@EDGE|@NODEBLEND|@CHILD|@DEBLENDED_AS_PSF)
 WHILE(1=1)
 BEGIN
   FETCH NEXT from my_cursor into @thing_id, @ra, @dec, @zgal
   IF (@@fetch_status < 0) break
   INSERT MYDB.{tablename}
-  SELECT top 1 @thing_id, @zgal, N.distance, p.objid, 
-p.run, p.rerun, p.camcol, p.field, p.obj,
-p.rowc_g,p.rowc_r,p.rowc_i,
-p.colc_g,p.colc_r,p.colc_i,
-p.petroR50_g, p.petroR50_r, p.petroR50_i, 
-p.petroMag_g, p.petroMag_r, p.petroMag_i, 
-p.ModelMag_g, p.ModelMag_r, p.ModelMag_i, 
-p.CModelMag_g, p.CModelMag_r, p.CModelMag_i, 
-p.fracdev_g, p.fracdev_r, p.fracdev_i, 
-p.devmag_g, p.devmag_r, p.devmag_i, 
-p.expmag_g, p.expmag_r, p.expmag_i,
-p.extinction_g, p.extinction_r, p.extinction_i, 
-p.type, p.lnLStar_r
-  FROM PhotoPrimary as p,
-dbo.fGetNearbyObjEq(@ra,@dec,3.0) as N where p.objid=N.objid 
+
+
+
+SELECT top 1
+@thing_id, @zgal, N.distance,
+p.objid, (p.flags & @bad_flags)  as badflag, p.nchild, 
+p.run,p.rerun,p.camCol,p.field,p.obj, c.stripe,
+c.startmu, s.specobjid, s.plate, s.mjd, s.fiberid,  
+p.ra as ra_gal, p.dec as dec_gal, s.z, 
+s.veldisp, s.veldispErr, s.eclass,  p.probPSF,
+p.petroR90_u, p.petroR90_g, p.petroR90_r, p.petroR90_i, p.petroR90_z,
+p.petroR50_u, p.petroR50_g, p.petroR50_r, p.petroR50_i, p.petroR50_z,
+p.petroMag_u, p.petroMag_g, p.petroMag_r, p.petroMag_i, p.petroMag_z,
+p.devRad_u, p.devRad_g, p.devRad_r, p.devRad_i, p.devRad_z, 
+p.devab_u, p.devab_g, p.devab_r, p.devab_i, p.devab_z, 
+p.devPhi_u,p.devPhi_g,p.devPhi_r,p.devPhi_i,p.devPhi_z,
+p.devmag_u, p.devmag_g, p.devmag_r, p.devmag_i, p.devmag_z, 
+p.fracdev_u, p.fracdev_g, p.fracdev_r, p.fracdev_i, p.fracdev_z, 
+p.expRad_u, p.expRad_g, p.expRad_r, p.expRad_i, p.expRad_z, 
+p.expab_u, p.expab_g, p.expab_r, p.expab_i, p.expab_z, 
+p.expPhi_u,p.expPhi_g,p.expPhi_r,p.expPhi_i,p.expPhi_z,
+p.expmag_u, p.expmag_g, p.expmag_r, p.expmag_i, p.expmag_z, 
+p.PSFmag_u, p.PSFmag_g, p.PSFmag_r, p.PSFmag_i, p.PSFmag_z, 
+p.extinction_u, p.extinction_g, p.extinction_r, p.extinction_i,
+    p.extinction_z, 
+f.aa_u, f.aa_g, f.aa_r, f.aa_i, f.aa_z,
+f.kk_u, f.kk_g, f.kk_r, f.kk_i, f.kk_z,
+f.airmass_u, f.airmass_g, f.airmass_r, f.airmass_i, f.airmass_z,
+f.gain_u, f.gain_g, f.gain_r, f.gain_i, f.gain_z,
+f.darkvariance_u, f.darkvariance_g, f.darkvariance_r, f.darkvariance_i,
+    f.darkvariance_z,
+f.sky_u, f.sky_g, f.sky_r, f.sky_i, f.sky_z,
+f.skySig_u, f.skySig_g, f.skySig_r, f.skySig_i, f.skySig_z,
+f.skyErr_u, f.skyErr_g, f.skyErr_r, f.skyErr_i, f.skyErr_z,
+f.psfWidth_u, f.psfWidth_g, f.psfWidth_r, f.psfWidth_i, f.psfWidth_z,
+p.rowc_u, p.rowc_g, p.rowc_r, p.rowc_i, p.rowc_z,
+p.colc_u, p.colc_g, p.colc_r, p.colc_i, p.colc_z,
+x.z as photoz, x.zErr as photoz_err,
+x.kcorr_u,x.kcorr_g,x.kcorr_r,x.kcorr_i,x.kcorr_z
+p.lnLStar_u,p.lnLStar_g,p.lnLStar_r,p.lnLStar_i,p.lnLStar_z,
+p.type
+INTO
+mydb.{tablename}
+FROM
+(photoobj as p LEFT OUTER JOIN SpecObj as s on p.objID = s.BestObjID) 
+LEFT OUTER JOIN Photoz as x on x.objid =p.objid, chunk c,  field f, segment g, dbo.fGetNearbyObjEq(@ra,@dec,3.0) as N  
+WHERE
+p.objid=N.objid and 
+g.segmentID = f.segmentID and
+f.fieldID = p.fieldID and  c.chunkID=g.chunkID
+and p.run={run} and p.rerun = {rerun} and p.camcol = {camcol} 
+and p.field = {field}
 order by N.distance
 END
 
 CLOSE my_cursor
-  DEALLOCATE my_cursor""".format(**job_info)
+  DEALLOCATE my_cursor;
+""".format(**self.job_info)
+        except KeyError:
+            print """WARNING: Not all query info was supplied:
+You must supply a run, rerun, camcol, field, and table name"""
+            traceback.print_exc()
 
-    return cmd
+        return cmd
+
+
+
+
+
+
 
 def create_table(tabname):
     """creates the table for cone search output"""
@@ -99,39 +160,7 @@ order by galcount limit {offset},{chunksize};""".format(offset = max((chunknum-1
                                      [int, float, float, float])
     return chunkdata
 
-
-def casjobs(gal_cat, casjobs_info):
-    os.system('rm {data_dir}{filename}'.format(**gal_cat))
-
-    thisdir = os.getcwd()
-    casjobs='java -jar %s ' %casjobs_info['cas_jar_path']
-
-    write_config(casjobs_info)
-
-    full_jobname = "%s_%s" %(casjobs_info['jobname'],str(datetime.date.today()).replace('-','_'))
-    job_info = {'full_jobname':full_jobname,
-                'tablename':full_jobname,
-                'in_tablename':"in_"+full_jobname,
-                'casjobs':casjobs,
-                'chunknum':0,
-                'chunk':100
-                }
     
-    print 'CUT PIPE: Preparing mydb output tables'
-    exec_cmd('{casjobs} execute -t "mydb" -n "drop output table" "drop table {tablename}"'.format(**job_info))
-    exec_cmd('{casjobs} -j '.format(**job_info))
-
-    exec_cmd('{casjobs} execute -t "mydb" -n "create output table" "{cmd}"'.format(cmd=create_table(job_info['tablename']),**job_info))
-    exec_cmd('{casjobs} -j '.format(**job_info))
-    
-    print 'CUT PIPE: Preparing mydb input tables'
-    exec_cmd('{casjobs} execute -t "mydb" -n "drop input table" "drop table {in_tablename}"'.format(**job_info))
-    exec_cmd('{casjobs} -j '.format(**job_info))
-    
-    exec_cmd('{casjobs} execute -t "mydb" -n "create input table" "CREATE table {in_tablename} (thing_id int, ra_gal float, dec_gal float, zgal float);"'.format(**job_info))
-    exec_cmd('{casjobs} -j '.format(**job_info))
-
-    cursor = mysql_connect('catalog',mysql_params['user'],mysql_params['pwd'])
 
     while True:
         job_info['chunknum']+=1
