@@ -1,4 +1,4 @@
-from mysql_class import *
+from astro_image_processing.mysql import *
 
 def load_table(cursor, table_name, file_name, columns, column_types, delimiter = ',', make_table = 1):
     if make_table:
