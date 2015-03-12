@@ -33,27 +33,29 @@ class query_class(object):
                          'chunk':self.gal_cat['chunksize'],
                          'casjobs_jar':self.casjobs_jar
                     }
+
+        self.exec_cmd = exec_cmd
     
         return
 
 
     def prep_output_table(self):
         print 'CUT PIPE: Preparing mydb output tables'
-        exec_cmd('{casjobs_jar} execute -t "MyDB" -n "drop output table" "drop table {tablename}"'.format(**self.job_info))
-        exec_cmd('{casjobs_jar} -j '.format(**self.job_info))
+        self.exec_cmd('{casjobs_jar} execute -t "MyDB" -n "drop output table" "drop table {tablename}"'.format(**self.job_info))
+        self.exec_cmd('{casjobs_jar} -j '.format(**self.job_info))
 
-        exec_cmd('{casjobs_jar} execute -t "MyDB" -n "create output table" "{cmd}"'.format(cmd=self.create_table_output()))
-        exec_cmd('{casjobs_jar} -j '.format(**self.job_info))
+        self.exec_cmd('{casjobs_jar} execute -t "MyDB" -n "create output table" "{table_cmd}"'.format(table_cmd=self.create_table_output(), **self.job_info))
+        self.exec_cmd('{casjobs_jar} -j '.format(**self.job_info))
         return
 
     def prep_input_table(self):
 
         print 'CUT PIPE: Preparing MyDB input tables'
-        exec_cmd('{casjobs_jar} execute -t "MyDB" -n "drop input table" "drop table {in_tablename}"'.format(**self.job_info))
-        exec_cmd('{casjobs_jar} -j '.format(**self.job_info))
+        self.exec_cmd('{casjobs_jar} execute -t "MyDB" -n "drop input table" "drop table {in_tablename}"'.format(**self.job_info))
+        self.exec_cmd('{casjobs_jar} -j '.format(**self.job_info))
         
-        exec_cmd('{casjobs_jar} execute -t "MyDB" -n "create input table" "{cmd}";'.format(cmd=self.create_table_intput()))
-        exec_cmd('{casjobs_jar} -j '.format(**self.job_info))
+        self.exec_cmd('{casjobs_jar} execute -t "MyDB" -n "create input table" "{table_cmd}";'.format(table_cmd=self.create_table_input(), **self.job_info))
+        self.exec_cmd('{casjobs_jar} -j '.format(**self.job_info))
         return
 
 
@@ -65,8 +67,8 @@ class query_class(object):
         self.job_info['tablename'] = self.job_info['jobname']
 
         print 'CUT PIPE: Preparing MyDB input/output tables'
-        exec_cmd('{casjobs_jar} execute -t "MyDB" -n "drop output table" "drop table {tablename}"'.format(**self.job_info))
-        exec_cmd('{casjobs_jar} -j '.format(**self.job_info))
+        self.exec_cmd('{casjobs_jar} execute -t "MyDB" -n "drop output table" "drop table {tablename}"'.format(**self.job_info))
+        self.exec_cmd('{casjobs_jar} -j '.format(**self.job_info))
         print 'NOTICE:It is OK if it said error just then.'
 
         
@@ -102,12 +104,12 @@ class query_class(object):
             print 'CUT PIPE: Running Query'
             self.job_info['cmd']='{casjobs_jar} run -n "{jobname}" -f {query_name}'.format(**self.job_info)
             print self.job_info['cmd']
-            exec_cmd(self.job_info['cmd'])
+            self.exec_cmd(self.job_info['cmd'])
 
             print 'GALMORPH: Downloading Results'
             self.job_info['cmd']='{casjobs_jar} extract -force -type "csv" -download {jobname} -table {tablename}'.format(**self.job_info)
             print self.job_info['cmd']
-            self.casjobs_out = exec_cmd(self.job_info['cmd'])
+            self.casjobs_out = self.exec_cmd(self.job_info['cmd'])
             print self.casjobs_out
 
             if not self.get_job_output():

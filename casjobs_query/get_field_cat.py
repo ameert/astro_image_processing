@@ -102,7 +102,7 @@ x.kcorrU,x.kcorrG,x.kcorrR,x.kcorrI,x.kcorrZ
 INTO
 mydb.{tablename}
 FROM
-(Galaxy as p LEFT OUTER JOIN SpecObj as s on p.objID = s.BestObjID) 
+(PhotoPrimary as p LEFT OUTER JOIN SpecObj as s on p.objID = s.BestObjID) 
 LEFT OUTER JOIN Photoz as x on x.objid =p.objid, field f
 WHERE
 f.fieldID = p.fieldID and  
