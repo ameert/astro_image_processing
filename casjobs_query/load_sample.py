@@ -1,13 +1,16 @@
 #!/usr/bin/python
 
-from mysql_class import *
 import numpy as np
-from load_table import *
+astro_image_processing.mysql import load_table
+import astro_image_processing.mysql as mysql
+from astro_image_processing.sdss_flags import *
+from astro_image_processing.user_settings import mysql_params
 
 infile = '../spectro_sample.cat'
 table_name = 'CAST_raw'
 
-cursor = mysql_connect('intermediate_tables', 'pymorph', 'pymorph')
+cursor = mysql.mysql_connect(mysql_params['dba'],mysql_params['user'],
+                       mysql_params['pwd'],mysql_params['host'])
 
 columns = ['objid','badflag','nchild',
 'run','rerun','camCol','field','obj','stripe','startmu',

@@ -41,16 +41,16 @@ all in nanomaggies"""
             
             #read in run, rerun, camcol, field, filter data for default
             # gain and dark_var
-            self.run = image[3]['run']
-            self.rerun = image[3]['rerun']
-            self.camcol = image[3]['camcol']
-            self.band = image[3]['filter']
-            self.field = image[3]['field']
+            self.run = image[3].data['run'][0]
+            self.rerun = image[3].data['rerun'][0]
+            self.camcol = image[3].data['camcol'][0]
+            self.band = image[3].data['filter'][0]
+            self.field = image[3].data['field'][0]
             
             # set the default dark_var and gain
             self.default_gain()
             self.default_dark_var()
-
+            image.close()
         else:
             print "File '%s' not found!!!!" %self.filename
             print "File not loaded!!!"
@@ -104,16 +104,16 @@ http://data.sdss3.org/datamodel/files/BOSS_PHOTOOBJ/frames/RERUN/RUN/CAMCOL/fram
             return self.data_nosky
         
     def weight_im(self, unit='NM', gain=None, dark_var=None):
-        if gain is None and self.gain is None:
-            self.default_gain()
-        else:
+        if gain!=None:
             self.gain = gain
-
-        if dark_var is None and self.dark_var is None:
-            self.default_dark_var()
-        else:
+        elif self.gain==None:
+            self.default_gain()
+        
+        if dark_var!=None:
             self.dark_var = dark_var
-
+        elif self.dark_var==None:
+            self.default_dark_var()
+        
         #poisson noise is in photo-electrons
         dn_err= np.sqrt(self.DN(sky=True)/self.gain+self.dark_var)
         
@@ -124,7 +124,7 @@ http://data.sdss3.org/datamodel/files/BOSS_PHOTOOBJ/frames/RERUN/RUN/CAMCOL/fram
         else:
             print "Units not recognized!\nNo weight image created"
         
-        return
+        return self.weight
 
     def diagnostic_plot(self):
         import matplotlib.pyplot as plt

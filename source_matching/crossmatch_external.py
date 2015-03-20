@@ -2,19 +2,6 @@
 
 import sys
 
-for a in ['/home/ameert/alans-image-processing-pipeline/matching',
-'/home/ameert/python/lib64/python2.6/site-packages/CosmoloPy-0.1.103-py2.6-linux-x86_64.egg',
-'/home/ameert/python/lib/python2.6/site-packages/scikits.bootstrap-0.2dev-py2.6.egg',
-'/home/ameert/python/lib/python2.6/site-packages/scikit_learn-0.12.1-py2.6-linux-x86_64.egg',
-'/home/ameert/python/alan_code',
-'/home/ameert/python/lib64/python2.6/site-packages',
-'/home/ameert/python/lib/python2.6/site-packages',
-'/home/ameert/python/lib64/python2.6/site-packages/PIL',
-'/home/ameert/python/lib64/python2.6/site-packages/healpy'
-]:
-    sys.path.append(a)
-
-#print sys.path
 
 
 import os

@@ -33,7 +33,7 @@ from table_defs import *
 from make_pymorph_fits import get_table
 
 
-save_loc = '/home/ameert/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/UPenn_PhotDec_'
+save_loc = '/home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/UPenn_PhotDec_'
 this_dir = os.getcwd()
 
 
@@ -96,7 +96,7 @@ if __name__=="__main__":
         hdu.header.add_history('email: ameert-at-sas.upenn.edu')
         hdu.header.add_blank(' ')
         hdu.header.add_comment('The Extension(s) of this fits file contain the %s data' %tablename)
-        hdu.header.add_comment('See Meert et al. (2014) for Table Explanation')
+        hdu.header.add_comment('See Meert et al. (2015) for Table Explanation')
 
         thdulist = pyfits.HDUList([hdu]+tabs)
         thdulist.writeto(fits_file, clobber =1)

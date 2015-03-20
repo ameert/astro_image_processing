@@ -1,4 +1,4 @@
-from mysql_class import *
+from astro_image_processing.mysql import *
 import os
 import itertools
 import pyfits
@@ -6,10 +6,10 @@ import datetime
 import sys
 
 dba = 'catalog'
-pwd = 'al130568'
-usr = 'ameert'
+pwd = 'pymorph'
+usr = 'pymorph'
 
-stem = 'newt536'
+stem = 'newt538'
 
 cursor = mysql_connect(dba, usr, pwd)
 
@@ -516,6 +516,132 @@ f.galcount = z.galcount and u.ftype = 'u' and u.band='r' and u.model = 'serexp'
 and f.galcount = x.galcount and x.ftype = 'u' and x.band='r' and x.model = 'ser'order by f.galcount 
 into outfile "/tmp/%s_highn.txt";""" %(stem)
 
+#print cmd
+#cursor.execute(cmd)
+#os.system('cp /tmp/%s_highn.txt /scratch/MB/galtable_highn.txt' %(stem))
+
+
+cmd = """select f.galcount, f.ra_gal, f.dec_gal, f.z,  
+d.kcorr_r, f.petroMag_r-f.extinction_r,
+IFNULL(-2.5*log10(f.fracdev_r*pow(10.0, -0.4*(f.devmag_r-f.extinction_r)) +
+(1.0-f.fracdev_r)*pow(10.0, -0.4*(f.expmag_r-f.extinction_r))), -999)
+from 
+catalog.r_band_ser as a, catalog.r_band_serexp as b, 
+catalog.CAST as f,
+catalog.DERT as d, catalog.r_simard_fit as s,
+catalog.M2010 as m, catalog.Flags_catalog as u,
+catalog.Flags_catalog as x, COLOR_GRAD_ser as z
+where  
+f.galcount = a.galcount and f.galcount = b.galcount and 
+f.galcount = d.galcount and f.galcount = s.galcount and
+f.galcount = m.galcount and f.galcount = u.galcount and 
+f.galcount = z.galcount and u.ftype = 'u' and u.band='r' and u.model = 'serexp' 
+and f.galcount = x.galcount and x.ftype = 'u' and x.band='r' and x.model = 'ser' 
+order by f.galcount 
+into outfile "/tmp/%s_for_vmax.txt";""" %(stem)
+#print cmd
+#cursor.execute(cmd)
+#os.system('cp /tmp/%s_for_vmax.txt /home/alan/Desktop/galtable_for_vmax.txt' %(stem))
+
+
+cmd = """select f.galcount, f.ra_gal, f.dec_gal, f.z,  
+f10.fiber2mag_g,f10.fiber2mag_r,f10.fiber2mag_i,
+f10.petromag_g,f10.petromag_r,f10.petromag_i,
+f10.modelmag_g,f10.modelmag_r,f10.modelmag_i,
+f10.cmodelmag_g,f10.cmodelmag_r,f10.cmodelmag_i,
+f10.extinction_g,f10.extinction_r,f10.extinction_i,
+f10.kcorrg,f10.kcorrr,f10.kcorri,
+a.m_tot, ai.m_tot, sr.m_tot,
+IF(u.flag&pow(2,0)>0, IF(a.n_bulge between 0.5 and 7.5, 0, 1),2),
+IF(x.flag&pow(2,0)>0, IF(ai.n_bulge between 0.5 and 7.5, 0, 1),2)
+from 
+catalog.r_band_ser as a,
+catalog.r_simard_ser as sr,
+catalog.i_band_ser as ai,
+catalog.r_band_serexp as b, 
+catalog.dr10_CAST as f10,
+catalog.CAST as f,
+catalog.DERT as d, catalog.r_simard_fit as s,
+catalog.M2010 as m, catalog.Flags_catalog as u,
+catalog.Flags_catalog as x
+where  
+f.galcount = ai.galcount and f.galcount = f10.galcount and 
+f.galcount = sr.galcount and 
+f.galcount = a.galcount and f.galcount = b.galcount and 
+f.galcount = d.galcount and f.galcount = s.galcount and
+f.galcount = m.galcount and f.galcount = u.galcount and 
+ u.ftype = 'u' and u.band='r' and u.model = 'ser' 
+and f.galcount = x.galcount and x.ftype = 'u' and x.band='i' and x.model = 'ser'
+order by f.galcount 
+into outfile "/tmp/%s_fiber2mag_all.txt";""" %(stem)
+#print cmd
+#cursor.execute(cmd)
+#os.system('cp /tmp/%s_fiber2mag_all.txt /home/alan/Desktop/galtable_fiber2mag_all.txt' %(stem))
+
+cmd = """select f.galcount, f.ra_gal, f.dec_gal, f.z,  
+f10.fiber2mag_g,f10.fiber2mag_r,f10.fiber2mag_i,
+f.petromag_g,f.petromag_r,f.petromag_i,
+f.modelmag_g,f.modelmag_r,f.modelmag_i,
+IFNULL(-2.5*log10(f.fracdev_g*pow(10.0, -0.4*(f.devmag_g)) +
+(1.0-f.fracdev_g)*pow(10.0, -0.4*(f.expmag_g))), -999),
+IFNULL(-2.5*log10(f.fracdev_r*pow(10.0, -0.4*(f.devmag_r)) +
+(1.0-f.fracdev_r)*pow(10.0, -0.4*(f.expmag_r))), -999),
+IFNULL(-2.5*log10(f.fracdev_i*pow(10.0, -0.4*(f.devmag_i)) +
+(1.0-f.fracdev_i)*pow(10.0, -0.4*(f.expmag_i))), -999),
+f.extinction_g,f.extinction_r,f.extinction_i,
+d.kcorr_g,d.kcorr_r,d.kcorr_i,
+a.m_tot, ai.m_tot, sr.m_tot,
+IF(u.flag&pow(2,0)>0, IF(a.n_bulge between 0.5 and 7.5, 0, 1),2),
+IF(x.flag&pow(2,0)>0, IF(ai.n_bulge between 0.5 and 7.5, 0, 1),2),
+a.r_bulge, a.ba_bulge, a.n_bulge,
+ai.r_bulge, ai.ba_bulge, ai.n_bulge
+from 
+catalog.r_highn_ser as a,
+catalog.r_simard_ser as sr,
+catalog.i_highn_ser as ai,
+catalog.r_band_serexp as b, 
+catalog.dr10_CAST as f10,
+catalog.CAST as f,
+catalog.DERT as d, catalog.r_simard_fit as s,
+catalog.M2010 as m, catalog.Flags_catalog as u,
+catalog.Flags_catalog as x
+where  
+f.galcount = ai.galcount and f.galcount = f10.galcount and 
+f.galcount = sr.galcount and 
+f.galcount = a.galcount and f.galcount = b.galcount and 
+f.galcount = d.galcount and f.galcount = s.galcount and
+f.galcount = m.galcount and f.galcount = u.galcount and 
+ u.ftype = 'u' and u.band='r' and u.model = 'ser' 
+and f.galcount = x.galcount and x.ftype = 'u' and x.band='i' and x.model = 'ser'
+order by f.galcount 
+into outfile "/tmp/%s_fiber2mag_all_dr7_highn.txt";""" %(stem)
+#print cmd
+#cursor.execute(cmd)
+#os.system('cp /tmp/%s_fiber2mag_all_dr7_highn.txt /home/alan/Desktop/galtable_fiber2mag_all_dr7_highn.txt' %(stem))
+
+cmd = """select f.galcount, f.ra_gal, f.dec_gal, f.z,  
+polyid_boss.polyid
+from 
+catalog.polyid_boss as polyid_boss,
+catalog.r_highn_ser as a,
+catalog.r_simard_ser as sr,
+catalog.i_highn_ser as ai,
+catalog.r_band_serexp as b, 
+catalog.dr10_CAST as f10,
+catalog.CAST as f,
+catalog.DERT as d, catalog.r_simard_fit as s,
+catalog.M2010 as m, catalog.Flags_catalog as u,
+catalog.Flags_catalog as x
+where  
+f.galcount = ai.galcount and f.galcount = f10.galcount and 
+f.galcount = sr.galcount and f.galcount = polyid_boss.galcount and 
+f.galcount = a.galcount and f.galcount = b.galcount and 
+f.galcount = d.galcount and f.galcount = s.galcount and
+f.galcount = m.galcount and f.galcount = u.galcount and 
+ u.ftype = 'u' and u.band='r' and u.model = 'ser' 
+and f.galcount = x.galcount and x.ftype = 'u' and x.band='i' and x.model = 'ser'
+order by f.galcount 
+into outfile "/tmp/%s_polyid_all.txt";""" %(stem)
 print cmd
 cursor.execute(cmd)
-os.system('cp /tmp/%s_highn.txt /scratch/MB/galtable_highn.txt' %(stem))
+os.system('cp /tmp/%s_polyid_all.txt /home/alan/Desktop/galtable_polyid_all.txt' %(stem))

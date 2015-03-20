@@ -2,6 +2,10 @@ import numpy as np
 import pyfits 
 import os
 
+"""NOTE: THIS IS AN OLD FILE USED FOR SDSS2 DR& and EARIER DATA"""
+
+
+
 
 def cut_images(gal, bands, data_stem, out_path, cut_size = 20.0, 
                pix_scale = 0.396, min_size = 80.0):

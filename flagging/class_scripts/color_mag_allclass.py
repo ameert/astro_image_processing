@@ -33,8 +33,8 @@ for band in 'gri':
     gal[band]  = np.load(a)
     print gal.keys()
 
-rmag = gal['r']['cmodelr']-gal['r']['dismod']-gal['r']['kr']
-mcolor = gal['r']['modelg']-gal['r']['kg'] - (gal['r']['modelr']-gal['r']['kr'])
+rmag = gal['r']['mag']-gal['r']['dismod']-gal['r']['kr']
+mcolor = gal['g']['mag']-gal['g']['kg'] - (gal['r']['mag']-gal['r']['kr'])
 flaglist = [ (1,1,1), (4,4,4),  (10,10,10)]
 colorlist = [ 'Red', 'Blue',  'Green']
 labellist = [ "BBB", "DDD", "222"]

@@ -18,8 +18,8 @@
 #-----------------------------------
 
 #from astro_image_processing.user_params import * #defaults
-from astro_image_processing.casjobs_query.casjobs_new_query import * 
-from astro_image_processing.casjobs_query.clean_cat import * 
-from astro_image_processing.casjobs_query.query_config import * 
+#from astro_image_processing.casjobs_query.clean_cat import * 
+#from astro_image_processing.casjobs_query.query_config import * 
 
+pass
 

@@ -23,5 +23,6 @@ import sizes  # the size conversions
 import profiles # the 1d profile conversions
 import surf_bright # surface bbightness conversions
 import image_analysis # surface brightness conversions
+import cosmology # cosmology calcuations
 
 
