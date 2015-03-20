@@ -14,11 +14,11 @@ c.PetroMag_{band1}-c.extinction_{band1}, c.PetroR50_{band1},
 c.PetroMag_{band2}-c.extinction_{band2}, c.PetroR50_{band2},
 -4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd
 from {table1} as a, {table2} as b, CAST as c, DERT as d {add_tables},  
-Flags_optimize as x, M2010 as m
+Flags_catalog as x, M2010 as m
 where 
 a.galcount = b.galcount and  a.galcount = c.galcount and
 m.galcount = c.galcount and 
-a.galcount = x.galcount  and x.band = 'r' and x.ftype = 'u' and 
+a.galcount = x.galcount  and x.band = '{band1}' and x.ftype = 'u' and 
 x.model = '{flagmodel}' and
 d.galcount = c.galcount 
 """.format(table1=table1, table2=table2,add_tables=add_tables, 
@@ -52,6 +52,11 @@ d.galcount = c.galcount
     data['mtot_abs_1'] = data['mtot_1'] - data['magcorr1']
     data['mtot_abs_2'] = data['mtot_2'] - data['magcorr2']
     
+
+    data['mdisk_abs_1'] = data['mdisk_1'] - data['magcorr1']
+    data['mbulge_abs_1'] = data['mbulge_1'] - data['magcorr1']
+    data['mdisk_abs_2'] = data['mdisk_2'] - data['magcorr2']
+    data['mbulge_abs_2'] = data['mbulge_2'] - data['magcorr2']
 
     data['petromag_abs_1'] = data['petromag_1'] - data['magcorr1']
     data['petromag_abs_2'] = data['petromag_2'] - data['magcorr2']

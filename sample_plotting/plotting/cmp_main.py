@@ -53,7 +53,7 @@ for posnum in ['1','2']:
             data['mdisk_%s' %posnum] = data['mdisk_%s' %posnum]-0.0103 #corrects for mag offset due to truncation
 
             data['mtot_%s' %posnum] = -2.5*np.log10(10**(-0.4*data['mdisk_%s' %posnum])+10**(-0.4*data['mbulge_%s' %posnum]))
-            data['mtot_abs_%s' %posnum] = data['mtot_%s' %posnum] - data['magcorr']
+            data['mtot_abs_%s' %posnum] = data['mtot_%s' %posnum] - data['magcorr%s' %posnum]
             data['surf_bright_%s' %posnum] = -2.5*np.log10(10**(-0.4*data['mtot_%s' %posnum])/(2.0*np.pi*data['hrad_%s' %posnum]**2))
     
 

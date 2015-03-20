@@ -209,17 +209,6 @@ sky_i as Galsky , skyErr_i as Galsky_err ,
 -999 as FinalFlag, '-999' as Comments
 FROM CAST;
 
-
--- best fits 
-DROP VIEW IF EXISTS r_band_best;
-CREATE VIEW r_band_best AS (SELECT a.* from r_band_ser as a, svm_probs as d where a.galcount = d.galcount and d.p_ser <= 0.5) UNION (SELECT a.* from r_band_serexp as a, svm_probs as d where a.galcount = d.galcount and d.p_ser > 0.5);
-
-DROP VIEW IF EXISTS g_band_best;
-CREATE VIEW g_band_best AS (SELECT a.* from g_band_ser as a, svm_probs as d where a.galcount = d.galcount and d.p_ser <= 0.5) UNION (SELECT a.* from g_band_serexp as a, svm_probs as d where a.galcount = d.galcount and d.p_ser > 0.5);
-
-DROP VIEW IF EXISTS i_band_best;
-CREATE VIEW i_band_best AS (SELECT a.* from i_band_ser as a, svm_probs as d where a.galcount = d.galcount and d.p_ser <= 0.5) UNION (SELECT a.* from i_band_serexp as a, svm_probs as d where a.galcount = d.galcount and d.p_ser > 0.5);
-
 --lackner mappings
 DROP VIEW IF EXISTS i_lackner_dev;
 CREATE VIEW i_lackner_dev AS SELECT * from i_lackner_dvc;
@@ -266,7 +255,30 @@ FROM CAST;
 
 
 DROP VIEW IF EXISTS g_cmodel_serexp;
-CREATE VIEW g_cmodel_serexp AS SELECT galcount, -2.5*log10(pow(10,-0.4*(devmag_g-0.0637))*fracdev_g + (1.0-fracdev_g)*pow(10,-0.4*(expmag_g-0.0103))) as m_tot, fracdev_g as BT,  
+CREATE VIEW g_cmodel_serexp AS SELECT galcount, -2.5*log10(pow(10,-0.4*(abs(devmag_g)-0.0637))*fracdev_g + (1.0-fracdev_g)*pow(10,-0.4*(abs(expmag_g)-0.0103))) as m_tot, fracdev_g as BT,  
+-999.0 as Hrad_corr , -999.0 as ba_tot_corr ,
+-999.0 as xctr_bulge , -999.0 as xctr_bulge_err ,  
+-999.0 as yctr_bulge , -999.0 as yctr_bulge_err ,  
+-999.0 as m_bulge , -999.0 as m_bulge_err ,
+-999.0 as r_bulge , -999.0 as r_bulge_err ,
+-999.0 as n_bulge , -999.0 as n_bulge_err ,
+-999.0 as ba_bulge , -999.0 as ba_bulge_err ,
+-999.0 as pa_bulge , -999.0 as pa_bulge_err ,
+-999.0 as xctr_disk , -999.0 as xctr_disk_err ,  
+-999.0 as yctr_disk , -999.0 as yctr_disk_err ,  
+-999.0 as m_disk , -999.0 as m_disk_err ,
+-999.0 as r_disk , -999.0 as r_disk_err ,
+-999.0 as ba_disk , -999.0 as ba_disk_err ,
+-999.0 as pa_disk , -999.0 as pa_disk_err ,
+-999.0 as chi2nu , -999.0 as Goodness ,
+sky_g as Galsky , skyErr_g as Galsky_err , 
+-999 as fit , -999 as FitFlag,
+-999 as flag, -999 as Manual_flag,
+-999 as FinalFlag, '-999' as Comments
+FROM CAST;
+
+DROP VIEW IF EXISTS g_sdss_cmodel;
+CREATE VIEW g_sdss_cmodel AS SELECT galcount, -2.5*log10(pow(10,-0.4*(abs(devmag_g)-0.0637))*fracdev_g + (1.0-fracdev_g)*pow(10,-0.4*(abs(expmag_g)-0.0103))) as m_tot, fracdev_g as BT,  
 -999.0 as Hrad_corr , -999.0 as ba_tot_corr ,
 -999.0 as xctr_bulge , -999.0 as xctr_bulge_err ,  
 -999.0 as yctr_bulge , -999.0 as yctr_bulge_err ,  
@@ -290,7 +302,30 @@ FROM CAST;
 
 
 DROP VIEW IF EXISTS i_cmodel_serexp;
-CREATE VIEW i_cmodel_serexp AS SELECT galcount, -2.5*log10(pow(10,-0.4*(devmag_i-0.0637))*fracdev_i + (1.0-fracdev_i)*pow(10,-0.4*(expmag_i-0.0103))) as m_tot, fracdev_i as BT,  
+CREATE VIEW i_cmodel_serexp AS SELECT galcount, -2.5*log10(pow(10,-0.4*(abs(devmag_i)-0.0637))*fracdev_i + (1.0-fracdev_i)*pow(10,-0.4*(abs(expmag_i)-0.0103))) as m_tot, fracdev_i as BT,  
+-999.0 as Hrad_corr , -999.0 as ba_tot_corr ,
+-999.0 as xctr_bulge , -999.0 as xctr_bulge_err ,  
+-999.0 as yctr_bulge , -999.0 as yctr_bulge_err ,  
+-999.0 as m_bulge , -999.0 as m_bulge_err ,
+-999.0 as r_bulge , -999.0 as r_bulge_err ,
+-999.0 as n_bulge , -999.0 as n_bulge_err ,
+-999.0 as ba_bulge , -999.0 as ba_bulge_err ,
+-999.0 as pa_bulge , -999.0 as pa_bulge_err ,
+-999.0 as xctr_disk , -999.0 as xctr_disk_err ,  
+-999.0 as yctr_disk , -999.0 as yctr_disk_err ,  
+-999.0 as m_disk , -999.0 as m_disk_err ,
+-999.0 as r_disk , -999.0 as r_disk_err ,
+-999.0 as ba_disk , -999.0 as ba_disk_err ,
+-999.0 as pa_disk , -999.0 as pa_disk_err ,
+-999.0 as chi2nu , -999.0 as Goodness ,
+sky_i as Galsky , skyErr_i as Galsky_err , 
+-999 as fit , -999 as FitFlag,
+-999 as flag, -999 as Manual_flag,
+-999 as FinalFlag, '-999' as Comments
+FROM CAST;
+
+DROP VIEW IF EXISTS i_sdss_cmodel;
+CREATE VIEW i_sdss_cmodel AS SELECT galcount, -2.5*log10(pow(10,-0.4*(abs(devmag_i)-0.0637))*fracdev_i + (1.0-fracdev_i)*pow(10,-0.4*(abs(expmag_i)-0.0103))) as m_tot, fracdev_i as BT,  
 -999.0 as Hrad_corr , -999.0 as ba_tot_corr ,
 -999.0 as xctr_bulge , -999.0 as xctr_bulge_err ,  
 -999.0 as yctr_bulge , -999.0 as yctr_bulge_err ,  
@@ -314,38 +349,67 @@ FROM CAST;
 
 
 create table r_band_best like r_band_dev;
-
 create table r_lackner_best like r_band_dev;
-
 create table r_simard_best like r_band_dev;
-
 create table r_mendel_best like r_band_dev;
 
 
 
-insert into r_band_best (galcount, m_tot) select a.galcount, a.m_tot from r_band_serexp as a, Flags_optimize as x where a.galcount = x.galcount  and x.band = 'r' and x.ftype = 'u' and x.model = 'serexp'  and ( x.flag&pow(2,19)=0 ) ;
-
+insert into r_band_best (galcount, m_tot) select a.galcount, a.m_tot from r_band_serexp as a, Flags_catalog as x where a.galcount = x.galcount  and x.band = 'r' and x.ftype = 'u' and x.model = 'serexp'  and ( x.flag&pow(2,19)=0 ) ;
 insert into r_lackner_best (galcount, m_tot) select a.galcount, a.m_tot-0.071648 from r_lackner_dev as a, r_lackner_fit as b where a.galcount = b.galcount and b.model ='dvc';
-
 insert into r_lackner_best (galcount, m_tot) select a.galcount, a.m_tot-0.0103 from r_lackner_exp as a, r_lackner_fit as b where a.galcount = b.galcount and b.model ='exp';
-
 insert into r_lackner_best (galcount, m_tot) select a.galcount, a.m_tot from r_lackner_ser as a, r_lackner_fit as b where a.galcount = b.galcount and b.model ='ser';
-
 insert into r_lackner_best (galcount, m_tot) select a.galcount, a.m_tot-0.0103 from r_lackner_nb1 as a, r_lackner_fit as b where a.galcount = b.galcount and b.model ='nb1';
-
 insert into r_lackner_best (galcount, m_tot) select a.galcount, -2.5*log10(pow(10,-0.4*(a.m_bulge-0.0637)) + pow(10,-0.4*(a.m_disk-0.0103))) from r_lackner_devexp as a, r_lackner_fit as b where a.galcount = b.galcount and b.model ='nb4';
-
 insert into r_simard_best (galcount, m_tot) select a.galcount, a.m_tot from r_simard_ser as a, r_simard_fit as x where a.galcount = x.galcount  and  x.Prob_Ps > 0.32 ;
-
 insert into r_simard_best (galcount, m_tot) select a.galcount, a.m_tot from r_simard_devexp as a, r_simard_fit as x where a.galcount = x.galcount  and  x.Prob_Ps <= 0.32 and x.Prob_n4>0.32;
-
 insert into r_simard_best (galcount, m_tot) select a.galcount, a.m_tot from r_simard_serexp as a, r_simard_fit as x where a.galcount = x.galcount  and  x.Prob_Ps <= 0.32 and x.Prob_n4<=0.32;
 
-
-
 insert into r_mendel_best (galcount, m_tot) select a.galcount, a.m_tot from r_simard_ser as a, r_simard_fit as x where a.galcount = x.galcount  and  x.ProfType <=2 ;
-
 insert into r_mendel_best (galcount, m_tot) select a.galcount, a.m_tot from r_simard_devexp as a, r_simard_fit as x where a.galcount = x.galcount  and  x.ProfType =3 ;
 
 
+
+create table g_band_best like g_band_dev;
+create table g_lackner_best like g_band_dev;
+create table g_simard_best like g_band_dev;
+create table g_mendel_best like g_band_dev;
+
+
+
+insert into g_band_best (galcount, m_tot) select a.galcount, a.m_tot from g_band_serexp as a, Flags_catalog as x where a.galcount = x.galcount  and x.band = 'g' and x.ftype = 'u' and x.model = 'serexp'  and ( x.flag&pow(2,19)=0 ) ;
+insert into g_lackner_best (galcount, m_tot) select a.galcount, a.m_tot-0.071648 from g_lackner_dev as a, g_lackner_fit as b where a.galcount = b.galcount and b.model ='dvc';
+insert into g_lackner_best (galcount, m_tot) select a.galcount, a.m_tot-0.0103 from g_lackner_exp as a, g_lackner_fit as b where a.galcount = b.galcount and b.model ='exp';
+insert into g_lackner_best (galcount, m_tot) select a.galcount, a.m_tot from g_lackner_ser as a, g_lackner_fit as b where a.galcount = b.galcount and b.model ='ser';
+insert into g_lackner_best (galcount, m_tot) select a.galcount, a.m_tot-0.0103 from g_lackner_nb1 as a, g_lackner_fit as b where a.galcount = b.galcount and b.model ='nb1';
+insert into g_lackner_best (galcount, m_tot) select a.galcount, -2.5*log10(pow(10,-0.4*(a.m_bulge-0.0637)) + pow(10,-0.4*(a.m_disk-0.0103))) from g_lackner_devexp as a, g_lackner_fit as b where a.galcount = b.galcount and b.model ='nb4';
+insert into g_simard_best (galcount, m_tot) select a.galcount, a.m_tot from g_simard_ser as a, r_simard_fit as x where a.galcount = x.galcount  and  x.Prob_Ps > 0.32 ;
+insert into g_simard_best (galcount, m_tot) select a.galcount, a.m_tot from g_simard_devexp as a, g_simard_fit as x where a.galcount = x.galcount  and  x.Prob_Ps <= 0.32 and x.Prob_n4>0.32;
+insert into g_simard_best (galcount, m_tot) select a.galcount, a.m_tot from g_simard_serexp as a, g_simard_fit as x where a.galcount = x.galcount  and  x.Prob_Ps <= 0.32 and x.Prob_n4<=0.32;
+
+insert into g_mendel_best (galcount, m_tot) select a.galcount, a.m_tot from g_simard_ser as a, g_simard_fit as x where a.galcount = x.galcount  and  x.ProfType <=2 ;
+insert into g_mendel_best (galcount, m_tot) select a.galcount, a.m_tot from g_simard_devexp as a, g_simard_fit as x where a.galcount = x.galcount  and  x.ProfType =3 ;
+
+
+create table i_band_best like i_band_dev;
+create table i_lackner_best like i_band_dev;
+create table i_simard_best like i_band_dev;
+create table i_mendel_best like i_band_dev;
+
+
+
+insert into i_band_best select a.* from i_band_serexp as a, Flags_catalog as x where a.galcount = x.galcount  and x.band = 'i' and x.ftype = 'u' and x.model = 'serexp'  and ( x.flag&pow(2,19)=0 ) ;
+insert into i_band_best (galcount, m_tot) select a.galcount, a.m_tot from i_band_serexp as a, Flags_catalog as x where a.galcount = x.galcount  and x.band = 'i' and x.ftype = 'u' and x.model = 'serexp'  and ( x.flag&pow(2,19)=0 ) ;
+
+insert into i_lackner_best (galcount, m_tot) select a.galcount, a.m_tot-0.071648 from i_lackner_dev as a, i_lackner_fit as b where a.galcount = b.galcount and b.model ='dvc';
+insert into i_lackner_best (galcount, m_tot) select a.galcount, a.m_tot-0.0103 from i_lackner_exp as a, i_lackner_fit as b where a.galcount = b.galcount and b.model ='exp';
+insert into i_lackner_best (galcount, m_tot) select a.galcount, a.m_tot from i_lackner_ser as a, i_lackner_fit as b where a.galcount = b.galcount and b.model ='ser';
+insert into i_lackner_best (galcount, m_tot) select a.galcount, a.m_tot-0.0103 from i_lackner_nb1 as a, i_lackner_fit as b where a.galcount = b.galcount and b.model ='nb1';
+insert into i_lackner_best (galcount, m_tot) select a.galcount, -2.5*log10(pow(10,-0.4*(a.m_bulge-0.0637)) + pow(10,-0.4*(a.m_disk-0.0103))) from i_lackner_devexp as a, i_lackner_fit as b where a.galcount = b.galcount and b.model ='nb4';
+insert into i_simard_best (galcount, m_tot) select a.galcount, a.m_tot from i_simard_ser as a, r_simard_fit as x where a.galcount = x.galcount  and  x.Prob_Ps > 0.32 ;
+insert into i_simard_best (galcount, m_tot) select a.galcount, a.m_tot from i_simard_devexp as a, i_simard_fit as x where a.galcount = x.galcount  and  x.Prob_Ps <= 0.32 and x.Prob_n4>0.32;
+insert into i_simard_best (galcount, m_tot) select a.galcount, a.m_tot from i_simard_serexp as a, i_simard_fit as x where a.galcount = x.galcount  and  x.Prob_Ps <= 0.32 and x.Prob_n4<=0.32;
+
+insert into i_mendel_best (galcount, m_tot) select a.galcount, a.m_tot from i_simard_ser as a, i_simard_fit as x where a.galcount = x.galcount  and  x.ProfType <=2 ;
+insert into i_mendel_best (galcount, m_tot) select a.galcount, a.m_tot from i_simard_devexp as a, i_simard_fit as x where a.galcount = x.galcount  and  x.ProfType =3 ;
 

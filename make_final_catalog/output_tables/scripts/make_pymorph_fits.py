@@ -81,7 +81,7 @@ def get_table(cursor, ext_dict, suffix,mysqltable, Table_name, model='none'):
 
 if __name__=="__main__":
 
-    save_loc = '/home/ameert/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/'
+    save_loc = '/home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/'
     this_dir = os.getcwd()
 
     dba = 'catalog'
@@ -93,8 +93,8 @@ if __name__=="__main__":
     band = sys.argv[1]
 
     tablename = 'UPenn_PhotDec_nonParam'
-    table = {'blank':'%s_band_fit' %band, 'c':'CAST as c ','d':'DERT as d ',
-             'f':'Flags_catalog as f '}
+    table = {'blank':'%s_band_fit' %band, 'c':'catalog.CAST as c ','d':'catalog.DERT as d ',
+             'f':'catalog.Flags_catalog as f '}
     data_dict = meert[0]
     ext_names ='nonParam Table'
 
@@ -112,7 +112,7 @@ if __name__=="__main__":
         hdu.header.add_history('email: ameert-at-sas.upenn.edu')
         hdu.header.add_blank(' ')
         hdu.header.add_comment('The Extension(s) of this fits file contain the %s data' %tablename)
-        hdu.header.add_comment('See Meert et al. (2014) for Table Explanation')
+        hdu.header.add_comment('See Meert et al. (2015) for Table Explanation')
 
         thdulist = pyfits.HDUList([hdu]+tabs)
         thdulist.writeto(fits_file, clobber =1)
@@ -140,7 +140,7 @@ if __name__=="__main__":
     hdu.header.add_history('email: ameert-at-sas.upenn.edu')
     hdu.header.add_blank(' ')
     hdu.header.add_comment('The Extension(s) of this fits file contain the %s data' %tablename)
-    hdu.header.add_comment('See Meert et al. (2014) for Table Explanation')
+    hdu.header.add_comment('See Meert et al. (2015) for Table Explanation')
     
     thdulist = pyfits.HDUList([hdu]+tabs)
     thdulist.writeto(fits_file, clobber =1)
