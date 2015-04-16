@@ -55,7 +55,6 @@ def prepare_psf(gal, bands, data_stem, out_path):
             
             a.close()
 
-    raw_input()
     # remove unpacked fits files but leave zipped files to save space
     cmd = 'rm %s/*.fit' %data_path
     print "REMOVING FIT images to save space"
