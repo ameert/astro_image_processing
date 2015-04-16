@@ -40,7 +40,7 @@ def plot_appmag(appMag, weight, plot_stem = '', colors = ['k'],
                                    range=(10,30), histtype = 'step', color = curr_color, lw = cls, linestyle=clstyle)
 
         if write_points:
-            fout = open('/home/ameert/Desktop/%s_appmag.txt' %label, 'w')
+            fout = open('/home/alan/Desktop/%s_appmag.txt' %label, 'w')
             fout.write('#bins, pdf\n')
             binctr= (bins[0:-1]+bins[1:])/2.0
             for a,b in zip(binctr, n):
@@ -69,7 +69,7 @@ def get_alldat(band, distance, table, typesearch = 'all'):
     elif typesearch=='galaxy':
         type_trim=' and type=3 '
 
-    cmd = 'select zgal, 1.0 as Vmax, PetroMag_{band} - extinction_{band} - dismod, petromag_{band} - extinction_{band}, 1.0 as petroR50_{band}, petromag_{band}  from catalog.corr_lum_func_{table} as b where kpc_per_arcsec*distance*60.0 between {dislow} and {dishigh} {type_trim};'.format(band=band, dislow=distance[0], dishigh=distance[1], table=table,type_trim=type_trim)
+    cmd = 'select zgal, 1.0 as Vmax, PetroMag_{band} - extinction_{band} - dismod, petromag_{band} - extinction_{band}, 1.0 as petroR50_{band}, petromag_{band}  from corr_lum_func_{table} as b where kpc_per_arcsec*distance*60.0 between {dislow} and {dishigh} {type_trim};'.format(band=band, dislow=distance[0], dishigh=distance[1], table=table,type_trim=type_trim)
 
     print cmd
     z, V_max, absmag, petromag, halflight_rad,ucorr_mag = cursor.get_data(cmd)
@@ -85,7 +85,7 @@ def get_alldat(band, distance, table, typesearch = 'all'):
     
     return z1, V_max1, petromag_1, halflight_rad1, absmag1, surf_bright1
 
-dba = 'catalog'
+dba = 'corr_lum_func'
 usr = 'pymorph'
 pwd = 'pymorph'
 cursor = mysql_connect(dba, usr, pwd)

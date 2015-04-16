@@ -2,15 +2,17 @@
 
 # We are going to clean our sample similar to Simard ...
 
-from mysql_class import *
 import numpy as np
-from sdss_flags import *
+import astro_image_processing.mysql as mysql
+from astro_image_processing.sdss_flags import *
+from astro_image_processing.user_settings import mysql_params
 
 in_table = 'CAST_raw'
 out_table = 'CAST'
 outfile = 'results.txt'
 
-cursor = mysql_connect('catalog', 'pymorph', 'pymorph')
+cursor = mysql.mysql_connect(mysql_params['dba'],mysql_params['user'],
+                       mysql_params['pwd'],mysql_params['host'])
 
 # first remove any galaxies not in the Legacy survey
 infile = open('allrunsdr7db.par')

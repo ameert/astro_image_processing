@@ -24,93 +24,99 @@ def cut_images(gal, bands, data_stem, out_path, cut_size = 20.0,
             
         bad_gals = open(out_path + 'bad_gals_' + band_char+'.txt', 'a')
 
-        for count in range(len(gal['galcount'])):
-            galcount_tmp = gal['galcount'][count]
-            run_tmp      = gal['run'][count]
-            rerun_tmp    = gal['rerun'][count]
-            camCol_tmp   = gal['camCol'][count]
-            field_tmp    = gal['field'][count]
-            rowc_tmp     = gal['rowc_'+band_char][count]
-            colc_tmp     = gal['colc_'+band_char][count]
-            # We want to cut everything to the same size
-            petro_half_light = gal['petroR50_r'][count]
-            path_app    =  gal['dir_end'][count]
+        """NOTE: we use petroR50_r for EVERYTHING to maintain consistent 
+        cutout size, which makes color measurements easier"""
+        for (galcount, run, rerun, camCol, field, rowc, 
+             colc, petro_half_light, path_app) in zip(gal['galcount'], 
+             gal['run'], gal['rerun'], gal['camCol'], gal['field'],
+             gal['rowc_'+band_char] ,gal['colc_'+band_char],
+             gal['petroR50_r'],gal['dir_end']):
 
-            file_base = '%s/%08d_%s_' %(path_app, galcount_tmp, band_char)
-            image_size = petro_half_light * cut_size * 2.0/pix_scale
+             file_base = '%s/%08d_%s_' %(path_app, galcount, band_char)
+             image_size = petro_half_light * cut_size * 2.0/pix_scale
             
-            if image_size < min_size:
-                image_size = min_size
+             if image_size < min_size:
+                 image_size = min_size
 
-            nm  = 'frame-%s-%06d-%d-%04d.fits' %(band_char,run_tmp, camCol_tmp, field_tmp)
-            if not os.path.isfile(data_path + nm+'.bz2'):
-                print data_path+nm
-                bad_gals.write('%d %d %d %d %d %s\n' %(galcount_tmp,run_tmp, rerun_tmp, camCol_tmp, field_tmp,  nm))
-                continue
+             nm  = 'frame-%s-%06d-%d-%04d.fits' %(band_char,run, camCol, field)
+             if not os.path.isfile(data_path + nm+'.bz2'):
+                 print data_path+nm
+                 bad_gals.write('%d %d %d %d %d %s\n' %(galcount,run, rerun, camCol, field,  nm))
+                 continue
 
-            str = 'bzip2 -dk %s%s.bz2' %(data_path, nm)
-            os.system(str)
+             if not os.path.isfile(data_path+nm):
+                 bzipcmd = 'bzip2 -dk %s%s.bz2' %(data_path, nm)
+                 os.system(bzipcmd)
 
-            if 1:
-            #try:
-                fpc_file = frame_img('%s%s' %(data_path, nm))
-                weight =fpc_file.weight_im(unit='DN')
-                data = fpc_file.DN(sky=True)
-                header = fpc_file.imhead                
+#             try:
+             if 1:
+                 fpc_file = frame_img('%s%s' %(data_path, nm))
+                 weight =fpc_file.weight_im(unit='DN')
+                 data = fpc_file.DN(sky=True)
+                 header = fpc_file.imhead                
 
                 
-                # print shape(data)
-                row_low = np.round(rowc_tmp - .5 - .5*image_size)
-                row_high = np.round(rowc_tmp - .5 + .5*image_size)
-                col_low = np.round(colc_tmp - .5 - .5*image_size)
-                col_high = np.round(colc_tmp - .5 + .5*image_size)
-                # -.5 accounts for sdss convention of first pixel being at (.5,.5)
+                 # print shape(data)
+                 row_low = np.round(rowc - .5 - .5*image_size)
+                 row_high = np.round(rowc - .5 + .5*image_size)
+                 col_low = np.round(colc - .5 - .5*image_size)
+                 col_high = np.round(colc - .5 + .5*image_size)
+                 # -.5 accounts for sdss convention of first pixel being at (.5,.5)
 
-                if row_low < 0.0:
-                    row_low = 0.0
-                    row_high = np.round(2*(rowc_tmp - .5))
-                if row_high > 1488.0:
-                    row_high = 1488.0
-                    row_low = np.round(1488.0 - 2*(1488.0 - rowc_tmp + .5))
-                if col_low < 0.0:
-                    col_low = 0.0
-                    col_high = np.round(2*(colc_tmp - .5))
-                if col_high > 2047.0:
-                    col_high = 2047.0
-                    col_low = np.round(2047.0 - 2*(2047.0 - colc_tmp + .5))
+                 if row_low < 0.0:
+                     row_low = 0.0
+                     row_high = np.round(2*(rowc - .5))
+                 if row_high > 1488.0:
+                     row_high = 1488.0
+                     row_low = np.round(1488.0 - 2*(1488.0 - rowc + .5))
+                 if col_low < 0.0:
+                     col_low = 0.0
+                     col_high = np.round(2*(colc - .5))
+                 if col_high > 2047.0:
+                     col_high = 2047.0
+                     col_low = np.round(2047.0 - 2*(2047.0 - colc + .5))
                 
-                trim_data = data[row_low:row_high,col_low:col_high]
-                wz = weight[row_low:row_high,col_low:col_high]
+                 trim_data = data[row_low:row_high,col_low:col_high]
+                 wz = weight[row_low:row_high,col_low:col_high]
                 
-                # Lets generate the weight image while we are here
-                wf =  '%s%s/%sstamp_W.fits' %(out_path, band_char, file_base)
-                os.system('rm -f ' + wf) 
-                hdu = pyfits.PrimaryHDU(wz.astype(np.float32))
-                hdu.writeto(wf, clobber = 1)
+                 # Lets generate the weight image while we are here
+                 wf =  '%s%s/%sstamp_W.fits' %(out_path, band_char, file_base)
+                 os.system('rm -f ' + wf) 
+                 hdu = pyfits.PrimaryHDU(wz.astype(np.float32))
+                 hdu.writeto(wf, clobber = 1)
                 
-                # And update the header
-                header.update('MIN_SIZE', min_size, 'pixels')
-                header.update('EXPTIME', 1.0, 'Exposure time (seconds)')
-                header.update('SOFTBIAS',0, 'software "bias" added to all DN')  
-                header.update('FIELD',field_tmp, 'Field sequence number within the run')  
-                for del_char in ['RADECSYS', 'CTYPE1','CTYPE2','CUNIT1',
-                                 'CUNIT2','CRPIX1','CRPIX2','CRVAL1','CRVAL2',
-                                 'CD1_1','CD1_2','CD2_1','CD2_2']:
-                    try:
-                        del header[del_char]          
-                    except:
-                        pass
-                
-                # Finally write the thing
-                ext = pyfits.PrimaryHDU(trim_data, header)
-                outfile = '%s%s/%sstamp.fits' %(out_path, band_char, file_base)
-                print 'writing %s' %outfile
-                ext.writeto(outfile, clobber = 1,output_verify = 'ignore' )
+                 # And update the header
+                 header.update('MIN_SIZE', str(min_size), 'pixels')
+                 header.update('EXPTIME', str(1.0), 'Exposure time (seconds)')
+                 header.update('SOFTBIAS',str(0), 'software "bias" added to all DN')  
+                 header.update('FIELD',str(field), 'Field sequence number within the run')  
+                 header.update('rowctr',str(rowc), 'Galaxy Center Row')            
+                 header.update('colctr',str(colc), 'Galaxy Center column')            
+                 header.update('rowlow',str(row_low), 'Lowest row value included in cutout')            
+                 header.update('rowhigh',str(row_high), 'Lowest row value included in cutout')            
+                 header.update('collow',str(col_low), 'Lowest column value included in cutout')            
+                 header.update('colhigh',str(col_high), 'Highest column value included in cutout')            
+
+                 # Update the WCS info
+                 header.update('CRPIX1',str(float(header['CRPIX1'])-col_low))            
+                 header.update('CRPIX2',str(float(header['CRPIX2'])-row_low))            
+                 
+                 # Finally write the thing
+                 ext = pyfits.PrimaryHDU(trim_data, header)
+                 outfile = '%s%s/%sstamp.fits' %(out_path, band_char, file_base)
+                 print 'writing %s' %outfile
+                 ext.writeto(outfile, clobber = 1,output_verify = 'ignore' )
         
-            #except:
-            #    bad_gals.write('%d %s\n' %(galcount_tmp, nm))
+#             except:
+#                 bad_gals.write('%d %s\n' %(galcount, nm))
             
+        #remove fits file but leve zipped files to save space
+        cmd = 'rm %s/*.fits' %data_path
+        print "REMOVING FIT images to save space"
+        print cmd
+        os.system(cmd)
+    
         bad_gals.close()
-
+        
     return
 

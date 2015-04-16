@@ -1,10 +1,18 @@
 
-cp /home/ameert/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/UPenn_PhotDec_CAST.fits /home/ameert/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/meert_et_al_data_tables_v1/
-cp /home/ameert/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/UPenn_PhotDec_Models_rband.fits /home/ameert/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/meert_et_al_data_tables_v1/
-cp /home/ameert/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/UPenn_PhotDec_nonParam_rband.fits /home/ameert/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/meert_et_al_data_tables_v1/
-cp /home/ameert/git_projects/catalog2013/data_tables.pdf /home/ameert/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/meert_et_al_data_tables_v1/README.pdf
+cp /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/UPenn_PhotDec_CAST.fits /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/meert_et_al_data_tables_v1/
+cp /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/UPenn_PhotDec_Models_rband.fits /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/meert_et_al_data_tables_v1/
+cp /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/UPenn_PhotDec_nonParam_rband.fits /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/meert_et_al_data_tables_v1/
 
-cd /home/ameert/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/
+cp /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/UPenn_PhotDec_Models_gband.fits /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/meert_et_al_data_tables_v1/
+cp /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/UPenn_PhotDec_nonParam_gband.fits /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/meert_et_al_data_tables_v1/
+
+cp /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/UPenn_PhotDec_Models_iband.fits /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/meert_et_al_data_tables_v1/
+cp /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/UPenn_PhotDec_nonParam_iband.fits /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/meert_et_al_data_tables_v1/
+
+
+cp /home/alan/git_projects/catalog2013/data_tables.pdf /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/meert_et_al_data_tables_v1/README.pdf
+
+cd /home/alan/git_projects/astro_image_processing/make_final_catalog/output_tables/fits/
 
 tar -czvf meert_et_al_data_tables_v1.tgz meert_et_al_data_tables_v1 
 
