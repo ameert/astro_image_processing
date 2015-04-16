@@ -151,7 +151,7 @@ http://data.sdss3.org/datamodel/files/BOSS_PHOTOOBJ/frames/RERUN/RUN/CAMCOL/fram
         return 
 
 if __name__ == "__main__":
-    nm  = '/home/ameert/Desktop/frame-i-001009-4-0144.fits' 
+    nm  = '/home/jofis/Galaxy_Evo/frame-i-001009-4-0144.fits' 
     image = frame_img(nm)
 
     image.diagnostic_plot()

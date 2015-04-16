@@ -50,7 +50,7 @@ def prepare_psf(gal, bands, data_stem, out_path):
 
             a = pf.open('%s%s/%s/%spsf.fits' %(out_path, band_char, path_app, file_base),'update' )
             # remove 1000 count soft-bias from images and normalize
-            a[0].data = a[0].data - 1000
+            a[0].data = a[0].data - 1000.0
             a[0].data = a[0].data/np.sum(a[0].data)
             
             a.close()

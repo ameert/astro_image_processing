@@ -12,7 +12,7 @@
 #              rerun: the sdss rerun number
 #              camCol: the sdss camera column number
 #              field: the sdss field number     
-#         data_dir: string path to directroy that galmorph will palce all data
+#         data_dir: string path to directory that galmorph will place all data
 #         bands: the bands that will be downloaded. This defaults to 'r' band
 #                if not set by the function call
 # OUTPUTS: NONE

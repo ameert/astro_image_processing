@@ -12,13 +12,13 @@ from astro_image_processing.mysql import *
 
 ### Now set the essential variables ###
 ### mysql info ###
-table_name = 'manga_cast'
+table_name = 'manga_earlytypes'
 ### Paths ###
-data_dir = '/home/alan/Desktop/test/data/'
-cut_dir =  '/home/alan/Desktop/test/cutouts/'
+data_dir = '/data3/MANGA/SDSS3/data/'
+cut_dir =  '/data3/MANGA/SDSS3/cutouts/'
 ### Settings for cutouts ###
 bands = 'gri' # list all desired bands in a single string
-pix_scale = 0.396 # arcsec per pixel
+pix_scale = 0.396 # arcsec per pixel, check for MANGA!!!!
 cut_size = 20.0 # the radius of the cutout image in multiples of PetroRad50
 min_size = 80.0 # minimum size in pixels
 folder_size = 250 # num of galaxies/folder
@@ -88,8 +88,8 @@ gal['dir_end'] = [ folder_fmt %a for a in ((np.array(gal['galcount'])-1)/folder_
  
 ### now cut the data
 for band in bands:
-    #download_files(gal, data_dir, band)
-    #prepare_psf(gal, band, data_dir, cut_dir)
+    download_files(gal, data_dir, band)
+    prepare_psf(gal, band, data_dir, cut_dir)
     cut_images(gal, band, data_dir, cut_dir, cut_size = cut_size, 
                pix_scale = pix_scale, min_size = min_size)
 
