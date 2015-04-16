@@ -85,18 +85,27 @@ def cut_images(gal, bands, data_stem, out_path, cut_size = 20.0,
                  hdu.writeto(wf, clobber = 1)
                 
                  # And update the header
-                 header.update('MIN_SIZE', min_size, 'pixels')
-                 header.update('EXPTIME', 1.0, 'Exposure time (seconds)')
-                 header.update('SOFTBIAS',0, 'software "bias" added to all DN')  
-                 header.update('FIELD',field, 'Field sequence number within the run')  
-                 for del_char in ['RADECSYS', 'CTYPE1','CTYPE2','CUNIT1',
-                                  'CUNIT2','CRPIX1','CRPIX2','CRVAL1','CRVAL2',
-                                  'CD1_1','CD1_2','CD2_1','CD2_2']:
-                     try:
-                         del header[del_char]          
-                     except:
-                         pass
+                 header.update('MIN_SIZE', str(min_size), 'pixels')
+                 header.update('EXPTIME', str(1.0), 'Exposure time (seconds)')
+                 header.update('SOFTBIAS',str(0), 'software "bias" added to all DN')  
+                 header.update('FIELD',str(field), 'Field sequence number within the run')  
+                 #for del_char in ['RADECSYS', 'CTYPE1','CTYPE2','CUNIT1',
+                 #                 'CUNIT2','CRPIX1','CRPIX2','CRVAL1','CRVAL2',
+                 #                 'CD1_1','CD1_2','CD2_1','CD2_2']:
+                 #    try:
+                 #        del header[del_char]          
+                 #    except:
+                 #        pass
                 
+                 header.update('rowlow',str(row_low), 'Lowest row value included in cutout')            
+                 header.update('rowhigh',str(row_high), 'Lowest row value included in cutout')            
+                 header.update('collow',str(col_low), 'Lowest column value included in cutout')            
+                 header.update('colhigh',str(col_high), 'Highest column value included in cutout')            
+
+                 # Update the WCS info
+                 header.update('CRPIX1',str(float(header['CRPIX1'])-row_low))            
+                 header.update('CRPIX2',str(float(header['CRPIX2'])-col_low))            
+                 
                  # Finally write the thing
                  ext = pyfits.PrimaryHDU(trim_data, header)
                  outfile = '%s%s/%sstamp.fits' %(out_path, band_char, file_base)
