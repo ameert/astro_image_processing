@@ -45,10 +45,11 @@ def cut_images(gal, bands, data_stem, out_path, cut_size = 20.0,
                  continue
 
              if not os.path.isfile(data_path+nm):
-                 str = 'bzip2 -dk %s%s.bz2' %(data_path, nm)
-                 os.system(str)
+                 bzipcmd = 'bzip2 -dk %s%s.bz2' %(data_path, nm)
+                 os.system(bzipcmd)
 
-             try:
+#             try:
+             if 1:
                  fpc_file = frame_img('%s%s' %(data_path, nm))
                  weight =fpc_file.weight_im(unit='DN')
                  data = fpc_file.DN(sky=True)
@@ -89,22 +90,16 @@ def cut_images(gal, bands, data_stem, out_path, cut_size = 20.0,
                  header.update('EXPTIME', str(1.0), 'Exposure time (seconds)')
                  header.update('SOFTBIAS',str(0), 'software "bias" added to all DN')  
                  header.update('FIELD',str(field), 'Field sequence number within the run')  
-                 #for del_char in ['RADECSYS', 'CTYPE1','CTYPE2','CUNIT1',
-                 #                 'CUNIT2','CRPIX1','CRPIX2','CRVAL1','CRVAL2',
-                 #                 'CD1_1','CD1_2','CD2_1','CD2_2']:
-                 #    try:
-                 #        del header[del_char]          
-                 #    except:
-                 #        pass
-                
+                 header.update('rowctr',str(rowc), 'Galaxy Center Row')            
+                 header.update('colctr',str(colc), 'Galaxy Center column')            
                  header.update('rowlow',str(row_low), 'Lowest row value included in cutout')            
                  header.update('rowhigh',str(row_high), 'Lowest row value included in cutout')            
                  header.update('collow',str(col_low), 'Lowest column value included in cutout')            
                  header.update('colhigh',str(col_high), 'Highest column value included in cutout')            
 
                  # Update the WCS info
-                 header.update('CRPIX1',str(float(header['CRPIX1'])-row_low))            
-                 header.update('CRPIX2',str(float(header['CRPIX2'])-col_low))            
+                 header.update('CRPIX1',str(float(header['CRPIX1'])-col_low))            
+                 header.update('CRPIX2',str(float(header['CRPIX2'])-row_low))            
                  
                  # Finally write the thing
                  ext = pyfits.PrimaryHDU(trim_data, header)
@@ -112,8 +107,8 @@ def cut_images(gal, bands, data_stem, out_path, cut_size = 20.0,
                  print 'writing %s' %outfile
                  ext.writeto(outfile, clobber = 1,output_verify = 'ignore' )
         
-             except:
-                 bad_gals.write('%d %s\n' %(galcount, nm))
+#             except:
+#                 bad_gals.write('%d %s\n' %(galcount, nm))
             
         #remove fits file but leve zipped files to save space
         cmd = 'rm %s/*.fits' %data_path
