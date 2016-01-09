@@ -1,7 +1,7 @@
 ### Now import configuration variables ###
 from cutout_config import *
-import astro_image_processing.user_settings as user_settings
-from astro_image_processing.mysql import *
+import user_settings as user_settings
+from mysql import *
 
 
 ### the first entry is the name in mysql, the second in the name for my program

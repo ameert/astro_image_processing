@@ -88,7 +88,7 @@ all in nanomaggies"""
         
         return
 
-    def DN(self,sky=False):
+    def DN(self,sky=True):
         """returns an image in DN following the prescription at
 http://data.sdss3.org/datamodel/files/BOSS_PHOTOOBJ/frames/RERUN/RUN/CAMCOL/frame.html with or without sky based on the setting of the sky keyword""" 
         if sky:
