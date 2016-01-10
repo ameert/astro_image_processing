@@ -1,17 +1,20 @@
-#!/usr/bin/python
+#!/usr/bin/python 
 
 ### First the imports ####
 import os 
 import sys
 import numpy as np
+sys.path.append('/data2/home/jofis/Galaxy_Evo/astro_image_processing')
 from argparse import ArgumentParser, ArgumentError
 from download_files import *
 from prepare_psf import *
 from cut_sdss3 import *
-import astro_image_processing.user_settings as user_settings
-import astro_image_processing.cut_pipe.get_data as get_data
-from astro_image_processing.mysql import *
+import user_settings as user_settings
+#print user_settings
+import get_data as get_data
+from mysql import *
 from make_dirs import build_dirs
+
 
 ### Now import configuration variables ###
 from cutout_config import *

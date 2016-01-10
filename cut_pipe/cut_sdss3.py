@@ -1,4 +1,4 @@
-import numpy as np 
+ import numpy as np 
 import pyfits 
 import os
 from SDSS3_image_DN import frame_img
@@ -18,7 +18,8 @@ def cut_images(gal, bands, data_stem, out_path, cut_size = 20.0,
             band = 5
 
         data_path = data_stem + band_char + '/'
-
+        #print data_path
+        
         if not os.path.isdir(out_path + band_char):
             os.mkdir(out_path+band_char)
             
@@ -52,7 +53,7 @@ def cut_images(gal, bands, data_stem, out_path, cut_size = 20.0,
              if 1:
                  fpc_file = frame_img('%s%s' %(data_path, nm))
                  weight =fpc_file.weight_im(unit='DN')
-                 data = fpc_file.DN(sky=True)
+                 data = fpc_file.DN(sky=False) #without sky
                  header = fpc_file.imhead                
 
                 
@@ -110,7 +111,7 @@ def cut_images(gal, bands, data_stem, out_path, cut_size = 20.0,
 #             except:
 #                 bad_gals.write('%d %s\n' %(galcount, nm))
             
-        #remove fits file but leve zipped files to save space
+        #remove fits file but leave zipped files to save space
         cmd = 'rm %s/*.fits' %data_path
         print "REMOVING FIT images to save space"
         print cmd

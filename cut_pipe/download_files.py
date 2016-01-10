@@ -12,7 +12,7 @@
 #              rerun: the sdss rerun number
 #              camCol: the sdss camera column number
 #              field: the sdss field number     
-#         data_dir: string path to directroy that galmorph will palce all data
+#         data_dir: string path to directory that galmorph will place all data
 #         bands: the bands that will be downloaded. This defaults to 'r' band
 #                if not set by the function call
 # OUTPUTS: NONE
@@ -32,7 +32,7 @@
 #-----------------------------------
 import os
 
-def download_files(gal, data_stem, bands = 'r', data_release=12):
+def download_files(gal, data_stem, bands = 'r', data_release=9):
     """downloads the files of interest from SDSS3. locations of more files can be found 
 at http://data.sdss3.org/datamodel/index-files.html"""
     psf_dir = data_stem+'/psField/'
@@ -95,9 +95,9 @@ old version of the download script from dr7 and earlier from SDSS2"""
             ##### currently using them
             
             # # see if fpM file exists, if not, then get it from SDSS
-            # nm  = 'fpM-%06d-%s%d-%04d.fit' %(run_tmp, band, camCol_tmp, field_tmp)
-            # str1 = 'http://das.sdss.org/imaging/%d/%d/objcs/%d/%s' %(run_tmp, rerun_tmp, camCol_tmp, nm)
-            # get_file(nm, str1, data_dir)
+            nm  = 'fpM-%06d-%s%d-%04d.fit' %(run_tmp, band, camCol_tmp, field_tmp)
+            str1 = 'http://das.sdss.org/imaging/%d/%d/objcs/%d/%s' %(run_tmp, rerun_tmp, camCol_tmp, nm)
+            get_file(nm, str1, data_dir)
             
     return
 
