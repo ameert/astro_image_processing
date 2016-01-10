@@ -51,8 +51,11 @@ new_data['BT']=data[pos_dict['BT']]
 new_data['dr10_petro50']=data[pos_dict['dr10_petrorad50_r']]
 new_data['dr10_petro90']=data[pos_dict['dr10_petrorad90_r']]
 new_data['dr10_petrotot']=data[pos_dict['dr10_petroradtot_r']]
-new_data['fiber2']=data[pos_dict['fiber2']]
-new_data['fiber3']=data[pos_dict['fiber3']]
+new_data['fiber2']=np.array(data[pos_dict['fiber2']], dtype=float)
+new_data['fiber3']=np.array(data[pos_dict['fiber3']], dtype=float)
+
+
+
 
 outfile = open('dr10_full_catalog_info_%s_%s.pickle' %(band,model), 'w')
 pickle.dump(new_data, outfile)

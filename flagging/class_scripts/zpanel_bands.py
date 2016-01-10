@@ -15,7 +15,7 @@ sql_values = {# Set these params
               'galnumlim':1000000,
               #do not set this parameter! Set automatically!
               'add_param':'',
-              'choice':'mag'
+              'choice':'absmagrad'
               }
 
 
@@ -37,7 +37,42 @@ for band in 'gri':
     sql_values['band']=band
     scount+=2
     
-    if sql_values['choice']=='mag':
+    if sql_values['choice']=='absmagrad':
+        print "absmag" 
+        sql_values['add_param'] = " b.m_tot-s.dismod-s.kcorr_{band}-r.extinction_{band}".format(**sql_values)
+        pl.subplot(3,2,scount)
+
+        delta = 0.5
+        magbins = np.arange(-25.0, -17.0, delta)
+        galcount, autoflag, mag = get_vals('meert', sql_values, cursor)
+        props = get_flag_props(flags_to_use, autoflag, mag, magbins)
+        props['datamask'] = np.where(np.array(props['total'])>0,True,False)
+        props = flag_norm(flags_to_use, props, sql_values['normtype'])
+        ax1, ax2 = plot_props('M$_{{ {band}, tot}}$'.format(**sql_values), 
+                              props, magbins, delta, flags_to_use,plot_info)
+        ax2.set_ylim(plot_info.get('ylims',{}).get(sql_values['normtype'],{}).get('absmtot',(0.0,1.0)))
+        ax1.tick_params(axis='y', labelsize=10)
+        ax2.tick_params(axis='y', labelsize=10)
+
+        print "ABSrad" 
+        sql_values['add_param'] = "b.Hrad_corr*s.kpc_per_arcsec"
+        pl.subplot(3,2,scount+1)
+
+        delta = 0.5
+        radbins = np.arange(0, 15.1, delta)
+        galcount, autoflag, rad = get_vals('meert', sql_values, cursor)
+        props = get_flag_props(flags_to_use, autoflag, rad, radbins)
+        props['datamask'] = np.where(np.array(props['total'])>0,True,False)
+        props = flag_norm(flags_to_use, props, sql_values['normtype'])
+        ax1, ax2 = plot_props('R$_{{hl, {band}, tot, kpc}}$'.format(**sql_values), 
+                              props, radbins, delta, flags_to_use,plot_info)
+        pl.xlim((0,12))
+        ax2.set_ylim(plot_info.get('ylims',{}).get(sql_values['normtype'],{}).get('absrad',(0.0,1.0)))
+        ax1.tick_params(axis='y', labelsize=10)
+        ax2.tick_params(axis='y', labelsize=10)
+
+        
+    elif sql_values['choice']=='mag':
         print "appmag" 
         sql_values['add_param'] = ' b.m_tot-r.extinction_{band}'.format(**sql_values)
         pl.subplot(3,2,scount)

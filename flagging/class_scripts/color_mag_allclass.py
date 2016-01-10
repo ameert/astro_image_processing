@@ -33,8 +33,8 @@ for band in 'gri':
     gal[band]  = np.load(a)
     print gal.keys()
 
-rmag = gal['r']['mag']-gal['r']['dismod']-gal['r']['kr']
-mcolor = gal['g']['mag']-gal['g']['kg'] - (gal['r']['mag']-gal['r']['kr'])
+rmag = gal['r']['modelr']-gal['r']['dismod']-gal['r']['kr']
+mcolor = gal['g']['modelg']-gal['g']['kg'] - (gal['r']['modelr']-gal['r']['kr'])
 flaglist = [ (1,1,1), (4,4,4),  (10,10,10)]
 colorlist = [ 'Red', 'Blue',  'Green']
 labellist = [ "BBB", "DDD", "222"]
@@ -62,7 +62,7 @@ pl.xlabel('M$_r$')
 pl.ylabel('M$_g$-M$_r$')
 pl.title('mag color diagram')
 
-pl.savefig('colormag_allclass.eps'.format(band=band))
+pl.savefig('colormag_allclass_pymorph_mags.eps'.format(band=band))
 pl.close('all')
 
 

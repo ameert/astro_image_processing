@@ -9,7 +9,7 @@ dba = 'catalog'
 pwd = 'pymorph'
 usr = 'pymorph'
 
-stem = 'newt538'
+stem = 'newt999'
 
 cursor = mysql_connect(dba, usr, pwd)
 
@@ -642,6 +642,38 @@ f.galcount = m.galcount and f.galcount = u.galcount and
 and f.galcount = x.galcount and x.ftype = 'u' and x.band='i' and x.model = 'ser'
 order by f.galcount 
 into outfile "/tmp/%s_polyid_all.txt";""" %(stem)
+#print cmd
+#cursor.execute(cmd)
+#os.system('cp /tmp/%s_polyid_all.txt /home/alan/Desktop/galtable_polyid_all.txt' %(stem))
+
+
+
+
+
+cmd = """select f.galcount, IFNULL(k.ra_gal,-999), IFNULL(k.dec_gal,-999), 
+IFNULL(k.zspec,-999),  IFNULL(k.M09_redchi2,-999), 
+IFNULL(k.M09_age,-999), IFNULL(k.M09_ebv,-999), IFNULL(k.M09_templ,-999), 
+IFNULL(k.M09_mstar_l,-999), IFNULL(k.M09_mstar,-999),
+IFNULL(k.M09_sfr,-999), IFNULL(k.Mabs_M09_u,-999), IFNULL(k.Mabs_M09_g,-999), 
+IFNULL(k.Mabs_M09_r,-999), IFNULL(k.Mabs_M09_i,-999), 
+IFNULL(k.Mabs_M09_z,-999),IFNULL(k.umag,-999), 
+IFNULL(k.gmag,-999), IFNULL(k.rmag,-999), IFNULL(k.imag,-999), 
+IFNULL(k.zmag,-999) 
+from 
+catalog.r_band_ser as a, catalog.r_band_serexp as b, 
+catalog.CAST as f left join catalog.DR7_Portsmouth_krouall as k on f.objid=k.objid,
+catalog.DERT as d, catalog.r_simard_fit as s,
+catalog.M2010 as m, catalog.Flags_catalog as u,
+catalog.Flags_catalog as x
+where  
+f.galcount = a.galcount and f.galcount = b.galcount and 
+f.galcount = d.galcount and f.galcount = s.galcount and
+f.galcount = m.galcount and f.galcount = u.galcount and 
+u.ftype = 'u' and u.band='r' and u.model = 'serexp' 
+and f.galcount = x.galcount and x.ftype = 'u' and x.band='r' and x.model = 'ser' 
+order by f.galcount 
+into outfile "/tmp/%s_DR7_Portsmouth_krouall.txt";""" %(stem)
 print cmd
 cursor.execute(cmd)
-os.system('cp /tmp/%s_polyid_all.txt /home/alan/Desktop/galtable_polyid_all.txt' %(stem))
+os.system('cp /tmp/%s_DR7_Portsmouth_krouall.txt /home/alan/Desktop/galtable_DR7_Portsmouth_krouall.txt' %(stem))
+
