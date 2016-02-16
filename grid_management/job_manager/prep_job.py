@@ -62,7 +62,7 @@ class job_creator():
 
                     jobs[job_name] = self.make_job_dict(job_name, job_count,  
                                                         model)
-                    job_maker.make_config(jobs[job_name])
+                    self.make_config(jobs[job_name])
 
         print jobs.keys()
         return jobs
