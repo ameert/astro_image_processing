@@ -1,14 +1,15 @@
 #### The configuration file for running the cutouts ####
 
 ### mysql info ###
-table_name = 'manga_cast'
+table_name = 'bright34_gal'
 
 ### Paths ###
-data_dir = '/home/alan/Desktop/test/data/' #directory for downloading data
-cut_dir =  '/home/alan/Desktop/test/cutouts/' #output directory
+data_dir = '/home/ameert/Desktop/manga/data/' #directory for downloading data
+cut_dir =  '/home/ameert/Desktop/manga/cutouts_nosky/' #output directory
+
 
 ### Settings for cutouts ###
-bands = 'gri' # list all desired bands in a single string
+bands = 'r' # list all desired bands in a single string
 pix_scale = 0.396 # arcsec per pixel
 cut_size = 20.0 # the radius of the cutout image in multiples of PetroRad50
 min_size = 80.0 # minimum size in pixels

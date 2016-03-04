@@ -21,16 +21,18 @@ all in nanomaggies"""
             #sky-subtracted as well as calibrated in nanomaggies/pixel
             self.data_nosky = image[0].data
             self.imhead = image[0].header
-
+            print self.data_nosky.shape
             #read in sky, and interpolate to full image size; this returns a
             #sky image the same size as the frame image, in units of counts
             allsky, xinterp, yinterp = image[2].data[0]
+            allsky = np.reshape(allsky,(192,256))            
+            print allsky.shape
             x = np.arange(allsky.shape[0])
             y = np.arange(allsky.shape[1])
             f = interpolate.interp2d(y,x, allsky, kind='linear')
 
             simg = f(yinterp,xinterp).T
-
+            print "here1"
             #read in calibration, and expand to full image size; this returns
             #a calibration image the same size as the frame image, in units of
             # nanomaggies per count
@@ -51,6 +53,7 @@ all in nanomaggies"""
             self.default_gain()
             self.default_dark_var()
             image.close()
+            print "here2"
         else:
             print "File '%s' not found!!!!" %self.filename
             print "File not loaded!!!"

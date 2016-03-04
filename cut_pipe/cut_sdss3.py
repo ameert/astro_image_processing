@@ -52,7 +52,7 @@ def cut_images(gal, bands, data_stem, out_path, cut_size = 20.0,
              if 1:
                  fpc_file = frame_img('%s%s' %(data_path, nm))
                  weight =fpc_file.weight_im(unit='DN')
-                 data = fpc_file.DN(sky=True)
+                 data = fpc_file.DN(sky=False)
                  header = fpc_file.imhead                
 
                 
@@ -79,6 +79,9 @@ def cut_images(gal, bands, data_stem, out_path, cut_size = 20.0,
                  trim_data = data[row_low:row_high,col_low:col_high]
                  wz = weight[row_low:row_high,col_low:col_high]
                 
+                 exptime = float(header['exptime'])
+                 trim_data = trim_data/exptime
+                 wz = wz/exptime
                  # Lets generate the weight image while we are here
                  wf =  '%s%s/%sstamp_W.fits' %(out_path, band_char, file_base)
                  os.system('rm -f ' + wf) 

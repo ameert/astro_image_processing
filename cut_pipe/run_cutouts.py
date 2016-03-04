@@ -63,8 +63,8 @@ def main():
 
     ### now cut the data
     for band in bands:
-        download_files(gal, data_dir, band)
-        prepare_psf(gal, band, data_dir, cut_dir)
+#        download_files(gal, data_dir, band)
+#        prepare_psf(gal, band, data_dir, cut_dir)
         cut_images(gal, band, data_dir, cut_dir, cut_size = cut_size, 
                    pix_scale = pix_scale, min_size = min_size)
 
