@@ -5,17 +5,17 @@ import os
 
 sample_size = 250
 
-cursor = mysql_connect('pymorph', 'pymorph', 'pymorph9455', 'shredder')
+cursor = mysql_connect('MANGA', 'pymorph', 'pymorph9455')
 
 print 'Beginning Creating cat'
 
-for subnum in range(1,1047):
-    cmd = 'select galcount, z from CAST where galcount > %d and galcount <= %d;' %((subnum - 1)*sample_size, subnum * sample_size)
+for subnum in range(1,2):
+    cmd = 'select galcount, z from bright34_gal where galcount > %d and galcount <= %d;' %((subnum - 1)*sample_size, subnum * sample_size)
 
     galcount, z = cursor.get_data(cmd)
 
-    for fil in ['r','i']:
-        outfile = open('/data2/home/ameert/catalog/%s/%04d/sdss_%s_%04d.cat' %(fil, subnum, fil, subnum), 'w')
+    for fil in ['r',]:
+        outfile = open('/home/ameert/Desktop/manga/cutouts/%s/%04d/sdss_%s_%04d.cat' %(fil, subnum, fil, subnum), 'w')
         outfile.write("gal_id gimg wimg star z\n")
 
         for cur_gal, cur_z in zip(galcount,z):

@@ -119,6 +119,8 @@ if ">=" in options['title']:
     options['title'] = options['title'].replace(">=","$\\geq$")
 
 pl.title(options['title'], fontsize=8)
+
+pl.text(-16, 1.0, options['postfix'].split('_')[1], fontsize=12)
 print '%s_%s_%s_%s_%s_%s_%s%s.eps' %(options['band1'], options['table1'],options['band2'],options['table2'], options['model2'], options['xchoice'], options['ychoice'], options['postfix'])
 #pl.show()
 oplot.savefig('%s_%s_%s_%s_%s_%s_%s%s.eps' %(options['band1'], options['table1'],options['band2'],options['table2'], options['model2'], options['xchoice'], options['ychoice'], options['postfix']))

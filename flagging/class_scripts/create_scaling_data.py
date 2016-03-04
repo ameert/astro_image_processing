@@ -20,12 +20,15 @@ for band in 'gri':
     z.r_disk*sqrt(z.ba_disk),
     s.kpc_per_arcsec, z.m_bulge-x.extinction_{band}, 
     z.m_disk-x.extinction_{band}, c.flag, s.dismod,
-    x.modelmag_g - x.extinction_g, x.modelmag_r - x.extinction_r, 
-    x.modelmag_i - x.extinction_i, 
+    d.m_tot - x.extinction_g, e.m_tot - x.extinction_r, 
+    f.m_tot - x.extinction_i, 
     -2.5*log10(x.fracdev_r*pow(10, -0.4*x.devmag_r) + (1.0-x.fracdev_r)*pow(10, -0.4*x.expmag_r)) as cmodel_r,
     -4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd, 
     s.kcorr_g, s.kcorr_r, s.kcorr_i
     from 
+    g_model_serexp as d,
+    r_model_serexp as e,
+    i_model_serexp as f,
     Flags_catalog as c,
     M2010 as m,  
     DERT as s,
@@ -33,6 +36,9 @@ for band in 'gri':
     {band}_band_fit as y,
     {band}_band_{model} as z
      where 
+    f.galcount = x.galcount and
+    e.galcount = x.galcount and
+    d.galcount = x.galcount and
     y.galcount = x.galcount and
     x.galcount = s.galcount and 
     x.galcount = z.galcount and 

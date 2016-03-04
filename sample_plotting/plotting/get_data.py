@@ -12,6 +12,7 @@ d.kcorr_{band1} + d.dismod,d.kcorr_{band2} + d.dismod,
 d.kpc_per_arcsec, c.z, d.vmax,
 c.PetroMag_{band1}-c.extinction_{band1}, c.PetroR50_{band1},
 c.PetroMag_{band2}-c.extinction_{band2}, c.PetroR50_{band2},
+c.PetroMag_r-c.extinction_r-(d.kcorr_r + d.dismod),
 -4.5775*m.probaEll -2.35723*m.probaS0+2.48028*m.probaSab+6.0815*m.probaScd
 from {table1} as a, {table2} as b, CAST as c, DERT as d {add_tables},  
 Flags_catalog as x, M2010 as m
@@ -40,7 +41,7 @@ d.galcount = c.galcount
                  'pabulge_2', 'mdisk_2', 'rdisk_2', 'badisk_2','padisk_2', 
                  'sky_2', 'magcorr1', 'magcorr2','kpc_per_arcsec','z', 'vmax',
                  'petromag_1', 'petrorad_1','petromag_2', 'petrorad_2',
-                 'ttype_1']
+                 'petromag_abs_r_1','ttype_1']
 
     data = {}
     for a,b in zip(data_list, data_name):

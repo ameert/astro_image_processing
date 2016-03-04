@@ -1,4 +1,4 @@
-from mysql_class import *
+from astro_image_processing.mysql import *
 import os
 import itertools
 import pyfits
@@ -13,10 +13,10 @@ import sys
 #mysql> insert ignore into r_band_flagmodel (galcount) select galcount from CAST;
 
 dba = 'catalog'
-pwd = 'al130568'
-usr = 'ameert'
+pwd = 'pymorph'
+usr = 'pymorph'
 
-stem = 'DR6_flagmod'
+stem = 'DR6_newt2'
 
 cursor = mysql_connect(dba, usr, pwd)
 
@@ -38,18 +38,39 @@ catalog.SSDR6 as z left join (catalog.CAST as f left join catalog.r_band_ser as 
 order by z.rowcount
 into outfile "/tmp/%s_1.txt";""" %(stem)
 
+#cursor.execute(cmd)
+
+#os.system('cp /tmp/%s_1.txt /scratch/MB/Sample_match_July2011_newmask.txt' %(stem))
+
+#outfile = open('tmp_head.txt', 'w')
+#outfile.write('#ra_gal dec_gal z absmag_ser n_ser hrad_semimajor_ser ba_ser absmag_best n_best hrad_semimajor_best ba_best BT_best P(E) P(Ell) P(S0) P(Sab) P(Scd) V_max absmagcorr mag_auto_r\n')
+#outfile.close()
+
+#os.system('cat tmp_head.txt /scratch/MB/Sample_match_July2011_newmask.txt > /scratch/MB/Sample_match_July2011_withhead_newmask.txt')
+
+#os.system('rm tmp_head.txt')
+#os.system('mv /scratch/MB/Sample_match_July2011_withhead_newmask.txt /scratch/MB/Sample_match_July2011_best.txt')
+
+
+
+cmd = """select f.galcount, IFNULL(k.ra_gal,-999), IFNULL(k.dec_gal,-999), 
+IFNULL(k.zspec,-999),  IFNULL(k.M09_redchi2,-999), 
+IFNULL(k.M09_age,-999), IFNULL(k.M09_ebv,-999), IFNULL(k.M09_templ,-999), 
+IFNULL(k.M09_mstar_l,-999), IFNULL(k.M09_mstar,-999),
+IFNULL(k.M09_sfr,-999), IFNULL(k.Mabs_M09_u,-999), IFNULL(k.Mabs_M09_g,-999), 
+IFNULL(k.Mabs_M09_r,-999), IFNULL(k.Mabs_M09_i,-999), 
+IFNULL(k.Mabs_M09_z,-999),IFNULL(k.umag,-999), 
+IFNULL(k.gmag,-999), IFNULL(k.rmag,-999), IFNULL(k.imag,-999), 
+IFNULL(k.zmag,-999) 
+from 
+catalog.SSDR6 as z left join (catalog.CAST as f left join catalog.DR7_Portsmouth_krouall as k on f.objid=k.objid) on f.galcount = z.galcount
+order by z.rowcount
+into outfile "/tmp/%s_DR7_Portsmouth_krouall_July2011.txt";""" %(stem)
+print cmd
 cursor.execute(cmd)
+os.system('cp /tmp/%s_DR7_Portsmouth_krouall_July2011.txt /home/alan/Desktop/galtable_DR7_Portsmouth_krouall_July2011.txt' %(stem))
 
-os.system('cp /tmp/%s_1.txt /scratch/MB/Sample_match_July2011_newmask.txt' %(stem))
 
-outfile = open('tmp_head.txt', 'w')
-outfile.write('#ra_gal dec_gal z absmag_ser n_ser hrad_semimajor_ser ba_ser absmag_best n_best hrad_semimajor_best ba_best BT_best P(E) P(Ell) P(S0) P(Sab) P(Scd) V_max absmagcorr mag_auto_r\n')
-outfile.close()
-
-os.system('cat tmp_head.txt /scratch/MB/Sample_match_July2011_newmask.txt > /scratch/MB/Sample_match_July2011_withhead_newmask.txt')
-
-os.system('rm tmp_head.txt')
-os.system('mv /scratch/MB/Sample_match_July2011_withhead_newmask.txt /scratch/MB/Sample_match_July2011_best.txt')
 
 
 

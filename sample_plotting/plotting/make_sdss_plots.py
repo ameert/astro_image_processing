@@ -13,3 +13,5 @@ mv r_best_best_ser_mtot_hrad.eps r_sdss_sdss_ser_mtot_hrad.eps
 
 
 python cmp_main_sdss_sims.py -1 sn05 -2 sn05 -m serexp -b r -x mtot -y mtot -f -z ser --title "PyMorph Ser-Exp" --yl "-1.0,1.0" --ytM 0.5 --ytm 0.05 --xl "14.0,17.8" --bins "14.0,18.01,0.5" --ylab 'm$_{\mathrm{tot, in}}$-m$_{\mathrm{tot, pm}}$' --xlab 'm$_{\mathrm{tot, in}}$' --ytl "%0.1f"
+
+python cmp_main_sdss_sims.py -1 psf -2 sn05 -m ser -b r -x mtot -y mtot -f -z ser --title "" --yl "-1.0,1.0" --ytM 0.5 --ytm 0.05 --xl "14.0,17.8" --bins "14.0,18.01,0.5" --ylab 'm$_{\mathrm{tot, in}}$-m$_{\mathrm{tot, pm}}$' --xlab 'm$_{\mathrm{tot, in}}$' --ytl "%0.1f"

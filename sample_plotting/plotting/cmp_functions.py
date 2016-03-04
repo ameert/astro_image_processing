@@ -205,7 +205,8 @@ def get_key(choice):
     """converts the axis choice to the common dictionary keys used to define axis labels, plot ranges, bin sizes, etc."""
     if choice in ['mtot', 'mtot_app', 'mbulge', 'mdisk','petromag']:
         key_choice = 'mag'
-    elif choice in ['mtot_abs', 'petromag_abs', 'mbulge_abs', 'mdisk_abs']:
+    elif choice in ['mtot_abs', 'petromag_abs', 'petromag_abs_r', 
+                    'mbulge_abs', 'mdisk_abs']:
         key_choice = 'absmag'
     elif choice in ['hrad','hrad_psf','rbulge','rdisk', 'petrorad']:
         key_choice = 'rad'
